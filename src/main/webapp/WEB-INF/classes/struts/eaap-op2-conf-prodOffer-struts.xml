@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="prodOffer" extends="default" namespace="/prodOffer">
+	
+		<action name="showProdOfferList" class="com.ailk.eaap.op2.conf.prodOffer.action.ProdOfferAction" method="showProdOfferList">
+			<result name="success">/mgr/prodOfferList.jsp</result> 
+		</action>
+		
+		<action name="addProdOfferInfo" class="com.ailk.eaap.op2.conf.prodOffer.action.ProdOfferAction" method="addProdOfferInfo">
+			<result name="success">/mgr/prodOffer_add.jsp</result> 
+		</action>
+		
+		<action name="insertProdOfferInfo" class="com.ailk.eaap.op2.conf.prodOffer.action.ProdOfferAction" method="insertProdOfferInfo">
+		       <result name="success" type="redirectAction">  
+                      <param name="actionName">showProdOfferList</param>  
+               </result>  
+		</action>
+		
+		<action name="updateProdOfferStatus" class="com.ailk.eaap.op2.conf.prodOffer.action.ProdOfferAction" method="updateProdOfferStatus">
+			   <result name="success" type="redirectAction">  
+                      <param name="actionName">showProdOfferList</param>  
+               </result>  
+		</action>
+		
+	   <action name="queryProdOfferInfo" class="com.ailk.eaap.op2.conf.prodOffer.action.ProdOfferAction" method="queryProdOfferInfo">
+			<result name="success">/mgr/prodOffer_edit.jsp</result> 
+		</action>
+		
+		<action name="updateProdOffer" class="com.ailk.eaap.op2.conf.prodOffer.action.ProdOfferAction" method="updateProdOffer">
+	  		 <result name="success" type="redirectAction">  
+                    <param name="actionName">showProdOfferList</param>  
+             </result>  
+		</action>
+	 </package>
+</struts>

@@ -1,0 +1,876 @@
+<div id="components-settlementRules">
+</div>
+<script id="art-oneTimeChargeRule" type="text/html">
+  <div class="row pdl0">
+    <div class="col-md-4">
+      <div class="form-group">
+        <!--Rule Name-->
+        <label class="control-label i18n">CNF00000080</label>
+        <input type="text" class="form-control" disabled="" value="{{ruleName}}" name="ruleName" stype="string">
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <!--Settlement Direction-->
+        <label class="control-label i18n">CNF00000070</label>
+        <select name="settlementDirection" data-select="{{settlementDirection}}" class="form-control" disabled="">
+          {{each settlementDirectionList}}
+          <option value="{{$value.id}}">{{$value.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <!--One-time Charge-->
+        <label class="control-label i18n">CNF00000022</label>
+        <input type="text" stype="number" class="form-control" value="{{oneTimeCharge}}" disabled="" name="oneTimeCharge">
+      </div>
+    </div>
+  </div>
+  <div class="row pdl0">
+    <div class="col-md-4">
+      <div class="form-group">
+        <!--One-time Charge-->
+        <label class="control-label i18n">Currency</label>
+        <select class="form-control" data-select="{{currency.id}}" disabled="" name="currency">
+          {{each currencyList }}
+          <option value="{{$value.id}}">{{$value.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <!--Effective Date-->
+        <label class="control-label i18n">CNF00000030</label>
+        <div class="input-group date-picker input-daterange" data-date="10/11/2012" data-date-format="mm/dd/yyyy">
+          <input type="text" class="form-control od" name="startTime" placeholder="Start" value="{{startDate}}" disabled="" stype="bothRequired" error-placement="div[sclass]"> <span class="input-group-addon"> to </span>
+          <input type="text" class="form-control od" name="endTime" placeholder="End" value="{{endDate}}" disabled="" stype="bothRequired" error-placement="div[sclass]"> </div>
+        <div sclass=""></div>
+      </div>
+    </div>
+  </div>
+  <div class="row pdl0">
+    <div class="col-md-12">
+      <div class="form-group">
+        <!--Description-->
+        <label class="control-label i18n">CNF00000034</label>
+        <textarea rows="2" class="form-control" disabled="" name="description">{{description}}</textarea>
+      </div>
+    </div>
+  </div>
+</script>
+<script id="art-recurringRule" type="text/html">
+  <div class="row pdl0">
+    <div class="col-md-4">
+      <div class="form-group">
+        <!--Rule Name-->
+        <label class="control-label i18n">CNF00000080</label>
+        <input type="text" class="form-control" disabled="" value="{{ruleName}}" name="ruleName" stype="string"> </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <!--Subscription Statistics Method-->
+        <label class="control-label i18n">CNF00000066</label>
+        <select class="form-control" disabled="" name="subscriptionStatisticsMethod" data-id="subscriptionStatisticsMethod" data-select="{{subscriptionStatisticsMethod}}">
+          {{each subscriptionStatisticsMethodList}}
+          <option value="{{$value.id}}">{{$value.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <!--Subscription Statistics Rule-->
+        <label class="control-label i18n">CNF00000067</label>
+        <select class="form-control" data-id="statisticsRule" disabled="" name="statisticsRule" data-select="{{statisticsRule}}" onchange="SettlementRules.toggleDay(this)">
+          {{each statisticsRuleList}}
+          <option value="{{$value.id}}">{{$value.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="row pdl0">
+    <div class="col-md-4" data-class="day" style="display:none">
+      <div class="form-group">
+        <!--Day-->
+        <label class="control-label i18n">CNF00000068</label>
+        <select name="day" class="form-control" data-select="{{day}}" data-id="day" disabled="">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+          <option value="12">12</option>
+          <option value="13">13</option>
+          <option value="14">14</option>
+          <option value="15">15</option>
+          <option value="16">16</option>
+          <option value="17">17</option>
+          <option value="18">18</option>
+          <option value="19">19</option>
+          <option value="20">20</option>
+          <option value="21">21</option>
+          <option value="22">22</option>
+          <option value="23">23</option>
+          <option value="24">24</option>
+          <option value="25">25</option>
+          <option value="26">26</option>
+          <option value="27">27</option>
+          <option value="28">28</option>
+        </select>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <!--Reduce Amount-->
+        <label class="control-label i18n">CNF00000069</label>
+        <input stype="number" type="text" class="form-control" value="{{reduceAmount}}" disabled="" name="reduceAmount"> </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <!--Settlement Direction-->
+        <label class="control-label i18n">CNF00000070</label>
+        <select name="settlementDirection" data-id="settlementDirection" data-select="{{settlementDirection}}" disabled="" class="form-control">
+          {{each settlementDirectionList}}
+          <option value="{{$value.id}}">{{$value.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="row pdl0">
+    <div class="col-md-4">
+      <div class="form-group">
+        <!--Currency-->
+        <label class="control-label i18n">CNF00000037</label>
+        <select name="currency" class="form-control" data-select="{{currency.id}}" disabled="" onchange="SettlementRules.autoChangeUnit(this)" data-id="currency">
+          {{each currencyList}}
+          <option value="{{$value.id}}">{{$value.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <!--Effective Date-->
+        <label class="control-label i18n">CNF00000030</label>
+        <div class="input-group date-picker input-daterange" data-date="10/11/2012" data-date-format="mm/dd/yyyy">
+          <input type="text" class="form-control od" stype="bothRequired" name="startTime" placeholder="Start" value="{{startDate}}" disabled="" error-placement="div[sclass]"> <span class="input-group-addon"> to </span>
+          <input type="text" class="form-control od" stype="bothRequired" name="endTime" placeholder="End" value="{{endDate}}" disabled="" error-placement="div[sclass]"> </div>
+        <div sclass=""></div>
+      </div>
+    </div>
+  </div>
+  <div class="row pdl0">
+    <div class="col-md-12">
+      <!--Settlement Conditions-->
+      <label class="control-label i18n">CNF00000085</label>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th class="th-check"><i class="fa fa-plus pointer disabled" onclick="SettlementRules.addTr(this)"></i> </th>
+            <th width="40%"><span class="i18n">CNF00000072</span> </th>
+            <th width="24%"><span class="i18n">CNF00000073</span> &nbsp;(<span class="currencyArea">{{currency.name}}</span>)</th>
+            <th><span class="i18n">CNF00000074</span> &nbsp;(<span class="currencyArea">{{currency.name}}</span>)</th>
+            <th class="th-operation text-center"> Operation </th>
+          </tr>
+        </thead>
+        <tbody> {{if (settlementConditions.length > 0) }} {{each settlementConditions}}
+          <tr>
+            <td>{{$value.id}}</td>
+            <td>
+              <div class="form-group mb0">
+                <div class="input-group">
+                  <input type="text" class="form-control ignore" value="{{$value.subscriptionRangeMin}}" disabled="" name="subscriptionRangeMin" error-placement=".input-group" stype="compare"> <span class="input-group-addon">-</span>
+                  <input type="text" class="form-control ignore" value="{{$value.subscriptionRangeMax}}" disabled="" name="subscriptionRangeMax" error-placement=".input-group" stype="compare"> </div>
+              </div>
+            </td>
+            <td>
+              <div class="form-group mb0">
+                <input type="text" class="form-control" value="{{$value.unitPrice}}" disabled="" name="unitPrice" stype="number"> </div>
+            </td>
+            <td>
+              <div class="form-group mb0">
+                <input type="text" class="form-control" value="{{$value.basicCharge}}" disabled="" name="basicCharge" stype="number"> </div>
+            </td>
+            <td class="text-center"> <a class="btn default disabled" onclick="SettlementRules.deleteTr(this)">Delete </a> </td>
+          </tr> {{/each}} {{else}}
+          <tr>
+            <td colspan="5" class="i18n">CNF00000065</td>
+          </tr> {{/if}} </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="row pdl0">
+    <div class="col-md-12">
+      <div class="form-group">
+        <!--Description-->
+        <label class="control-label i18n">CNF00000034</label>
+        <textarea rows="2" class="form-control" disabled="" name="description">{{description}}</textarea>
+      </div>
+    </div>
+  </div>
+</script>
+<script id="art-aggregationRule" type="text/html">
+  <div class="row pdl0">
+    <div class="col-md-4">
+      <div class="form-group">
+        <!--Rule Name-->
+        <label class="control-label i18n">CNF00000080</label>
+        <input type="text" class="form-control" disabled="" value="{{ruleName}}" name="ruleName" stype="string">
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <!--Aggregated Item-->
+        <label class="control-label i18n">CNF00000086</label>
+        <select class="form-control" disabled="" name="aggregatedItem" data-select="{{aggregatedItem}}">
+          {{each aggregatedItemList}}
+          <option value="{{$value.id}}">{{$value.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <!--Settlement Direction-->
+        <label class="control-label i18n">CNF00000070</label>
+        <select id="settlementAggregationRule-settlementDirection" name="settlementDirection" data-select="{{settlementDirection}}" class="form-control" disabled="">
+          {{each settlementDirectionList}}
+          <option value="{{$value.id}}">{{$value.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="row pdl0">
+    <div class="col-md-4">
+      <div class="form-group">
+        <!--Currency-->
+        <label class="control-label i18n">CNF00000037</label>
+        <select class="form-control" data-select="{{currency.id}}" disabled="" name="currency" onchange="SettlementRules.autoChangeUnit(this)">
+          {{each currencyList}}
+          <option value="{{$value.id}}">{{$value.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <!--Priority-->
+        <label class="control-label i18n">CNF00000033</label>
+        <input stype="number" type="text" class="form-control" value="{{priority}}" disabled="" name="priority">
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <!--Effective Date-->
+        <label class="control-label i18n">CNF00000030</label>
+        <div class="input-group date-picker input-daterange" data-date="10/11/2012" data-date-format="mm/dd/yyyy">
+          <input type="text" class="form-control od" stype="bothRequired" name="startTime" placeholder="Start" value="{{startDate}}" disabled="" error-placement="div[sclass]"> <span class="input-group-addon"> to </span>
+          <input type="text" class="form-control od" stype="bothRequired" name="endTime" placeholder="End" value="{{endDate}}" disabled="" error-placement="div[sclass]"> </div>
+        <div sclass=""></div>
+      </div>
+    </div>
+  </div>
+  <div class="row pdl0">
+    <div class="col-md-4">
+      <div class="form-group">
+        <!--Rules-->
+        <label class="control-label i18n">Rules Type</label>
+        <select name="rules" data-select="{{ruleType}}" disabled="" class="form-control select2">
+          {{each ruleTypeList}}
+          <option value="{{$value.id}}">{{$value.name}}</option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="row pdl0">
+    <div class="col-md-12">
+      <div class="form-group">
+        <!--Settlement Conditions-->
+        <label class="control-label i18n">CNF00000085</label>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th class="th-check"><i class="fa fa-plus pointer disabled" onclick="SettlementRules.addTr(this)"></i>
+              </th>
+              <th><span class="i18n">Charge Range&nbsp;(<span class="currencyArea">{{currency.name}}</span>)</span>
+              </th>
+              <th><span class="i18n">Ratio</span>
+              </th>
+              <th><span class="i18n">Basic Charge</span> &nbsp;(<span class="currencyArea">{{currency.name}}</span>)</th>
+              <th class="th-operation text-center">Operation</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{if (settlementConditions.length > 0) }} {{each settlementConditions}}
+            <tr>
+              <td>{{$value.id}}</td>
+              <td>
+                <div class="form-group mb0">
+                  <div class="input-group">
+                    <input type="text" class="form-control ignore" value="{{$value.chargeRangeMin}}" disabled="" name="chargeRangeMin" error-placement="div[sclass]" stype="compare">
+                    <span class="input-group-addon">-</span>
+                    <input type="text" class="form-control ignore" value="{{$value.chargeRangeMax}}" disabled="" name="chargeRangeMax" error-placement="div[sclass]" stype="compare">
+                  </div>
+                  <div class="sclass"></div>
+                </div>
+              </td>
+              <td>
+                <div class="form-group mb0">
+                  <div class="input-group">
+                    <input type="text" class="form-control ignore" disabled="" value="{{$value.ratio}}" error-placement="div[sclass]" name="ratio" stype="number"><span class="input-group-addon">%</span>
+                  </div>
+                  <div sclass=""></div>
+                </div>
+              </td>
+              <td>
+                <div class="form-group mb0">
+                  <input type="text" class="form-control" value="{{$value.basicCharge}}" disabled="" name="basicCharge" stype="number">
+                </div>
+              </td>
+              <td class="text-center"> <a class="btn default disabled" onclick="SettlementRules.deleteTr(this)">Delete </a> </td>
+            </tr>
+            {{/each}} {{else}}
+            <tr>
+              <td colspan="5" class="i18n">CNF00000065</td>
+            </tr>
+            {{/if}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="row pdl0">
+    <div class="col-md-12">
+      <div class="form-group">
+        <!--Description-->
+        <label class="control-label i18n">CNF00000034</label>
+        <textarea rows="2" class="form-control" name="description" disabled="">{{description}}</textarea>
+      </div>
+    </div>
+  </div>
+</script>
+<script id="common" type="text/html">
+  <div class="panel panel-default" data-type="2">
+    <div class="panel-heading pointer" onclick="$(this).next('.panel-collapse').toggleClass('in')">
+      <h4 class="panel-title">
+      <button class="btn btn-default pull-right btn-sm disabled" type="button" data-class="add" onclick="SettlementRules.addRule(this,2,event)" style="margin-top:-5px;">Add</button># One-Time Charge Rule </h4>
+    </div>
+    <div class="panel-collapse collapse in">
+      <div class="panel-body">
+        {{if oneTimeChargeRule.length == 0}}
+        <p>no data</p>
+        {{else}}
+        <ul class="nav nav-tabs">
+          {{each oneTimeChargeRule}}
+          <li>
+            <a href="#" data-toggle="tab" class="disabled"><span class="close3" onclick="SettlementRules.deleteRule(this)"></span> <span class="sl80">{{$value.ruleName}}</span></a>
+          </li>
+          {{/each}}
+        </ul>
+        <div class="tab-content">
+          {{each oneTimeChargeRule}}
+          <div class="tab-pane" id="">{{include "art-oneTimeChargeRule" $value}}</div>
+          {{/each}}
+        </div>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-default" data-type="1">
+    <div class="panel-heading pointer" onclick="$(this).next('.panel-collapse').toggleClass('in')">
+      <h4 class="panel-title"><button class="btn btn-default pull-right btn-sm disabled" type="button" data-class="add" onclick="SettlementRules.addRule(this,1,event)" style="margin-top:-5px;">Add</button>#  Recurrinng Rule  </h4>
+    </div>
+    <div class="panel-collapse collapse in">
+      <div class="panel-body">
+        {{if recurringRule.length == 0}}
+        <p>no data</p>
+        {{else}}
+        <ul class="nav nav-tabs">
+          {{each recurringRule}}
+          <li>
+            <a href="#" data-toggle="tab" class="disabled"><span class="close3" onclick="SettlementRules.deleteRule(this)"></span> <span class="sl80">{{$value.ruleName}}</span></a>
+          </li>
+          {{/each}}
+        </ul>
+        <div class="tab-content">
+          {{each recurringRule}}
+          <div class="tab-pane" id="">{{include "art-recurringRule" $value}}</div>
+          {{/each}}
+        </div>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-default" data-type="4">
+    <div class="panel-heading pointer" onclick="$(this).next('.panel-collapse').toggleClass('in')">
+      <h4 class="panel-title">
+      <button class="btn btn-default pull-right btn-sm disabled" type="button" data-class="add" onclick="SettlementRules.addRule(this,4,event)" style="margin-top:-5px;">Add</button># Aggregation Rule </h4>
+    </div>
+    <div class="panel-collapse collapse in">
+      <div class="panel-body">
+        {{if aggregationRule.length == 0}}
+        <p>no data</p>
+        {{else}}
+        <ul class="nav nav-tabs">
+          {{each aggregationRule}}
+          <li>
+            <a href="#" data-toggle="tab" class="disabled"><span class="close3" onclick="SettlementRules.deleteRule(this)"></span> <span class="sl80">{{$value.ruleName}}</span></a>
+          </li>
+          {{/each}}
+        </ul>
+        <div class="tab-content">
+          {{each aggregationRule}}
+          <div class="tab-pane" id="">{{include "art-aggregationRule" $value}}</div>
+          {{/each}}
+        </div>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</script>
+
+<script type="text/html" id="art-settlementRules">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <!--One-time Charge-->
+    <h4 class="modal-title i18n">Settlement Rule</h4>
+  </div>
+  <div class="modal-body">
+    <ul class="nav nav-pills" role="tablist">
+      <li role="presentation" class="active">
+        <a href="#tab1" role="tab" data-toggle="tab">Provider Settlement</a>
+      </li>
+      <li role="presentation">
+        <a href="#tab2" role="tab" data-toggle="tab">Resale Settlement</a>
+      </li>
+    </ul>
+    <div class="tab-content">
+      <div role="tabpanel" class="tab-pane active mt30" id="tab1">
+        {{include "common" oldForm}}
+      </div>
+      <div role="tabpanel" class="tab-pane mt30" id="tab2">
+        <form id="newForm">
+          {{if (newForm == 0)}} {{include "common" oldForm}} {{else}} {{include "common" newForm}} {{/if}}
+          <div class="form-actions text-right">
+            <button type="button" class="btn btn-default i18n" data-dismiss="modal">CNF00000013</button>
+            <button type="submit" class="btn theme-btn i18n" i18n-set="data-loading-text" data-loading-text="CNF00000096" id="saveSettlementRulesBtn" onclick="SettlementRules.doSave(event)">CNF00000095</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</script>
+<script>
+  template.helper('plus', function(index) {
+    return ++index;
+  });
+  var SettlementRules = function() {
+    var json = '{"recurringRule": {"currencyList": [{"id": 11403, "name": "DKK"}, {"id": 11503, "name": "HUF"}, {"id": 10201, "name": "DollarCent"}, {"id": 10202, "name": "Dollar"}, {"id": 10301, "name": "EuroCent"}, {"id": 10302, "name": "Euro"}, {"id": 10403, "name": "Fen"}, {"id": 10404, "name": "Yuan"}], "settlementDirectionList": [{"id": 1, "name": "Operator Pays to Partner"}, {"id": 2, "name": "Partner Pays to Operator"}], "subscriptionStatisticsMethodList": [{"id": 1, "name": "Up to User"}, {"id": 2, "name": "Up to Customer"}], "statisticsRuleList": [{"id": 1, "name": "Specify the Date Order Number"}, {"id": 2, "name": "the Last Cycle Number to Order"}, {"id": 3, "name": "the Current Cycle Order Number"}, {"id": 4, "name": "Cycles And the Average Current Cycle"}], "ruleName": "", "subscriptionStatisticsMethod": 2, "statisticsRule": 3, "day": 11, "reduceAmount": 959, "settlementDirection": 2, "currency": {"id": 10301, "name": "EuroCent"}, "settlementConditions": [{"id": 1, "subscriptionRangeMin": 2, "subscriptionRangeMax": 6, "unitPrice": 8, "basicCharge": 8 }], "description": "", "startDate": "", "endDate": ""}, "aggregationRule": {"currencyList": [{"id": 11403, "name": "DKK"}, {"id": 11503, "name": "HUF"}, {"id": 10201, "name": "DollarCent"}, {"id": 10202, "name": "Dollar"}, {"id": 10301, "name": "EuroCent"}, {"id": 10302, "name": "Euro"}, {"id": 10403, "name": "Fen"}, {"id": 10404, "name": "Yuan"}], "settlementDirectionList": [{"id": 1, "name": "Operator Pays to Partner"}, {"id": 2, "name": "Partner Pays to Operator"}], "aggregatedItemList": [{"id": 1, "name": "Total Charge"}], "ruleTypeList": [{"id": 1, "name": "Rule 1"}], "ruleName": "", "aggregatedItem": 1, "settlementDirection": 1, "currency": {"id": 10302, "name": "Euro"}, "priority": 75, "ruleType": 2, "settlementConditions": [{"id": 1, "chargeRangeMin": 0, "chargeRangeMax": 1, "ratio": 0, "basicCharge": 0 }], "description": "", "startDate": "", "endDate": ""}, "oneTimeChargeRule": {"currencyList": [{"id": 11403, "name": "DKK"}, {"id": 11503, "name": "HUF"}, {"id": 10201, "name": "DollarCent"}, {"id": 10202, "name": "Dollar"}, {"id": 10301, "name": "EuroCent"}, {"id": 10302, "name": "Euro"}, {"id": 10403, "name": "Fen"}, {"id": 10404, "name": "Yuan"}], "settlementDirectionList": [{"id": 1, "name": "Operator Pays to Partner"}, {"id": 2, "name": "Partner Pays to Operator"}], "ruleName": "", "oneTimeCharge": 0, "currency": {"id": 11503, "name": "HUF"}, "settlementDirection": 1, "description": "", "startDate": "", "endDate": ""} }';
+    //提价表单校验
+    var validnewForm = function() {
+      // newForm = $('#newForm');
+      // jQuery.validator.addMethod("invalidString", function(value, element) {
+      //   return !/[`~!@#\$%\^\&\*\(\)\+<>\?:"\{\},\.\\\/;'\[\]]/im.test(value);
+      // }, App.i18n('CNF00000026'));
+      // newForm.validate({
+      //   errorElement: 'span', //default input error message container
+      //   errorClass: 'help-block', // default input error message class
+      //   focusInvalid: false, // do not focus the last invalid input
+      //   // onfocusout: false,
+      //   rules: {
+      //     ruleName: {
+      //       required: true,
+      //       invalidString: 'ruleName'
+      //     },
+      //     settlementDirection: {
+      //       required: true
+      //     },
+      //     oneTimeCharge: {
+      //       required: true,
+      //       number: true
+      //     },
+      //     currency: {
+      //       required: true
+      //     },
+      //     startTime: {
+      //       required: true
+      //     },
+      //     endTime: {
+      //       required: true
+      //     },
+      //     description: {
+      //       required: true
+      //     }, // 2222
+      //     ruleName: {
+      //       required: true,
+      //       invalidString: 'ruleName'
+      //     },
+      //     subscriptionStatisticsMethod: {
+      //       required: true,
+      //     },
+      //     statisticsRule: {
+      //       required: true,
+      //     },
+      //     reduceAmount: {
+      //       required: true,
+      //       number: true
+      //     },
+      //     settlementDirection: {
+      //       required: true,
+      //     },
+      //     currency: {
+      //       required: true,
+      //     },
+      //     startTime: {
+      //       required: true
+      //     },
+      //     endTime: {
+      //       required: true
+      //     },
+      //     description: {
+      //       required: true
+      //     }, //1111111
+      //     ruleName: {
+      //       required: true,
+      //       invalidString: 'ruleName'
+      //     },
+      //     aggregatedItem: {
+      //       required: true
+      //     },
+      //     settlementDirection: {
+      //       required: true
+      //     },
+      //     priority: {
+      //       required: true,
+      //       number: true
+      //     },
+      //     currency: {
+      //       required: true
+      //     },
+      //     rules: {
+      //       required: true
+      //     },
+      //     startTime: {
+      //       required: true
+      //     },
+      //     endTime: {
+      //       required: true
+      //     },
+      //     description: {
+      //       required: true
+      //     }
+      //   },
+      //   ignore: '.ignore',
+      //   messages: {},
+      //   invalidHandler: function(event, validator) { //display error alert on form submit   
+      //   },
+      //   highlight: function(element) { // hightlight error inputs
+      //     $(element).closest('.form-group').addClass('has-error'); // set error class to the control group
+      //   },
+      //   success: function(label, element) {
+      //     // $(element).closest('.form-group').removeClass('has-error');
+      //     label.closest('.form-group').removeClass('has-error');
+      //     label.remove();
+      //   },
+      //   errorPlacement: function(error, element) {
+      //     error.appendTo(element.closest('.form-group'));
+      //   },
+      //   submitHandler: function() {},
+      // });
+    };
+
+    return {
+      init: function() {
+        var selector = '#components-settlementRules';
+        var $modal = $(selector).closest('.modal'); //获取当前modal对象
+        App.template(App.urls.settlementRulesData, 'art-settlementRules', 'components-settlementRules', {
+          busiId: $modal.data('myData')
+        }, function() {
+          $modal.modal();
+          //默认选中标签第一项
+          $('.panel').each(function() {
+            $(this).find('.nav').children('li').eq(0).addClass('active');
+            $(this).find('.tab-content').children('.tab-pane').eq(0).addClass('active');
+            $(this).find('.nav').find('a').each(function(index, el) {
+              var id = App.getUniqueID('tab');
+              $(this).attr('href', '#' + id).closest('.nav').next().children('.tab-pane').eq(index).attr('id', id);
+            });
+          })
+          SettlementRules.initAfterCompileTemplate();
+          // 激活结束
+          $('#components-settlementRules').data('dataTmpl', $.parseJSON(json));
+        })
+      },
+      //初始化 select 选择项
+      //初始化Recurrinng Rule模板中day是否显示
+      //激活:input和add,delete按钮成编辑
+      //初始化datepicker
+      initAfterCompileTemplate: function() {
+        App.transferI18nRes();
+        //编译template时设置select选中的辅助方法
+        $('select[data-select]').each(function() {
+            var val = $(this).attr('data-select');
+            $opt = $(this).children('option[value="' + val + '"]').attr('selected', 'selected');
+          })
+          //Recurrinng Rule : 根据statisticsRule的选中值，初始化day是否显示
+          //必须在上一段each滞后
+        $('[name="statisticsRule"]').each(function() {
+            if ($(this).find('option:selected').val() == 3) {
+              $(this).closest('.tab-pane').find('div[data-class="day"]').show();
+            }
+          })
+          //激活newform表单中的:input元素
+        $('#newForm').find(':input,a,i').removeClass('disabled');
+        $('#newForm').find(':input,a,i').removeAttr('disabled');
+        App.handleDatePickers();
+        validnewForm();
+      },
+      //删除结算规则
+      //el表示当前点击的元素
+      //type表示模板类型 1=recurringRule,2=oneTimeChargeRule,4=aggregationRule
+      addRule: function(el, type, event) {
+        event.stopPropagation();
+        var markup = '<ul class="nav nav-tabs"> </ul> <div class="tab-content"> </div>',
+          $this = $(el),
+          $panel = $this.closest('.panel'),
+          $panelBody = $panel.find('.panel-body'),
+          $nav,
+          $tabContent,
+          $a,
+          $li,
+          $div,
+          id = App.getUniqueID('tab'),
+          num, //序列号
+          data = {},
+          tmplID = '',
+          html = '';
+        switch (+type) {
+          case 1:
+            data = $('#components-settlementRules').data('dataTmpl').recurringRule;
+            tmplID = 'art-recurringRule';
+            break;
+          case 2:
+            data = $('#components-settlementRules').data('dataTmpl').oneTimeChargeRule;
+            tmplID = 'art-oneTimeChargeRule';
+            break;
+          case 4:
+            tmplID = 'art-aggregationRule';
+            data = $('#components-settlementRules').data('dataTmpl').aggregationRule;
+        }
+        html = template(tmplID, data);
+        //panel-body为空时，添加基础markup
+        if ($panelBody.children('.nav').size() == 0) {
+          $panelBody.html(markup);
+        }
+        $nav = $panelBody.children('.nav');
+        $tabContent = $panelBody.children('.tab-content');
+        //获得当前标签的序列号
+        $nav.children('li').size() ? num = $nav.children('li').size() + 1 : num = 0;
+        //添加tab标签和标签对应的content
+        $a = $('<a>').attr({
+          "data-toggle": "tab",
+          "href": "#" + id,
+          "class": "sl100"
+        }).html('<span class="close3" onclick="SettlementRules.deleteRule(this)"></span>' + '<span class="sl80">New</span>');
+        $li = $('<li>').append($a).addClass('active');
+        $div = $('<div>').attr('id', id).addClass('tab-pane active').html(html);
+        $nav.children('li').removeClass('active');
+        $tabContent.children('div').removeClass('active');
+        $nav.append($li); // 往标签容器中加标签
+        $tabContent.append($div); // 往content容器中加div.tab-pane
+        //初始化新增的表单元素
+        SettlementRules.initAfterCompileTemplate();
+      },
+      //删除结算规则
+      //el表示当前点击的元素
+      deleteRule: function(el) {
+        var $this = $(el),
+          $li = $this.closest('li'),
+          $prevLi = $li.prev(),
+          $nextLi = $li.next(),
+          $nav = $li.closest('.nav'),
+          $panelBody = $nav.closest('.panel-body'),
+          prevIndex,
+          nextIndex,
+          currIndex = $nav.children('li').index($li);
+        //删除当前tab标签
+        $li.remove();
+        $panelBody.find('.tab-content').children('.tab-pane').eq(currIndex).remove();
+        //没有上一项也没有下一项，即表示只有当前一个tab标签
+        if ($prevLi.size() == 0 && $nextLi.size() == 0) {
+          $panelBody.html('<p>no data</p>');
+          return
+        }
+        $nav.children('li').removeClass('active');
+        $panelBody.children('div').removeClass('active');
+        //active指向prev
+        if ($prevLi.size() > 0) {
+          $prevLi.addClass('active');
+          prevIndex = $nav.children('li').index($prevLi);
+          $panelBody.find('.tab-content').children('.tab-pane').eq(prevIndex).addClass('active');
+          return
+        }
+        //如果没有prev,那么active指向next
+        if ($nextLi.size() > 0) {
+          $nextLi.addClass('active');
+          nextIndex = $nav.children('li').index($nextLi);
+          $panelBody.find('.tab-content').children('.tab-pane').eq(nextIndex).addClass('active');
+          return
+        }
+
+      },
+      //表格中添加tr按钮
+      addTr: function(element) {
+        if ($(element).hasClass('disabled')) {
+          return
+        }
+        var count = $(element).closest('table').find('tbody tr').size();
+        var newTr = $(element).closest('table').find('tbody tr:last-child').clone();
+        $(element).closest('table').find('tbody tr:last-child').after(newTr);
+        $(element).closest('table').find('tbody tr:last-child input').each(function() {
+          $(this).val('0')
+        });
+        var $td = $(element).closest('table').find('tbody tr:last-child').find('td:first-child');
+        $td.html(parseInt(count) + 1);
+      },
+      //监听表格中删除tr按钮
+      deleteTr: function(element) {
+        if ($(element).hasClass('disabled')) {
+          return
+        }
+        var $this = $(element);
+        var $table = $this.closest('table');
+        var count = $this.closest('table').find('tbody tr').size();
+        if (count > 1) {
+          $this.closest('tr').remove();
+          $table.find('tbody tr').each(function(i) {
+            $(this).find('td:first-child').html(i + 1);
+          });
+        }
+      },
+      toggleDay: function(element) {
+        var val = $(element).find('option:selected').val();
+        if (val == 3) {
+          $(element).closest('.tab-pane').find('div[data-class="day"]').show();
+        } else {
+          $(element).closest('.tab-pane').find('div[data-class="day"]').hide();
+        }
+      },
+      autoChangeUnit: function(element) {
+        var currency = $(element).find('option:selected').text();
+        $('.currencyArea').html(currency);
+      },
+      compare: function(element) {
+        var currentInputName = $(element).attr('name');
+        var currentInputVal = $(element).val();
+        var left, right;
+        var $inputs = $(element).closest('tr').find('input');
+        left = +($inputs.eq(0).val());
+        right = +($inputs.eq(1).val());
+        // if (currentInputName == 'chargeRangeMin' || currentInputName == 'chargeRangeMax') {
+        if (left != NaN && right != NaN && left < right && right != 0 && right != -1 && /^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test(currentInputVal)) {
+          successHandler(element);
+        } else {
+          errorHandler(element, 'End value cannot be -1 or 0,and must be greater than start value')
+        }
+        // }
+      },
+      checkNumber: function(element) {
+        var value = $(element).val();
+        var isNumber = /^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/.test(value);
+        if (isNumber && value != '') {
+          successHandler(element);
+        } else {
+          errorHandler(element, 'Please enter a valid number.')
+        }
+      },
+      checkString: function(element) {
+        var value = $(element).val();
+        var isString = !/[`~!@#\$%\^\&\*\(\)\+<>\?:"\{\},\.\\\/;'\[\]]/im.test(value);
+        if (isString && value != '') {
+          successHandler(element);
+        } else {
+          errorHandler(element, App.i18n('CNF00000026'))
+        }
+      },
+      doSave: function(event) {
+        event.preventDefault();
+        $('#newForm :input[stype]').each(function() {
+          $(this).trigger('change');
+        });
+        if ($('#newForm .form-group').hasClass("has-error")) {
+          toastr.error('Form input error');
+          return
+        }
+
+        btnSave = $('#saveSettlementRulesBtn').button('loading');
+
+        // BEGIN 获取表单值并序列化，以“{a:1,b:2,c:3}”形式保存到对象obj
+        // 拼装oneTimeChargeRule:{}
+        var oneTimeChargeRule = [],
+          recurringRule = [],
+          aggregationRule = [];
+        $('#newForm div[data-type=2] .tab-pane').each(function(index, el) {
+          oneTimeChargeRule[index] = App.serialize($(this).find(':input').serialize());
+        });
+        //拼装recurringRule:{}
+        $('#newForm div[data-type=1] .tab-pane').each(function(index, el) {
+          recurringRule[index] = App.serialize($(this).find(':input').not('table :input').serialize());
+          recurringRule[index].settlementConditions = [];
+          $(this).find('tbody tr').each(function(i) {
+            var str = $(this).find(':input').serialize();
+            recurringRule[index].settlementConditions[i] = App.serialize(str);
+          })
+        });
+
+        //拼装aggregationRule:{}
+        $('#newForm div[data-type=4] .tab-pane').each(function(index, el) {
+          aggregationRule[index] = App.serialize($(this).find(':input').not('table :input').serialize());
+          aggregationRule[index].settlementConditions = [];
+          $(this).find('tbody tr').each(function(i) {
+            var str = $(this).find(':input').serialize();
+            aggregationRule[index].settlementConditions[i] = App.serialize(str);
+          })
+        });
+        var obj = {
+          oneTimeChargeRule: oneTimeChargeRule,
+          recurringRule: recurringRule,
+          aggregationRule: aggregationRule
+        };
+        obj.ruleType = 0;
+        //END
+        $.ajax({
+            url: App.urls.saveSettlementRuleForm,
+            type: 'post',
+            dataType: 'json',
+            data: obj,
+          })
+          .done(function(data) {
+            if (!App.checker(data.health)) {
+              return
+            }
+            toastr.success(data.data.message);
+          })
+          .complete(function() {
+            btnSave.button('reset');
+          });
+      }
+    }
+  }()
+  SettlementRules.init();
+</script>

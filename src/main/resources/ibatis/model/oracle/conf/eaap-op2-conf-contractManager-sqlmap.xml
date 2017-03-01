@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "http://ibatis.apache.org/dtd/sql-map-2.dtd" "-//ibatis.apache.org//DTD SQL Map 2.0//EN">
+
+<sqlMap namespace="eaap-op2-conf-manageContract">
+	 
+	<insert id="insertContractVersion" parameterClass="com.ailk.eaap.op2.bo.ContractVersion">
+	 <selectKey resultClass="java.lang.Integer" keyProperty="contractVersionId">
+				 SELECT to_char(SEQ_CONTRACT_VERSION.NEXTVAL) FROM DUAL  
+	 </selectKey>	
+	    insert into contract_version
+	    (create_time,state,lastest_time,EFF_DATE,EXP_DATE
+	  <dynamic>
+	    <isNotNull prepend="," property="contractVersionId">contract_version_id</isNotNull>
+	    <isNotNull prepend="," property="contractId">contract_id</isNotNull>
+	    <isNotNull prepend="," property="version">version</isNotNull>
+	    <isNotNull prepend="," property="descriptor">descriptor</isNotNull>
+	    <isNotNull prepend="," property="isNeedCheck">is_need_check</isNotNull>
+	  </dynamic>
+	  )
+	  values(SYS_EXTRACT_UTC(current_timestamp)+0,'A',SYS_EXTRACT_UTC(current_timestamp)+0,SYS_EXTRACT_UTC(current_timestamp)+0,SYS_EXTRACT_UTC(current_timestamp)+0+20*365
+	  <dynamic>
+	    <isNotNull prepend="," property="contractVersionId">#contractVersionId#</isNotNull>
+	    <isNotNull prepend="," property="contractId">#contractId#</isNotNull>
+	    <isNotNull prepend="," property="version">#version#</isNotNull>
+	    <isNotNull prepend="," property="descriptor">#descriptor#</isNotNull>
+	    <isNotNull prepend="," property="isNeedCheck">#isNeedCheck#</isNotNull>
+	  </dynamic>
+	  )
+	</insert>
+	
+	<insert id="insertDocContract" parameterClass="com.ailk.eaap.op2.bo.DocContract">
+	 <selectKey resultClass="java.lang.Integer" keyProperty="docContrId">
+				 SELECT to_char(seq_doc_contract.NEXTVAL) FROM DUAL  
+	 </selectKey>	
+	    insert into DOC_CONTRACT
+	    (DOC_CONTR_ID
+	  <dynamic>
+	    <isNotNull prepend="," property="contractDocId">CONTRACT_DOC_ID</isNotNull>
+	    <isNotNull prepend="," property="contractVersionId">CONTRACT_VERSION_ID</isNotNull>
+	    <isNotNull prepend="," property="descriptor">DESCRIPTOR</isNotNull>
+	  </dynamic>
+	  )
+	  values(#docContrId#
+	  <dynamic>
+	    <isNotNull prepend="," property="contractDocId">#contractDocId#</isNotNull>
+	    <isNotNull prepend="," property="contractVersionId">#contractVersionId#</isNotNull>
+	    <isNotNull prepend="," property="descriptor">#descriptor#</isNotNull>
+	  </dynamic>
+	  )
+	</insert>
+	
+	<insert id="insertContractFormat" parameterClass="com.ailk.eaap.op2.bo.ContractFormat">
+	 <selectKey resultClass="java.lang.Integer" keyProperty="tcpCtrFId">
+				 SELECT to_char(SEQ_CONTRACT_FORMAT.NEXTVAL) FROM DUAL  
+	 </selectKey>	
+	    insert into contract_format
+	    (create_time,state,lastest_time,CONTRACT_FORMAT_CODE
+	  <dynamic>
+	    <isNotNull prepend="," property="tcpCtrFId">tcp_ctr_f_id</isNotNull>
+	    <isNotNull prepend="," property="contractVersionId">contract_version_id</isNotNull>
+	    <isNotNull prepend="," property="reqRsp">req_rsp</isNotNull>
+	    <isNotNull prepend="," property="conType">con_type</isNotNull>
+	    <isNotNull prepend="," property="xsdHeaderFor">xsd_header_for</isNotNull>
+	    <isNotNull prepend="," property="xsdFormat">xsd_format</isNotNull>
+	    <isNotNull prepend="," property="xsdDemo">xsd_demo</isNotNull>
+	    <isNotNull prepend="," property="descriptor">descriptor</isNotNull>
+	  </dynamic>
+	  )
+	  values(SYS_EXTRACT_UTC(current_timestamp)+0 ,'A',SYS_EXTRACT_UTC(current_timestamp)+0,sys_guid()
+	  <dynamic>
+	    <isNotNull prepend="," property="tcpCtrFId">#tcpCtrFId#</isNotNull>
+	    <isNotNull prepend="," property="contractVersionId">#contractVersionId#</isNotNull>
+	    <isNotNull prepend="," property="reqRsp">#reqRsp#</isNotNull>
+	    <isNotNull prepend="," property="conType">#conType#</isNotNull>
+	    <isNotNull prepend="," property="xsdHeaderFor">#xsdHeaderFor#</isNotNull>
+	    <isNotNull prepend="," property="xsdFormat">#xsdFormat#</isNotNull>
+	    <isNotNull prepend="," property="xsdDemo">#xsdDemo#</isNotNull>
+	    <isNotNull prepend="," property="descriptor">#descriptor#</isNotNull>
+	  </dynamic>
+	  )
+	</insert>
+	
+	<insert id="insertNodeDesc" parameterClass="com.ailk.eaap.op2.bo.NodeDesc">
+	 <selectKey resultClass="java.lang.Integer" keyProperty="nodeDescId">
+				 SELECT to_char(seq_node_desc.NEXTVAL) FROM DUAL  
+	 </selectKey>	
+	    insert into NODE_DESC
+	    (create_time,state,lastest_time,NODE_DESC_CODE
+	  <dynamic>
+	    <isNotNull prepend="," property="nodeDescId">NODE_DESC_ID</isNotNull>
+	    <isNotNull prepend="," property="tcpCtrFId">TCP_CTR_F_ID</isNotNull>
+	    <isNotNull prepend="," property="nodeName">NODE_NAME</isNotNull>
+	    <isNotNull prepend="," property="nodePath">NODE_PATH</isNotNull>
+	    <isNotNull prepend="," property="nodeType">NODE_TYPE</isNotNull>
+	    <isNotNull prepend="," property="nevlConsType">NEVL_CONS_TYPE</isNotNull>
+	    <isNotNull prepend="," property="nevlConsValue">NEVL_CONS_VALUE</isNotNull>
+	  </dynamic>
+	  )
+	  values(SYS_EXTRACT_UTC(current_timestamp)+0 ,'A',SYS_EXTRACT_UTC(current_timestamp)+0,sys_guid()
+	  <dynamic>
+	    <isNotNull prepend="," property="nodeDescId">#nodeDescId#</isNotNull>
+	    <isNotNull prepend="," property="tcpCtrFId">#tcpCtrFId#</isNotNull>
+	    <isNotNull prepend="," property="nodeName">#nodeName#</isNotNull>
+	    <isNotNull prepend="," property="nodePath">#nodePath#</isNotNull>
+	    <isNotNull prepend="," property="nodeType">#nodeType#</isNotNull>
+	    <isNotNull prepend="," property="nevlConsType">#nevlConsType#</isNotNull>
+	    <isNotNull prepend="," property="nevlConsValue">#nevlConsValue#</isNotNull>
+	  </dynamic>
+	  )
+	</insert>
+</sqlMap>

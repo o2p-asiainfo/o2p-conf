@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="serviceManager" extends="default" namespace="/serviceManager">
+	    <!-- 显示服务注册页面-->
+		<action name="showServiceManagerAndDirAndFunc"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="showServiceManagerAndDirAndFunc">
+			<result name="success">/serviceManager/serviceManagerSearch.jsp</result>
+		</action>
+        <!-- 显示服务表-->
+		<action name="showGrid"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="showGrid">
+			<result name="success">/serviceManager/serviceManagerSearch.jsp</result>
+		</action>
+		<!-- 增加服务-->
+		<action name="addServiceManager"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="addServiceManager">
+			<result name="success">/serviceManager/serviceManagerSearch.jsp</result>
+		</action>
+		<!--更新服务-->
+		<action name="updateServiceManager"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="updateServiceManager">
+			<result name="success">/serviceManager/serviceManagerSearch.jsp</result>
+		</action>
+		<!--删除服务-->
+		<action name="deleteServiceManager"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="deleteServiceManager">
+			<result name="success">/serviceManager/serviceRegister.jsp</result>
+		</action>
+		<!-- 查询服务页面-->
+		<action name="searchServiceManager"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="searchServiceManager">
+			<result name="success">/serviceManager/serviceManagerSearch.jsp</result>
+		</action>
+		<action name="showServiceName"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="showServiceName">
+			<result name="success">/serviceManager/serviceManagerSearch.jsp</result>
+		</action>	
+	    <action name="queryContractVersionList"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="queryContractVersionList">
+			<result name="success">/serviceManager/serviceManagerSearch.jsp</result>
+		</action>	
+		<!-- 模糊查询协议版本-服务搜索页面-->
+	   <action name="showServiceManager"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="showServiceManager">
+			<result name="success">/serviceManager/serviceManagerSearch.jsp</result>
+		</action>
+		<!--显示所有的协议版本信息-->
+		<action name="showConstractInfor"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="showConstractInfor">
+			<result name="success">/serviceManager/showConstractInfo.jsp</result>
+		</action>
+		<action name="showList"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="showList">
+			<result name="success">/serviceManager/serviceManagerSearch.jsp</result>
+		</action>
+		<!--树形页面实例-->
+	    <action name="showTreeGrid"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="showTreeGrid">
+			<result name="success">/serviceManager/DemoTreeGrid.jsp</result>
+		</action>
+		<!--树形页面实例-获得字节点数据-->
+	    <action name="getChildNode"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="getChildNode">
+			<result name="success">/serviceManager/DemoTreeGrid.jsp</result>
+		</action>
+		<!-- 显示服务管理主数据 -->
+		<action name="showMainInfo"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="showMainInfo">
+			<result name="success">/serviceManager/serviceManagerSearch.jsp</result>
+		</action>
+		<!-- 显示服务目录树-->
+		<action name="showServiceDirTree"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="showServiceDirTree">
+			<result name="success">/serviceManager/serviceDirTree.jsp</result>
+		</action>
+		<!-- 显示业务流程树-->
+		<action name="showWorkFlowTree"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="showWorkFlowTree">
+			<result name="success">/serviceManager/workFlowTree.jsp</result>
+		</action>
+		<!--新增服务-服务增加页面 -->
+	    <action name="serviceAdd"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="serviceAdd">
+			<result name="success">/serviceManager/serviceAdd.jsp</result>
+		</action>
+		<!--协议模糊查询-服务增加页面 -->
+	    <action name="showProtocol"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="showProtocol">
+			<result name="success">/serviceManager/serviceAdd.jsp</result>
+		</action>
+		<!--展示协议版本下拉框-服务增加页面 -->
+		<action name="serviceAddprotocolVersion"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="serviceAddprotocolVersion">
+			<result name="success">/serviceManager/serviceAdd.jsp</result>
+		</action>
+		<!--获得服务增加页面主数据-服务增加页面 -->
+		<action name="getServiceAddData"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="getServiceAddData">
+			<result name="success" type="redirectAction">
+				<param name="actionName">serviceRegister</param>
+			</result>
+		</action>
+		<action name="getServiceAddDataManager"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="getServiceAddData">
+			<result name="success" type="redirectAction">
+				<param name="actionName">showMainInfo</param>
+			</result>
+		</action>
+		<!--获得服务更新页面主数据-服务更新页面 -->
+		<action name="showUpdateServiceData"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="showUpdateServiceData">
+			<result name="success">/serviceManager/serviceUpdate.jsp</result>
+		</action>
+		<!--更新服务更新页面数据-服务更新页面 -->
+		<action name="UpdateServiceData"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="UpdateServiceData">
+			<result name="success" type="redirectAction">
+				<param name="actionName">serviceRegister</param>
+			</result>
+		</action>
+		<action name="UpdateServiceDataManger"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="UpdateServiceData">
+			<result name="success" type="redirectAction">
+				<param name="actionName">showMainInfo</param>
+			</result>
+		</action>
+		<!--服务供应者注册-服务供应者注册页面 -->
+        <action name="ServiceSupRegister"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="ServiceSupRegister">
+			<result name="success">/serviceManager/serviceSupplierResgister.jsp</result>
+		</action>
+		<!--服务供应者注册-服务供应者添加跳转-->
+        <action name="serviceSupplierResgisterAdd"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="serviceSupplierResgisterAdd">
+			<result name="success">/serviceManager/serviceSupplierResgisterAdd.jsp</result>
+		</action>
+		<!--服务供应者注册-服务供应者添加下一步跳转-->
+        <action name="serviceSupplierResgisterAddToNext"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="serviceSupplierResgisterAddToNext">
+			<result name="success">/serviceManager/serviceSupplierResgisterAddToNext.jsp</result>
+		</action>
+		<!--服务供应者注册-服务供应者添加下一步跳转-->
+        <action name="addServiceSupRegTechCtl"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="addServiceSupRegTechCtl">
+			<result name="success">/serviceManager/serviceSupplierResgisterAddToNext.jsp</result>
+		</action>
+		<action name="addServiceSupReg"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="addServiceSupReg">
+			<result name="success" type="redirectAction">
+				<param name="actionName">ServiceSupRegister</param>
+			</result>
+		</action>
+		<action name="showSupRegUpdate"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="showSupRegUpdate">
+			<result name="success">/serviceManager/serviceSupRegUpdate.jsp</result>
+		</action>
+		<action name="addServiceSupRegTechCtlUpdate"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="addServiceSupRegTechCtlUpdate">
+			<result name="success">/serviceManager/serviceSupRegUpdate.jsp</result>
+		</action>
+		<action name="ServiceSupRegUpdate"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="ServiceSupRegUpdate">
+			<result name="success" type="redirectAction">
+				<param name="actionName">ServiceSupRegister</param>
+			</result>
+		</action>
+		<action name="serviceSupplierResgisterDelete"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="serviceSupplierResgisterDelete">
+			<result name="success">/serviceManager/serviceSupplierResgister.jsp</result>
+		</action>
+		<action name="serviceRegister"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="serviceRegister">
+			<result name="success">/serviceManager/serviceRegister.jsp</result>
+		</action>
+		<action name="compareVersion"
+			class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="compareVersion">
+			<result name="success">/serviceManager/serviceAdd.jsp</result>
+		</action>
+		<action name="createDirectMessageFlow"  class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="createDirectMessageFlow">
+			<result name="success" type="redirectAction">
+				<param name="actionName">ServiceSupRegister</param>
+			</result>
+		</action>
+		
+		<action name="getSerInvokeInsInfoByServiceId" class="com.ailk.eaap.op2.conf.serviceManager.action.ServiceManagerAction" method="getSerInvokeInsInfoByServiceId">
+		</action>
+	</package>
+</struts>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="crmOrder" extends="default" namespace="/crmOrder">
+	
+		<action name="showCrmOrderList" class="com.ailk.eaap.op2.conf.crmorder.action.CrmOrderAction" method="showCrmOrderList">
+			<result name="success">/crmOrder/crmOrder.jsp</result> 
+		</action>
+		
+		<action name="getOrderList" class="com.ailk.eaap.op2.conf.crmorder.action.CrmOrderAction" method="getOrderList">
+		</action>
+		
+		<action name="getOrderInfoById" class="com.ailk.eaap.op2.conf.crmorder.action.CrmOrderAction" method="getOrderInfoById">
+		</action>
+		
+	 </package>
+</struts>

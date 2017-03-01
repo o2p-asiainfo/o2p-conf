@@ -1,0 +1,15 @@
+.scrollable-render{} 
+.ui-scrollable{width: 100%; height: 28px;border:0px;}                                                                                                    
+.ui-scrollable-left{float: left; background: url(../images/scrollable_left.png) no-repeat 0 0; width: 20px; height: inherit; cursor: hand;MARGIN-LEFT:10px;MARGIN-TOP:3px;MARGIN-RIGHT:0px;}    
+.ui-scrollable-container{float: left; width: 95%; height: inherit; position: relative; overflow: hidden; /*border-bottom: 1px solid #DDDDDD;*/}  
+.ui-scrollable-content{float: left; width: 1770px; height: inherit;}                                                                           
+.ui-scrollable-right{float: left; background: url(../images/scrollable_right.png) no-repeat 0 0; width: 10px; height: inherit; cursor: hand;MARGIN-TOP:3px;}  
+ 
+.button{}  
+.button_center:hover {float: left; background: url(../images/button_center.png) repeat-x 0 0; height:28px; text-align: center;color:#ffffff;}  
+.button_left{float: left; background: url(../images/button_left.png) no-repeat 0 0; width: 1px; height: 28px;MARGIN-TOP:1px;}  
+.button_center{cursor: hand;float: left;  height:28px; text-align: center;color:#333333; FONT-SIZE: 14px;FONT-WEIGHT: 700;PADDING-LEFT:10px;PADDING-RIGHT:10px;}  
+.button_right{float: left; background: url(../images/button_right.png) no-repeat 0 0; width: 1px; height: 28px;MARGIN-TOP:1px;MARGIN-RIGHT:-1px;}
+
+.button .on{float: left; background: url(../images/button_center.png) repeat-x 0 0; height:28px; text-align: center;color:#ffffff;}  
+

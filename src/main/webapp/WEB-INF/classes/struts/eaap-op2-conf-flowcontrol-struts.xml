@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="flowcontrol" extends="default" namespace="/flowcontrol">
+		
+		<action name="flowControlIndex" class="com.ailk.eaap.op2.conf.flowcontrol.action.FlowControlAction" method="flowControlIndex">
+			<result name="success">/flowcontrol/flowcontrol.jsp</result> 
+		</action>
+		
+		<action name="queryExistsPolicy" class="com.ailk.eaap.op2.conf.flowcontrol.action.FlowControlAction" method="queryExistsPolicy" >
+			<result name="success">/flowcontrol/flowcontrolList.jsp</result> 
+		</action>
+		
+		<action name="addFlowControl" class="com.ailk.eaap.op2.conf.flowcontrol.action.FlowControlAction" method="addFlowControl">
+			<result name="success" type="redirectAction">
+				<param name="actionName">queryExistsPolicy</param>
+			</result>
+			
+			<result name="error" type="redirectAction">
+				<param name="actionName">addFlowControlPre</param>
+			</result>
+		</action>
+		
+		<action name="deleteCtlCounterms2Comp" class="com.ailk.eaap.op2.conf.flowcontrol.action.FlowControlAction" method="deleteCtlCounterms2Comp" >
+			<result name="success" type="redirectAction">
+				<param name="actionName">queryExistsPolicy</param>
+			</result>
+		</action>
+		
+		<action name="addFlowControlPre" class="com.ailk.eaap.op2.conf.flowcontrol.action.FlowControlAction" method="addFlowControlPre">
+			<result name="success">/flowcontrol/flowcontrolAdd.jsp</result> 
+		</action>
+		
+		<action name="updateFlowControlPre" class="com.ailk.eaap.op2.conf.flowcontrol.action.FlowControlAction" method="updateFlowControlPre">
+			<result name="success">/flowcontrol/flowcontrolUpdate.jsp</result> 
+		</action>
+		
+		<action name="getServiceInfo" class="com.ailk.eaap.op2.conf.flowcontrol.action.FlowControlAction" method="getServiceInfo" />
+		
+		<action name="updateFlowControl" class="com.ailk.eaap.op2.conf.flowcontrol.action.FlowControlAction" method="updateFlowControl">
+			<result name="success" type="redirectAction">
+				<param name="actionName">queryExistsPolicy</param>
+			</result>
+		</action>
+		
+	</package>
+</struts>

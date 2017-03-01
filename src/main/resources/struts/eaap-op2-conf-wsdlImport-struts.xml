@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="wsdlImport" extends="default" namespace="/wsdlImport">
+	
+		<action name="wsdlImportList" class="com.ailk.eaap.op2.conf.wsdlImport.action.WsdlImportAction" method="wsdlImportList">
+			<result name="success">/wsdlImport/wsdlImportList.jsp</result>
+		</action>
+		
+		<action name="wsdlImport" class="com.ailk.eaap.op2.conf.wsdlImport.action.WsdlImportAction" method="wsdlImport">
+			<result name="success">/wsdlImport/wsdlImport.jsp</result>
+		</action>
+		
+		<action name="resourceAliasCheck" class="com.ailk.eaap.op2.conf.wsdlImport.action.WsdlImportAction" method="resourceAliasCheck">
+		</action>
+		<action name="resourceAliasVersionCheck" class="com.ailk.eaap.op2.conf.wsdlImport.action.WsdlImportAction" method="resourceAliasVersionCheck">
+		</action>
+		
+		<action name="wsdlParse" class="com.ailk.eaap.op2.conf.wsdlImport.action.WsdlImportAction" method="wsdlParse">
+			<result name="success">/wsdlImport/wsdlParse.jsp</result>
+		</action>
+		<action name="wsdlToParse" class="com.ailk.eaap.op2.conf.wsdlImport.action.WsdlImportAction" method="wsdlToParse">
+		</action>
+		
+		<action name="getBaseContractInfo" class="com.ailk.eaap.op2.conf.wsdlImport.action.WsdlImportAction" method="getBaseContractInfo">
+		</action>
+		
+		<action name="hasContractByCode" class="com.ailk.eaap.op2.conf.wsdlImport.action.WsdlImportAction" method="hasContractByCode">
+		</action>		
+		
+		<action name="wsdlParseSave" class="com.ailk.eaap.op2.conf.wsdlImport.action.WsdlImportAction" method="wsdlParseSave">
+			<result name="success">/wsdlImport/wsdlParseNext.jsp</result>
+		</action>
+		
+		<action name="wsdlImportSave" class="com.ailk.eaap.op2.conf.wsdlImport.action.WsdlImportAction" method="wsdlImportSave">
+			<result name="success">/wsdlImport/wsdlImportList.jsp</result>
+		</action>
+		
+		<action name="wsdlImportShow" class="com.ailk.eaap.op2.conf.wsdlImport.action.WsdlImportAction" method="wsdlImportShow">
+			<result name="success">/wsdlImport/wsdlImportShow.jsp</result>
+		</action>
+		
+		<action name="wsdlDetail" class="com.ailk.eaap.op2.conf.wsdlImport.action.WsdlImportAction" method="wsdlDetail">
+			<result name="success">/wsdlImport/wsdlDetail.jsp</result>
+		</action>
+		<action name="getWsdlDetail" class="com.ailk.eaap.op2.conf.wsdlImport.action.WsdlImportAction" method="getWsdlDetail">
+		</action>
+				
+		<action name="getSeq" class="com.ailk.eaap.op2.conf.wsdlImport.action.WsdlImportAction" method="getSeq">
+		</action>
+	</package>
+</struts>

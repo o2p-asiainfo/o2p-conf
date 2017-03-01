@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+	
+<struts>
+	<package name="newAdapter" extends="default" namespace="/newadapter">
+	    <!-- 新协议适配页面 -->
+		<action name="showNewAdapter" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="newAdapterPage">
+			<result name="success">/newadapter/newAdapter.jsp</result>
+		</action>
+		<!-- 获取新的节点ID -->
+		<action name="getContractList" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="getContractList">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="getNodeDesc" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="getNodeDesc">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="saveAdapterConfig" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="saveAdapterConfig">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="delContractRecords" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="delContractRecords">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="isExitOperator" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="isExitOperator">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="isExitLine" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="isExitLine">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="saveNodeDescMap" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="saveNodeDescMap">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="delNodeDescMap" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="delNodeDescMap">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="changeToAction" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="changeToAction">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="getNodeValAdaReq" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="getNodeValAdaReq">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="loadCToRLinesData" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="loadCToRLinesData">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="addNodeValAdapterRes" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="addNodeValAdapterRes">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="getFunctionList" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="getFunctionList">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="getValableMap" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="getValableMap">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="addVarMapType" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="addVarMapType">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="addVariableMap" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="addVariableMap">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="updateVariableMap" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="updateVariableMap">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="delVariableMap" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="delVariableMap">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="getVarMapTypeName" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="getVarMapTypeName">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="loadAllData" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="loadAllData">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="saveScriptAdapter" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="saveScriptAdapter">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="isOrNotSubmit" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="isOrNotSubmit">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="showMessageFlowId" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="showMessageFlowId">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="updateResult" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="updateResult">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="getActionValue" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="getActionValue">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="getVarMapTypeList" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="getVarMapTypeList">
+			<result name="success" type="httpheader"></result>
+		</action>
+		<action name="deleteVarMapType" class="com.ailk.eaap.op2.conf.adapter.action.NewAdapterAction" method="deleteVarMapType">
+			<result name="success" type="httpheader"></result>
+		</action>
+    </package>
+</struts>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="operatorlog" extends="default" namespace="/operatorlog">
+	
+		<action name="showOperatorLog" class="com.ailk.eaap.op2.conf.operatorlog.action.OperatorLogAction" method="showOperatorLog">
+			<result name="success">/operatorlog/operatorlogmanage.jsp</result> 
+		</action>
+		<action name="detailOperatorLog" class="com.ailk.eaap.op2.conf.operatorlog.action.OperatorLogAction" method="detailOperatorLog">
+			<result name="success">/operatorlog/detail_log.jsp</result> 
+		</action>
+		<action name="showhideprocess" class="com.ailk.eaap.op2.conf.operatorlog.action.HideProcessAction" method="showhideProcess">
+			<result name="success">/hideprocess/hideprocessmanage.jsp</result> 
+		</action>
+		<action name="addHideProcess" class="com.ailk.eaap.op2.conf.operatorlog.action.HideProcessAction" method="addHideProcess">
+			<result name="success">/hideprocess/addhideprocess.jsp</result> 
+		</action>
+		<action name="addhideProcess" class="com.ailk.eaap.op2.conf.operatorlog.action.HideProcessAction" method="addhideProcess">
+			<result name="success" type="chain">  
+			    <param name="actionName">showhideprocess</param>  
+			</result>
+		</action>
+		<action name="delHideProcess" class="com.ailk.eaap.op2.conf.operatorlog.action.HideProcessAction" method="delHideProcess">
+			<result name="success">/hideprocess/addhideprocess.jsp</result> 
+		</action>
+		<action name="updateHideProcess" class="com.ailk.eaap.op2.conf.operatorlog.action.HideProcessAction" method="updateHideProcess">
+			<result name="success">/hideprocess/updatehideprocess.jsp</result> 
+		</action>
+		<action name="updateSubmitProcess" class="com.ailk.eaap.op2.conf.operatorlog.action.HideProcessAction" method="updateSubmitProcess">
+			<result name="success" type="chain">  
+			    <param name="actionName">showhideprocess</param>  
+			</result>
+		</action>
+	 </package>
+</struts>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "http://ibatis.apache.org/dtd/sql-map-2.dtd" "-//ibatis.apache.org//DTD SQL Map 2.0//EN">
+
+<sqlMap namespace="eaap-op2-conf-contractDoc">
+  
+
+ <select id="showContractDocs" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+    select cd.contract_doc_id contractDocId,cd.doc_name docName,cd.doc_version docVersion,
+    to_char(cd.doc_create_time,'yyyy-mm-dd hh24:mi')  docCreateTime,cd.state state,to_char(cd.lastest_time,'yyyy-mm-dd hh24:mi') lastestTime 
+    from contract_doc cd order by cd.doc_create_time desc
+ </select>
+ 
+ <select id="countDocSum" parameterClass="java.util.HashMap"  resultClass="java.lang.Integer">
+    SELECT COUNT(contract_doc_id) NUM FROM contract_doc C
+    <dynamic >
+	    <isNotNull prepend="and " property="docName">DOC_NAME like '%'||#docName#||'%'</isNotNull>
+	    <isNotNull prepend="and " property="docVersion">DOC_VERSION=#docVersion#</isNotNull>
+	    <isNotNull prepend="and " property="resourceAliss">resource_aliss=#resourceAliss#</isNotNull>
+	</dynamic>
+ </select>
+ <!-- 查询信息 -->
+<select id="countDoc" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+      SELECT * FROM (SELECT X.*,ROWNUM ROW_NUM FROM (select cd.contract_doc_id contractDocId,cd.doc_name docName,cd.doc_version docVersion,
+     	to_char(cd.doc_create_time,'yyyy-mm-dd hh24:mi')  docCreateTime,cd.state state,to_char(cd.lastest_time,'yyyy-mm-dd hh24:mi') lastestTime,
+     	cd.doc_path docpath,cd.resource_aliss resourceAliss  from contract_doc cd 
+     	Where state='A' 
+     	<dynamic >
+	    <isNotNull prepend="and " property="docName">DOC_NAME like '%'||#docName#||'%'</isNotNull>
+	    <isNotNull prepend="and " property="docVersion">DOC_VERSION=#docVersion#</isNotNull>
+	    <isNotNull prepend="and " property="resourceAliss">resource_aliss=#resourceAliss#</isNotNull>
+	   </dynamic>
+     	ORDER BY contractDocId desc)
+   		X WHERE <![CDATA[ ROWNUM <= #endPage# ) Y  WHERE Y.ROW_NUM >= #startPage# ]]>
+</select>
+
+
+ <insert id="addContractDoc" parameterClass="com.ailk.eaap.op2.bo.ContractDoc">
+ 	 <selectKey resultClass="Integer" keyProperty="contractDocId">
+			select seq_contract_doc.nextval from dual
+	 </selectKey>
+    insert into contract_doc
+	  (DOC_CREATE_TIME,LASTEST_TIME,STATE  
+	  <dynamic >
+	  	<isNotNull prepend="," property="contractDocId">CONTRACT_DOC_ID</isNotNull>
+	    <isNotNull prepend="," property="docName">DOC_NAME</isNotNull>
+	    <isNotNull prepend="," property="docVersion">DOC_VERSION</isNotNull>
+	    <isNotNull prepend="," property="docPath">DOC_PATH</isNotNull>
+	    <isNotNull prepend="," property="docType">DOC_TYPE</isNotNull>
+	    <isNotNull prepend="," property="resourceAliss">resource_aliss</isNotNull>
+	  </dynamic>
+	  )
+	  values
+	  (SYS_EXTRACT_UTC(current_timestamp)+0, SYS_EXTRACT_UTC(current_timestamp)+0,'A'
+	   <dynamic >
+	   <isNotNull prepend="," property="contractDocId">#contractDocId#</isNotNull>
+	    <isNotNull prepend="," property="docName">#docName#</isNotNull>
+	    <isNotNull prepend="," property="docVersion">#docVersion#</isNotNull>
+	    <isNotNull prepend="," property="docPath">#docPath#</isNotNull>
+	    <isNotNull prepend="," property="docType">#docType#</isNotNull>
+	    <isNotNull prepend="," property="resourceAliss">#resourceAliss#</isNotNull>
+	   </dynamic>
+	     )
+</insert>
+<delete id="delContracDoc" parameterClass="Integer">
+	delete from contract_doc cd where cd.contract_doc_id=#delContracDoc#
+	<!-- delete from doc_contract where contract_doc_id=#delContracDoc# -->
+</delete>
+<select id="isExitDocName" parameterClass="java.lang.String" resultClass="java.lang.Integer">
+	select count(1) from contract_doc where DOC_NAME = #name#
+</select>
+<select id="isResAlissExit" parameterClass="java.lang.String" resultClass="java.lang.Integer">
+	select count(1) from contract_doc where resource_aliss = #name#
+</select>
+</sqlMap>

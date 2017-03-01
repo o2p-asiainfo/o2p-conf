@@ -1,0 +1,369 @@
+<!--
+ 支持两种模式：add/update 
+ 1、add模式中，
+    入参：{rtiRuleId:300114,actionType:'add',clickTdId:'td_245954081954'}
+    clickTdId: 点击的add链接的id，用作添加成功后回填settlementId的钩子
+ 2、update模式
+    入参：{settlementRuleId:100000072,actionType:'update',editable:false}
+    editable:为false时, .modal-footer被隐藏
+ 调用方法：
+ App.modal({width:'container',remote:App.urls.settlementRule,data:{settlementRuleId:4214,actionType:'update',editable:false}})   
+-->
+<div id="SettlementRuleTmpl">
+</div>
+<script type="text/html" id="art-SettlementRule">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title"><span id="action" style="text-transform:capitalize;">View</span> Settlement</h4>
+  </div>
+  <div class="modal-body">
+    <div class="form-body">
+      <div class="row pdl0">
+        <div class="col-md-4">
+          <div class="form-group">
+            <input type="hidden" class="form-control" disabled="" value="{{rtiRuleId}}" name="rtiRuleId">
+            <!--Rule Name-->
+            <label class="control-label i18n">CNF00000080</label>
+            <input type="text" class="form-control" disabled="" value="{{ruleName}}" name="ruleName" stype="string" placeholder="none">
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <!--Rule Name-->
+            <label class="control-label i18n">Bill Source</label>
+            <select class="form-control" disabled="" name="billSourceList" data-select="{{billSource}}">
+              {{each billSourceList}}
+              <option value="{{$value.code}}">{{$value.name}}</option>
+              {{/each}}
+            </select>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <!--Rule Name-->
+            <label class="control-label i18n">Cycle Type</label>
+            <div class="clearfix">
+              <input type="text" class="form-control pull-left" disabled="" value="{{cycle}}" name="cycle" stype="string" style="width:45%">
+              <select class="form-control pull-right" disabled="" name="cycleType" data-select="{{cycleType}}" style="width:50%">
+                {{each cycleTypeList}}
+                <option value="{{$value.code}}">{{$value.name}}</option>
+                {{/each}}
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row pdl0">
+        <div class="col-md-4">
+          <div class="form-group">
+            <!--Aggregated Item-->
+            <label class="control-label i18n">Currency</label>
+            <select class="form-control" disabled="" name="currency" data-select="{{currency.code}}" onchange="SettlementRule.autoChangeUnit(this)" data-id="currency">
+              {{each currencyList}}
+              <option value="{{$value.code}}">{{$value.name}}</option>
+              {{/each}}
+            </select>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <!--Settlement Direction-->
+            <label class="control-label i18n">CNF00000070</label>
+            <select id="settlementAggregationRule-settlementDirection" name="settlementDirection" data-select="{{settlementDirection}}" class="form-control" disabled="">
+              {{each settlementDirectionList}}
+              <option value="{{$value.code}}">{{$value.name}}</option>
+              {{/each}}
+            </select>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <!--Effective Date-->
+            <label class="control-label i18n">CNF00000030</label>
+            <div class="input-group date-picker input-daterange" data-date="10/11/2012" data-date-format="yyyy-mm-dd" data-date-start-date="+0d">
+              <input type="text" class="form-control od" stype="bothRequired" name="startTime" placeholder="Start" value="{{startDate}}" disabled="" error-placement="div[sclass]"> <span class="input-group-addon"> to </span>
+              <input type="text" class="form-control od" stype="bothRequired" name="endTime" placeholder="End" value="{{endDate}}" disabled="" error-placement="div[sclass]"> </div>
+            <div sclass=""></div>
+          </div>
+        </div>
+      </div>
+      <div class="row pdl0">
+        <div class="col-md-12">
+          <div class="form-group">
+            <!--Settlement Conditions-->
+            <label class="control-label i18n">CNF00000085</label>
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th class="text-center" style="width:40px"><i class="fa fa-plus pointer disabled showInNewForm" onclick="SettlementRule.addTr(this)" currcount="{{settlementConditions.length}}"></i>
+                  </th>
+                  <th width="35%"><span class="i18n">Charge Range&nbsp;(<span class="currencyArea">{{currency.name}}</span>)</span>
+                  </th>
+                  <th width="35%"><span class="i18n">Ratio</span>
+                  </th>
+                  <th><span class="i18n">Basic Charge</span> &nbsp;(<span class="currencyArea">{{currency.name}}</span>)</th>
+                  <th class="th-operation text-center">Operation</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{if (settlementConditions.length > 0) }} {{ include "art-tr"}} {{else}}
+                <tr>
+                  <td colspan="5" class="i18n">CNF00000065</td>
+                </tr>
+                {{/if}}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="row pdl0">
+        <div class="col-md-12">
+          <div class="form-group">
+            <!--Description-->
+            <label class="control-label i18n">CNF00000034</label>
+            <textarea rows="2" class="form-control" name="description" disabled="">{{description}}</textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <button type="button" class="btn theme-btn" onclick="SettlementRule.doSave()" id="saveSettlementRuleBtn">Save</button>
+  </div>
+</script>
+<script id="art-tr" type="text/html">
+  {{each settlementConditions}}
+  <tr>
+    <td class="text-center text-middle">{{$index+1}}</td>
+    <td>
+      <div class="form-group mb0">
+        <div class="input-group">
+          <input type="text" class="form-control ignore" value="{{$value.chargeRangeMin}}" disabled="" name="chargeRangeMin" error-placement="div[sclass]" stype="compare2">
+          <span class="input-group-addon">-</span>
+          <input type="text" class="form-control ignore" value="{{$value.chargeRangeMax}}" disabled="" name="chargeRangeMax" error-placement="div[sclass]" stype="compare2">
+        </div>
+        <div sclass=""></div>
+      </div>
+    </td>
+    <td>
+      <div class="form-group mb0">
+        <div class="input-group">
+          <input type="text" class="form-control ignore" value="{{$value.ratio1}}" disabled="" name="ratio1" error-placement="div[sclass]" stype="number">
+          <span class="input-group-addon">/</span>
+          <input type="text" class="form-control ignore" value="{{$value.ratio2}}" disabled="" name="ratio2" error-placement="div[sclass]" stype="number">
+        </div>
+        <div sclass=""></div>
+      </div>
+    </td>
+    <td>
+      <div class="form-group mb0">
+        <input type="text" class="form-control" value="{{$value.basicCharge}}" disabled="" name="basicCharge" stype="number">
+      </div>
+    </td>
+    <td class="text-center"> <a class="btn default disabled" onclick="SettlementRule.deleteTr(this)">Delete </a>
+      <input type="hidden" value="{{$value.ruleConditionId}}" name="ruleConditionId">
+    </td>
+  </tr>
+  {{/each}}
+</script>
+<script>
+  template.helper('plus', function(index) {
+    return ++index;
+  });
+  var SettlementRule = function() {
+    var selector = '#SettlementRuleTmpl';
+    var $modal = $(selector).closest('.modal'); //获取当前modal对象
+    var myData = $modal.data('myData');
+    var btnSave;
+    var settlementRuleId; //当前settlementRule的ID
+    //判断body
+    if ($('body').data('settlementRule') == undefined || $('body').data('settlementRule').isFirst == undefined) {
+      $('body').data('settlementRule', {});
+      $('body').data('settlementRule').isFirst = true;
+    }
+
+    return {
+      init: function() {
+        myData.isFirst = $('body').data('settlementRule').isFirst;
+        $.ajax({
+          url: App.urls.settlementRuleData,
+          type: 'post',
+          dataType: 'json',
+          data: myData,
+        }).done(function(data) {
+          var d;
+          if (!myData.isFirst) {
+            $.extend(data, $('body').data('settlementRule').tpl);
+          }
+          if (myData.actionType == 'add') {
+            $.extend(data, {
+              settlementConditions: [{
+                "ruleConditionId": 12,
+                "chargeRangeMin": 0,
+                "chargeRangeMax": -1,
+                "ratio1": 0,
+                "ratio2": 1,
+                "basicCharge": 0
+              }]
+            });
+          }
+          $(selector).html(template('art-SettlementRule', data));
+          $modal.modal();
+          //更新BODY上的settlementRule
+          $('body').data('settlementRule', {
+            isFirst: false,
+            tpl: {
+              billSourceList: data.billSourceList,
+              cycleTypeList: data.cycleTypeList,
+              currencyList: data.currencyList,
+              settlementDirectionList: data.settlementDirectionList
+            }
+          });
+          SettlementRule.initAfterCompileTemplate();
+        })
+      },
+      //初始化 select 选择项
+      //初始化Recurrinng Rule模板中day是否显示
+      //激活:input和add,delete按钮成编辑
+      //初始化datepicker
+      initAfterCompileTemplate: function() {
+        App.transferI18nRes();
+        //编译template时设置select选中的辅助方法
+        $('select[data-select]').each(function() {
+          var val = eval($(this).attr('data-select'));
+          var $this = $(this);
+          if ($.isArray(val)) {
+            console.log(val)
+            $.each(val, function(index, value) {
+              $this.children('option[value="' + value + '"]').prop('selected', 'selected')
+            })
+          } else {
+            $opt = $this.children('option[value="' + val + '"]').prop('selected', 'selected');
+          }
+        });
+
+        App.handleDatePickers();
+        if (myData.editable == false) {
+          $modal.find('.modal-footer').hide();
+          $modal.modal('layout')
+          return; //不要激活form元素
+        }
+        //modal标题
+        $('#action').html(myData.actionType);
+        //激活表单中的:input元素
+        $(selector).find(':input,a,i').removeClass('disabled');
+        $(selector).find(':input,a,i').removeAttr('disabled');
+      },
+      /**
+       * 表格中添加tr按钮
+       * @param {dom对象} element []
+       */
+      addTr: function(element) {
+        if ($(element).hasClass('disabled')) {
+          return
+        }
+        var tmplID = 'art-tr';
+        var newTr = template(tmplID, {
+          settlementConditions: [{
+            "ruleConditionId": 12,
+            "chargeRangeMin": 0,
+            "chargeRangeMax": -1,
+            "ratio1": 0,
+            "ratio2": 1,
+            "basicCharge": 0
+          }]
+        });
+        var currcount = +$(element).attr('currcount');
+        if (currcount != 0) {
+          var $lastTr = $(element).closest('table').find('tbody tr:last-child');
+          $lastTr.after(newTr);
+        } else {
+          $(element).closest('table').find('tbody').html(newTr);
+        }
+        var $td = $(element).closest('table').find('tbody tr:last-child').find('td:first-child');
+        $td.html(currcount + 1);
+        $(element).attr('currcount', currcount + 1);
+        $(element).closest('table').find(':input,a,i').removeClass('disabled');
+        $(element).closest('table').find(':input,a,i').removeAttr('disabled');
+        $modal.modal('layout');
+
+      },
+      //监听表格中删除tr按钮
+      deleteTr: function(element) {
+        if ($(element).hasClass('disabled')) {
+          return
+        }
+        var $this = $(element);
+        var $plus = $this.closest('table').find('.fa-plus'); //计数器保存在plus按钮上
+        var currcount = $plus.attr('currcount');
+        var $table = $this.closest('table');
+        var count = $this.closest('table').find('tbody tr').size();
+        if (count > 1) {
+          $this.closest('tr').remove();
+          $plus.attr('currcount', currcount - 1);
+          $table.find('tbody tr').each(function(i) {
+            $(this).find('td:first-child').html(i + 1);
+          });
+        }
+        $modal.modal('layout');
+      },
+      autoChangeUnit: function(element) {
+        var currency = $(element).find('option:selected').text();
+        $('.currencyArea').html(currency);
+      },
+      doSave: function() {
+        $('#SettlementRuleTmpl :input[stype]').each(function() {
+          $(this).trigger('change');
+        });
+        if ($('#SettlementRuleTmpl .form-group').hasClass("has-error")) {
+          toastr.error('Form input error');
+          $modal.modal('layout');
+          return
+        }
+        btnSave = $('#saveSettlementRuleBtn').button('loading');
+
+        //拼装发送给后台的form数据
+        var oData;
+        oData = App.serialize($(selector).find(':input').not('table :input').serialize());
+        oData.settlementConditions = [];
+        var settlementConditionJson = [];
+        $(selector).find('tbody tr').each(function(i) {
+          var str = $(this).find(':input').serialize();
+          settlementConditionJson[i] = App.serialize(str);
+        })
+        oData.settlementConditions = JSON.stringify(settlementConditionJson);
+        oData.settlementRuleId = myData.settlementRuleId;
+        //END
+        $.ajax({
+            url: App.urls.saveSettlementRule,
+            type: 'post',
+            dataType: 'json',
+            data: oData,
+          })
+          .done(function(data) {
+            if (!App.checker(data.health)) {
+              return
+            }
+            if ((+data.status) == 1) {
+              toastr.success(App.i18n('PTL10000008'));
+              var id = App.getUniqueID('td');
+              $('#' + myData.clickTdId).closest('td').html('<a onclick="App.modal({width:\'container\',remote:App.urls.settlementRule,data:{settlementRuleId:' + (+data.settlementRuleId) + ',actionType:\'update\'}})" href="javascript:;" style="background-color:#ffff80;">' + data.settlementRuleId + '</a>').attr('id', id);
+              setTimeout(function() {
+                $('#' + id).children('a').removeAttr('style')
+              }, 1000)
+              $modal.find('[data-dismiss="modal"]').click();
+            } else {
+              toastr.error(data.message);
+            }
+
+          })
+          .complete(function() {
+            btnSave.button('reset');
+          });
+      }
+    }
+  }()
+  SettlementRule.init();
+</script>
+

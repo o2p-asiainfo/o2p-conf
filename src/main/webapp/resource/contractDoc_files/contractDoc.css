@@ -1,0 +1,9 @@
+#tm2008style .select_box{width:102px;height:24px;}
+
+#tm2008style div.tag_select{border:1px solid #efefef;display:block;width:145px;height:23px;background:url("img/combo3.png") no-repeat right center #FFFFFF;line-height:23px; font-size:12px; padding:0 3px 0;cursor:pointer}
+#tm2008style div.tag_select_hover{border:1px solid #a8d4f1;display:block;width:145px;height:23px;background:url("img/combo1.png") no-repeat right center #FFFFFF; line-height:23px; font-size:12px; padding:0 3px 0;cursor:pointer} 
+#tm2008style div.tag_select_open{border: 1px solid #a8d4f1;display:block;width:145px;height:23px;background:transparent url("img/combo2.png") no-repeat right center;line-height:23px; font-size:12px; padding:0 3px 0;cursor:pointer} 
+#tm2008style ul.tag_options{border: 1px solid #a8d4f1;position:absolute;margin:0;list-style:none;background:#f9f9f9;padding:0 0 1px;margin:0;width:150px;height:200px; overflow:hidden; overflow-y:auto; font-size:12px;cursor:pointer; z-index:1000 } 
+#tm2008style ul.tag_options li{background:#f9f9f9; display:block;width:150px;padding:0 10px;height:20px;text-decoration:none;line-height:20px;color:#666666; font-weight:normal; font-size:12px} 
+#tm2008style ul.tag_options li.open_hover{background:#dceef9;color:#000;font-weight:normal; font-size:12px} 
+#tm2008style ul.tag_options li.open_selected{background:#3da4ea;color:#ffffff;font-size:12px;font-weight:bold;} 

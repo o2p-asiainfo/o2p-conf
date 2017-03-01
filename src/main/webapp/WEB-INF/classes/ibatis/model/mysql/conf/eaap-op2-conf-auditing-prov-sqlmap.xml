@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="eaap-op2-conf-auditing-prov">
+	<!-- 展示应用能力 -->
+	<select id="showService" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT G.SER_SPEC_VA SERSPECVA,A.TECH_IMP_ATT_ID TECHIMPATTID, E.STATE STATE,E.SERVICE_ID SERVICEID,B.SERVICE_CN_NAME CNNAME, 
+		D.DIR_NAME DIRNAME,A.ATTR_SPEC_VALUE ATTRSPECVALUE, F.COMPONENT_ID  COMPONENTID, E.SER_TECH_IMPL_ID SERTECHIMPLID 
+		FROM TECH_IMP_ATT A,SERVICE B,DIR_SER_LIST C,DIRECTORY D,SER_TECH_IMPL E,TECH_IMPL F,COMPONENT H,SERVICE_ATT G 
+		WHERE 
+		B.SERVICE_ID=C.SERVICE_ID AND C.DIR_ID=D.DIR_ID AND E.SERVICE_ID = B.SERVICE_ID AND A.TECH_IMPL_ID = E.TECH_IMPL_ID 
+		AND F.TECH_IMPL_ID = E.TECH_IMPL_ID AND H.COMPONENT_ID = F.COMPONENT_ID AND E.STATE NOT IN('X','G') AND F.COMPONENT_ID=#componentId#
+		AND G.SERVICE_ID = B.SERVICE_ID AND G.ATTR_SPEC_ID='19' and a.attr_spec_id = 1
+		and A.tenant_id=#tenantId#
+		and B.tenant_id=#tenantId#
+		and C.tenant_id=#tenantId#
+		and D.tenant_id=#tenantId#
+		and E.tenant_id=#tenantId#
+		and F.tenant_id=#tenantId#
+		and G.tenant_id=#tenantId#
+		and H.tenant_id=#tenantId#
+	</select>
+	
+	<!-- 展示机构信息 -->
+	<select id="showOrg" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT A.ORG_USERNAME ORGUSERNAME,A.EMAIL EMAIL,D.ZONE_NAME ZONENAME,B.CEP_NAME ORGTYPENAME,A.NAME NAME,A.TELEPHONE TELEPHONE, 
+ 		C.CERT_TYPE_NAME CERTTYPENAME,A.CERT_NUMBER CERTNUMBER,A.ADDRESS ADDRESS,date_format(A.CREATE_TIME,'%Y-%m-%d %H:%i') CREATETIME  
+ 		FROM ORG A,MAIN_DATA B,CERT_TYPE C,AREA D WHERE A.ORG_TYPE_CODE= B.CEP_CODE AND B.MDT_CD = '201' 
+ 		AND C.CERT_TYPE_CODE = A.CERT_TYPE_CODE AND D.AREA_ID = A.AREA_ID AND A.ORG_ID=#orgId# 
+		and A.tenant_id=#tenantId#
+		and B.tenant_id=#tenantId#
+		and C.tenant_id=#tenantId#
+		and D.tenant_id=#tenantId#
+	</select>
+	
+		<!--  文件信息 -->
+	<select id="selectFileShare" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	   SELECT  A.S_FILE_ID SFILEID,A.S_FILE_CONTENT SFILECONTENT,A.S_FILE_NAME SFILENAME FROM FILE_SHARE A WHERE A.S_FILE_ID=#fileShareId# and A.tenant_id=#tenantId#
+	 </select>
+	 
+	 <!-- 查询package下的销售品-->
+	<select id="selectPackageList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT DISTINCT
+			a.prod_offer_id,
+			a.prod_offer_name PACKAGENAME,
+			(
+				SELECT
+					group_concat(b.product_name)
+				FROM
+					product b,
+					OFFER_PROD_REL c
+				WHERE
+					c.prod_offer_id = a.prod_offer_id
+				AND b.product_id = c.product_id 
+				and b.tenant_id=#tenantId#
+				and c.tenant_id=#tenantId#
+			) PRODUCTS
+		FROM
+			prod_offer a
+		WHERE
+			a.prod_offer_publisher = #componentId#
+		AND a.status_cd != '1300'
+		and A.tenant_id=#tenantId#
+	</select>
+	
+	  <select id="getPricingPlan" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+      SELECT  A.PRICING_INFO_ID PRICINGINFOID,
+              A.PRICING_NAME PRICINGNAME,
+      		  A.PRICING_TYPE PRICINGTYPE,
+      		  A.PRICING_DESC PRICINGDESC,
+      		  A.PRICE_SIGN PRICESIGN,
+      		  A.PRICE_CHA PRICECHA,
+      		  A.EFF_DATE EFFDATE,
+      		  A.EXP_DATE EXPDATE,
+      		  A.BILLING_PRIORITY BILLINGPRIORITY,
+      		  A.LICENSE_NBR LICENSENBR,
+      		  A.APPLIC_TYPE APPLICTYPE,
+      		  A.CYCLE_TYPE CYCLETYPE,
+      		  A.CREATE_DATE CREATEDATE,
+      		  A.STATUS_DATE STATUSDATE,
+      		  A.STATUS_CD STATUSCD,
+      		  B.PRICING_TARGET_ID PRICINGTARGETID 
+      FROM PRICING_PLAN A,PROD_OFFER_PRICING B 
+      WHERE   A.STATUS_CD!='11' AND B.PROD_OFFER_ID = #prodOfferId# 
+      AND A.PRICING_INFO_ID = B.PRICING_INFO_ID  
+	  and A.tenant_id=#tenantId#
+	  and B.tenant_id=#tenantId#
+      ORDER BY A.BILLING_PRIORITY DESC
+ </select>
+ <update id="updateProduct" parameterClass="com.ailk.eaap.op2.bo.Product">
+  	UPDATE PRODUCT
+	  <dynamic prepend="SET">
+	    <isNotNull prepend="," property="productNbr">PRODUCT_NBR=#productNbr#</isNotNull>
+	    <isNotNull prepend="," property="productName">PRODUCT_NAME=#productName#</isNotNull>
+	    <isNotNull prepend="," property="productDesc">PRODUCT_DESC=#productDesc#</isNotNull>
+	    <isNotNull prepend="," property="manageGrade">MANAGE_GRADE=#manageGrade#</isNotNull>
+	    <isNotNull prepend="," property="productType">PRODUCT_TYPE=#productType#</isNotNull>
+	    <isNotNull prepend="," property="productProviderId">PRODUCT_PROVIDER_ID=#productProviderId#</isNotNull>
+	    <isNotNull prepend="," property="statusCd">STATUS_CD=#statusCd#</isNotNull>
+	    <isNotNull prepend="," property="statusDate">STATUS_DATE=#statusDate#</isNotNull>
+	    <isNotNull prepend="," property="effDate">EFF_DATE=#effDate#</isNotNull>
+	    <isNotNull prepend="," property="expDate">EXP_DATE=#expDate#</isNotNull>
+	    <isNotNull prepend="," property="createDate">CREATE_DATE=#createDate#</isNotNull>
+	    <isNotNull prepend="," property="prodFuncType">PROD_FUNC_TYPE=#prodFuncType#</isNotNull>
+	    <isNotNull prepend="," property="extProdId">EXT_PROD_ID=#extProdId#</isNotNull>
+	    <isNotNull prepend="," property="valueAddedFlag">VALUE_ADDED_FLAG=#valueAddedFlag#</isNotNull>
+	    <isNotNull prepend="," property="innerProdNbr">INNER_PROD_NBR=#innerProdNbr#</isNotNull>
+	    <isNotNull prepend="," property="commonRegionId">COMMON_REGION_ID=#commonRegionId#</isNotNull>
+	    <isNotNull prepend="," property="isTemplate">IS_TEMPLATE=#isTemplate#</isNotNull>
+	    <isNotNull prepend="," property="parentProductId">PARENT_PRODUCT_ID=#parentProductId#</isNotNull>
+	     <isNotNull prepend="," property="cooperationType">COOPERATION_TYPE=#cooperationType#</isNotNull>
+	  </dynamic>
+	  <dynamic prepend="WHERE">
+	    <isNotNull prepend="and" property="productId">PRODUCT_ID=#productId#</isNotNull>
+		<isNotNull prepend="and" property="tenantId"> TENANT_ID=#tenantId#</isNotNull>
+	  </dynamic>
+</update>
+
+<select id="getProduct" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+
+		SELECT
+			PP.PRODUCT_ID,
+			FF.PROD_OFFER_ID
+		FROM
+			SERVICE_PRODUCT_REAL DD,
+			PRODUCT PP,
+			OFFER_PROD_REL FF
+		WHERE
+			DD.PRODUCT_ID = PP.PRODUCT_ID
+		AND FF.PRODUCT_ID = PP.PRODUCT_ID
+		AND FF.PROD_OFFER_ID = #PROD_OFFER_ID# 
+		AND PP.STATUS_CD != '1000'
+		  and DD.tenant_id=#tenantId#
+		  and PP.tenant_id=#tenantId#
+		  and FF.tenant_id=#tenantId#
+</select>
+
+   <select id="getSettleAPI" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+		SELECT
+		  a.RULE_NAME,
+		  a.RULE_ID,
+		  a.SERV_CODE,
+		  a.BUSI_CODE,
+		  a.RULE_TYPE,
+		  a.MONEY_UNIT,
+		  a.RULE_NAME,
+		  a.EFF_DATE,
+		  a.EXP_DATE,
+		  a.PARTNER_CODE,
+		  a.DESCRIPTION,
+		  a.VERSION,
+			CONCAT(
+				DATE_FORMAT(eff_date, "%Y-%m-%d"),
+				'~',
+				DATE_FORMAT(exp_date, '%Y-%m-%d')
+			) TIME
+		FROM
+			SETTLE_RULE a
+		WHERE
+			a.SERV_CODE = #servCode#
+		AND a.STATUS_CD !="1300"
+	    and a.tenant_id=#tenantId#
+		</select>
+</sqlMap> 

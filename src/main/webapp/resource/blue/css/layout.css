@@ -1,0 +1,235 @@
+.ui-layout-container{}
+.pane {
+	/*BORDER-BOTTOM: #777 1px solid; BORDER-LEFT: #777 1px solid; BORDER-TOP: #777 1px solid; BORDER-RIGHT: #777 1px solid; */
+	PADDING-BOTTOM: 0px; BACKGROUND-COLOR: #fff; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; OVERFLOW: auto; PADDING-TOP: 0px;
+}
+.ui-layout-pane {
+	/*BORDER-BOTTOM: #777 1px solid; BORDER-LEFT: #777 1px solid; BORDER-TOP: #777 1px solid; BORDER-RIGHT: #777 1px solid;*/
+	PADDING-BOTTOM: 0px; BACKGROUND-COLOR: #fff; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; OVERFLOW: auto;  PADDING-TOP: 0px
+}
+.pane-north {
+	OVERFLOW: hidden
+}
+.pane-south {
+	OVERFLOW: hidden
+}
+.pane-west {
+	OVERFLOW: hidden
+}
+.pane-east {
+	OVERFLOW: hidden
+}
+.pane-north {
+	BORDER-BOTTOM-STYLE: none
+}
+.pane-north .content {
+	TEXT-ALIGN: center
+}
+.pane-south .content {
+	TEXT-ALIGN: center;
+}
+.pane-west .content {
+	BORDER-RIGHT: #D4D4D4 1px solid;BORDER-BOTTOM: #D4D4D4 1px solid;
+}
+
+.pane-center {
+	PADDING-BOTTOM: 0px;  PADDING-LEFT: 0px; PADDING-RIGHT: 0px; PADDING-TOP: 0px;BORDER: #D4D4D4 1px solid;
+}
+.header {
+	BORDER-TOP: #D4D4D4 1px solid; BORDER-RIGHT: #D4D4D4 1px solid;BORDER-BOTTOM: #68A2CE 2px solid;
+	POSITION: relative; TEXT-ALIGN: LEFT;  PADDING-LEFT: 10px; PADDING-RIGHT: 0px; 
+	BACKGROUND: url(../images/layout/header.png) repeat-x 50% 50%; OVERFLOW: hidden; 
+	FONT-SIZE:14px;FONT-WEIGHT: bold; COLOR:#629DCC;PADDING-TOP: 2px;	height:25px;
+}
+.subhead {
+	POSITION: relative; PADDING-BOTTOM: 3px; PADDING-LEFT: 10px; PADDING-RIGHT: 10px; WHITE-SPACE: nowrap; BACKGROUND: url(../images/subhead.png) #d6d6d6 repeat-x 0px 50%; FONT-SIZE: 0.85em; OVERFLOW: hidden; PADDING-TOP: 3px
+}
+.footer {
+	POSITION: relative; PADDING-BOTTOM: 3px; PADDING-LEFT: 10px; PADDING-RIGHT: 10px; WHITE-SPACE: nowrap; BACKGROUND: url(../images/subhead.png) #d6d6d6 repeat-x 0px 50%; FONT-SIZE: 0.85em; OVERFLOW: hidden; PADDING-TOP: 3px
+}
+.subhead {
+	BORDER-BOTTOM: #777 1px solid
+}
+.footer {
+	BORDER-TOP: #777 1px solid
+}
+
+.content {
+	POSITION: relative; PADDING-BOTTOM: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; OVERFLOW: hidden; PADDING-TOP: 0px;
+	
+}
+
+.resizer-south-dragging {
+	BACKGROUND: url(../images/layout/resizable-s.gif) repeat-x center 50%
+}
+.resizer-south:hover {
+	BACKGROUND: url(../images/layout/resizable-s.gif) repeat-x center 50%
+}
+.resizer-west-dragging {
+	BACKGROUND: url(../images/layout/resizable-w.gif) repeat-y center 50%
+}
+.resizer-west-open:hover {
+	BACKGROUND: url(../images/layout/resizable-w.gif) repeat-y center 50%
+}
+.resizer-east-dragging {
+	BACKGROUND: url(../images/layout/resizable-e.gif) repeat-y center 50%
+}
+.resizer-east-open:hover {
+	BACKGROUND: url(../images/layout/resizable-e.gif) repeat-y center 50%
+}
+.resizer-west-open {
+	/*FILTER: alpha(opacity=10); BACKGROUND-COLOR: #999; opacity: 0.1*/
+	/*BACKGROUND: url(../images/layout/mini-left.gif) no-repeat center center;*/
+	BACKGROUND: url(../images/layout/e-handle-dark.gif) repeat-y left 50%;
+}
+.resizer-east-open {
+	FILTER: alpha(opacity=10); BACKGROUND-COLOR: #999; opacity: 0.1
+}
+.resizer-west-open:hover {
+	/*FILTER: alpha(opacity=100); opacity: 1*/
+	/*BACKGROUND: url(../images/layout/mini-left.gif) no-repeat center center;*/
+	BACKGROUND: url(../images/layout/e-handle-dark.gif) repeat-y left 50%;
+}
+.resizer-east-open:hover {
+	FILTER: alpha(opacity=100); opacity: 1
+}
+.resizer-dragging {
+	
+}
+.resizer-dragging-limit {
+	BACKGROUND: #ff3300
+}
+* HTML .resizer-south {
+	BACKGROUND: url(../images/layout/resizable-s.gif) repeat-x center 50%
+}
+* HTML .resizer-west-open {
+	BACKGROUND: url(../images/layout/resizable-w.gif) repeat-y center 50%
+}
+* HTML .resizer-east-open {
+	BACKGROUND: url(../images/layout/resizable-e.gif) repeat-y center 50%
+}
+* HTML .resizer-south {
+	FILTER: alpha(opacity=10) !important; opacity: 0.1
+}
+* HTML .resizer-west-open {
+	FILTER: alpha(opacity=10) !important; opacity: 0.1
+}
+* HTML .resizer-east-open {
+	FILTER: alpha(opacity=10) !important; opacity: 0.1
+}
+.toggler-north-open {
+	BACKGROUND: url(../images/layout/toggle-up.gif) no-repeat center bottom
+}
+.toggler-south-closed {
+	BACKGROUND: url(../images/layout/toggle-up.gif) no-repeat center bottom
+}
+.toggler-north-closed {
+	BACKGROUND: url(../images/layout/toggle-dn.gif) no-repeat center top
+}
+.toggler-south-open {
+	BACKGROUND: url(../images/layout/toggle-dn.gif) no-repeat center top
+}
+.resizer-west-closed {
+	  BACKGROUND: #CBDDF3;BORDER-BOTTOM: #D4D4D4 1px solid;BORDER-TOP: #D4D4D4 1px solid;BORDER-RIGHT: #CBDDF3 1px solid;
+}
+.resizer-east-closed {
+	BACKGROUND: url(../images/layout/closed.gif) 50% 50%;BORDER-BOTTOM: #D4D4D4 1px solid;  BORDER-TOP: #D4D4D4 1px solid;BORDER-RIGHT: #D4D4D4 1px solid;
+}
+.resizer-west-closed:hover {
+	BACKGROUND: #C4D8F0;
+}
+.resizer-east-closed:hover {
+	BACKGROUND: #d1e6fc
+}
+UL.toolbar {
+	POSITION: relative; TEXT-ALIGN: left; PADDING-BOTTOM: 2px; LIST-STYLE-TYPE: none; MARGIN: 0px; PADDING-LEFT: 2px; WIDTH: 100%; PADDING-RIGHT: 2px; BACKGROUND: url(../images/subhead.png) #d6d6d6 repeat-x 0px 50%; HEIGHT: auto; OVERFLOW: hidden; BORDER-TOP: #bbb 1px solid; PADDING-TOP: 2px
+}
+UL.toolbar LI {
+	BORDER-BOTTOM: transparent 1px solid; BORDER-LEFT: transparent 1px solid; PADDING-BOTTOM: 2px; MARGIN: 0px; PADDING-LEFT: 7px; PADDING-RIGHT: 7px; FLOAT: left; COLOR: #000; FONT-SIZE: 0.9em; BORDER-TOP: transparent 1px solid; CURSOR: pointer; BORDER-RIGHT: #bbb 1px solid; PADDING-TOP: 2px
+}
+UL.toolbar LI:hover {
+	BORDER-BOTTOM-COLOR: #bbb; BORDER-TOP-COLOR: #bbb; BACKGROUND: url(../images/layout/toolbar-hover.png) #eee repeat-x 0px 50%; COLOR: #005
+}
+UL.toolbar LI.first:hover {
+	BORDER-LEFT-COLOR: #bbb
+}
+UL.toolbar LI SPAN {
+	FILTER: alpha(opacity=60); WIDTH: 15px; DISPLAY: inline-block; HEIGHT: 15px; MARGIN-LEFT: -3px; VERTICAL-ALIGN: middle; MARGIN-RIGHT: 0.75ex; opacity: 0.6
+}
+UL.toolbar LI:hover SPAN {
+	FILTER: alpha(opacity=100); opacity: 1
+}
+LI.button-toggle-north SPAN {
+	BACKGROUND: url(../images/layout/go-up-on.gif) no-repeat center 50%
+}
+LI.button-open-south SPAN {
+	BACKGROUND: url(../images/layout/go-up-on.gif) no-repeat center 50%
+}
+LI.button-close-south SPAN {
+	BACKGROUND: url(../images/layout/go-dn-on.gif) no-repeat center 50%
+}
+LI.button-pin-up SPAN {
+	BACKGROUND: url(../images/layout/pin-up-on.gif) no-repeat center 50%
+}
+LI.button-pin-down SPAN {
+	BACKGROUND: url(../images/layout/pin-dn-on.gif) no-repeat center 50%
+}
+SPAN.button-pin {
+	Z-INDEX: 2; POSITION: absolute; WIDTH: 20px; DISPLAY: block; HEIGHT: 20px; TOP: 3px; CURSOR: pointer
+}
+SPAN.button-close {
+	Z-INDEX: 2; POSITION: absolute; WIDTH: 20px; DISPLAY: block; HEIGHT: 20px; TOP: 3px; CURSOR: pointer
+}
+SPAN.button-close-west {
+	/*LEFT: 0px*/
+	RIGHT: 0px;
+}
+SPAN.button-close-east {
+	RIGHT: 0px
+}
+SPAN.button-pin-west {
+	RIGHT: 1px
+}
+SPAN.button-pin-east {
+	LEFT: 1px
+}
+SPAN.button-pin-up {
+	BACKGROUND: url(../images/layout/pin-up-off.gif) no-repeat center 50%
+}
+SPAN.button-pin-up:hover {
+	BACKGROUND: url(../images/layout/pin-up-on.gif) no-repeat center 50%
+}
+SPAN.button-pin-down {
+	BACKGROUND: url(../images/layout/pin-dn-off.gif) no-repeat center 50%
+}
+SPAN.button-pin-down:hover {
+	BACKGROUND: url(../images/layout/pin-dn-on.gif) no-repeat center 50%
+}
+SPAN.button-close-west {
+	BACKGROUND: url(../images/layout/go-lt-off.gif) no-repeat center 50%
+}
+SPAN.button-close-west:hover {
+	BACKGROUND: url(../images/layout/go-lt-on.gif) no-repeat center 50%
+}
+SPAN.button-close-east {
+	BACKGROUND: url(../images/layout/go-rt-off.gif) no-repeat center 50%
+}
+SPAN.button-close-east:hover {
+	BACKGROUND: url(../images/layout/go-rt-on.gif) no-repeat center 50%
+}
+.toggler-west-open {
+	float:right;
+}
+.toggler-west-closed {
+	BACKGROUND: url(../images/layout/go-rt-off.gif) no-repeat center 50%
+}
+.toggler-west-closed:hover {
+	BACKGROUND: url(../images/layout/go-rt-on.gif) no-repeat center 50%
+}
+.toggler-east-closed {
+	BACKGROUND: url(../images/layout/go-lt-off.gif) no-repeat center 50%
+}
+.toggler-east-closed:hover {
+	BACKGROUND: url(../images/layout/go-lt-on.gif) no-repeat center 50%
+}
+

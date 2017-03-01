@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="eaap-op2-conf-auditing-pardSell">
+	<!-- 展示待审核的产品信息 -->
+	<select id="queryApplyInfo" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT T.PROD_OFFER_ID, T.PROD_OFFER_NAME, T.OFFER_NBR, A.NAME,
+		 	   T.PROD_OFFER_DESC
+ 		FROM PROD_OFFER T,PROD_OFFER_CHANNEL TT, CHANNEL TTT, ORG A
+ 	    WHERE TT.AUDIT_FLOW_ID = #AUDIT_FLOW_ID#
+ 	    AND T.PROD_OFFER_ID = TT.PROD_OFFER_ID
+ 	    AND TT.CHANNEL_ID = TTT.CHANNEL_ID
+ 	    AND TT.STATUS_CD = '1299'
+ 	    AND TTT.STATUS_CD = '1000'
+ 	    AND T.OFFER_PROVIDER_ID = A.ORG_ID
+	</select>
+	
+	<!-- 修改审核状态 -->
+	<update id="updateAuditState" parameterClass="java.util.HashMap">
+		UPDATE PROD_OFFER_CHANNEL SET STATUS_CD = #STATUS_CD# WHERE AUDIT_FLOW_ID = #AUDIT_FLOW_ID#
+	</update>
+</sqlMap>

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="remoteCallInfo" extends="default" namespace="/remoteCallInfo">
+	
+		<action name="remoteCallInfoList" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="remoteCallInfoList">
+			<result name="success">/remoteCallInfo/remoteCallInfoList.jsp</result>
+		</action>
+		<action name="editRemoteCallInfo" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="editRemoteCallInfo">
+			<result name="success">/remoteCallInfo/editRemoteCallInfo.jsp</result>
+		</action>
+		<action name="saveRemoteCallInfo" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="saveRemoteCallInfo">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">remoteCallInfoList</param>  
+            </result>  
+		</action>
+		<action name="delRemoteCallInfo" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="delRemoteCallInfo">
+			<result name="success" type="redirectAction">
+				<param name="actionName">remoteCallInfoList</param>
+			</result>
+		</action>
+	
+	
+	
+	
+		<action name="testScene" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testScene">
+			<result name="success">/remoteCallInfo/remoteCallInfoList.jsp</result>
+		</action>
+		<action name="chooseTechImpl" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testScene_chooseTechImpl">
+			<result name="success">/remoteCallInfo/testScene_chooseTechImpl.jsp</result> 
+		</action>
+		<action name="testSceneAdd" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testSceneAdd">
+			<result name="success">/remoteCallInfo/testScene_info.jsp</result> 
+		</action>
+		<action name="testSceneInfo" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testSceneInfo">
+			<result name="success">/remoteCallInfo/testScene_info.jsp</result> 
+		</action>
+		<action name="testSceneListDelete" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testSceneListDelete">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testScene</param>  
+             </result>  
+		</action>
+		<action name="saveTestSceneData" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="saveTestSceneData">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testScene</param>  
+             </result>  
+		</action>
+		<action name="deleteTestScene" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="deleteTestScene">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testScene</param>  
+             </result>  
+		</action>
+		<action name="testSceneRelaDel" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testSceneRelaDel">
+			<result name="success" type="redirectAction">
+                      <param name="actionName">testSceneInfo</param>
+             </result>
+		</action>
+		<action name="testSceneRela_add" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testSceneRela_add">
+			<result name="success">/remoteCallInfo/testSceneRela_add.jsp</result> 
+		</action>
+		<action name="testSceneRela_chooseMod" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testSceneRela_chooseMod">
+			<result name="success">/remoteCallInfo/testSceneRela_chooseMod.jsp</result> 
+		</action>
+		<action name="testSceneRelaUpdateMod" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testSceneRelaUpdateMod">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testSceneInfo</param>  
+             </result>  
+		</action>
+		<action name="testSceneRelaModSave" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testSceneRelaModSave">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testSceneRela_chooseMod</param>  
+             </result>  
+		</action>
+		<action name="testSceneRelaModDel" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testSceneRelaModDel">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testSceneRela_chooseMod</param>  
+             </result>  
+		</action>
+		<action name="testSceneRelaSave" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testSceneRelaSave">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testSceneInfo</param>  
+             </result>  
+		</action>
+		
+		
+		
+		<action name="testTask" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testTask">
+			<result name="success">/remoteCallInfo/testTask.jsp</result>
+		</action>		
+		<action name="testTaskInfo" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testTaskInfo">
+			<result name="success">/remoteCallInfo/testTask_info.jsp</result> 
+		</action>
+		<action name="chooseTestScene" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="chooseTestScene">
+			<result name="success">/remoteCallInfo/testScene.jsp</result>
+		</action>
+		<action name="saveTestTaskData" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="saveTestTaskData">
+			<result name="success" type="redirectAction">  
+				<param name="actionName">testTask</param>
+			</result>
+		</action>
+		
+		
+		
+		<action name="testTaskAdd" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testTaskAdd">
+			<result name="success">/remoteCallInfo/testTask_add.jsp</result> 
+		</action>
+		<action name="testTaskAddInsert" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testTaskAddInsert">
+             <result name="success" type="redirectAction"> 
+						<param name="actionName">testTaskEdit</param>
+						<param name="TestTask.taskId">${TestTask.taskId}</param>	
+			</result>
+		</action>
+		<action name="testTaskEdit" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testTaskEdit">
+			<result name="success">/remoteCallInfo/testTask_edit.jsp</result> 
+		</action>
+		<action name="testTaskEditUpdate" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testTaskEditUpdate">
+             <result name="success" type="redirectAction"> 
+						<param name="actionName">testTask</param>
+			</result>
+		</action>
+		<action name="testTaskDel" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testTaskDel">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testTask</param>
+             </result>
+		</action>
+		<action name="chooseScene" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testTask_chooseScene">
+			<result name="success">/remoteCallInfo/testTask_chooseScene.jsp</result> 
+		</action>
+		<action name="chooseSceneSave" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testTask_chooseSceneSave">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testTaskEdit</param>  
+             </result>  
+		</action>
+		
+		<action name="testingList" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testingList">
+			<result name="success">/remoteCallInfo/testingList.jsp</result>
+		</action>
+		<action name="testing" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testing">
+			<result name="success">/remoteCallInfo/testing.jsp</result>
+		</action>
+		<action name="testExe" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testExe">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testing</param>  
+             </result>  
+		</action>
+		<action name="getLogId" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="getLogId">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testing</param>  
+             </result>  
+		</action>
+		
+		<action name="saveTestResult" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="saveTestResult">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testing</param>  
+             </result>  
+		</action>
+		<action name="createFlow" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="createFlow">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testTaskEdit</param>  
+             </result>  
+		</action>
+
+		
+		<action name="testResults" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testResults">
+			<result name="success">/remoteCallInfo/testResults.jsp</result>
+		</action>
+		<action name="testResultInfo" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="testResultInfo">
+			<result name="success">/remoteCallInfo/testResultInfo.jsp</result>
+		</action>
+		
+		<action name="chooseSerInvokeIns" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="chooseSerInvokeIns">
+			<result name="success">/remoteCallInfo/chooseSerInvokeIns.jsp</result>
+		</action>
+		<action name="chooseTester" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="chooseTester">
+			<result name="success">/remoteCallInfo/chooseTester.jsp</result>
+		</action>
+		
+		
+		
+		<action name="showTestMsgModRela" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="showTestMsgModRela">
+			<result name="success">/remoteCallInfo/testMsgModRela.jsp</result>
+		</action>
+		<action name="gotoEditTestMsgModRela" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="gotoEditTestMsgModRela">
+			<result name="success">/remoteCallInfo/editTestMsgModRela.jsp</result>
+		</action>
+		<action name="editTestMsgModRela" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="editTestMsgModRela">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">showTestMsgModRela</param>  
+            </result>  
+		</action>
+		<action name="delTestMsgModRela" class="com.ailk.eaap.op2.conf.remoteCallInfo.action.RemoteCallInfoAction" method="delTestMsgModRela">
+			<result name="success" type="redirectAction">
+				<param name="actionName">showTestMsgModRela</param>
+			</result>
+		</action>
+		
+	</package>
+</struts>

@@ -1,0 +1,107 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>流程图DEMO</title>
+<!--[if lt IE 9]>
+<?import namespace="v" implementation="#default#VML" ?>
+<![endif]-->
+<!--<link rel="stylesheet" type="text/css" href="codebase/GooFlow2.css"/>-->
+<link rel="stylesheet" type="text/css" href="../resource/comm/test/GooFlow.css">
+<script type="text/javascript" src="../resource/comm/test/jquery.min.js"></script>
+<script type="text/javascript" src="../resource/comm/test/GooFunc.js"></script>
+<script type="text/javascript" src="../resource/comm/test/json2.js"></script>
+<link rel="stylesheet" type="text/css" href="../resource/comm/test/default.css">
+<script type="text/javascript" src="../resource/comm/test/GooFlow.js"></script>
+<script type="text/javascript">
+var demo;
+$(document).ready(function(){
+	demo=$.createGooFlow($("#demo"),{width:800,height:500,haveTool:true});
+	//左边的列表的"left":5一定要等于5，用于判断是左边的表格还是右边的表格
+	jsondata={"nodes":{"demo_node_1":{"name":"  node_1","left":5,"top":1,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_2":{"name":"  node_2","left":5,"top":26,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_3":{"name":"  node_3","left":5,"top":51,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_4":{"name":"  node_4","left":5,"top":76,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_5":{"name":"  node_5","left":5,"top":101,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_6":{"name":"  node_6","left":5,"top":126,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_7":{"name":"  node_7","left":5,"top":151,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_8":{"name":"  node_8","left":5,"top":176,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_9":{"name":"  node_9","left":5,"top":201,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_10":{"name":"  node_10","left":5,"top":226,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_11":{"name":"  node_11","left":5,"top":251,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_12":{"name":"  node_12","left":5,"top":276,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_13":{"name":"  node_13","left":5,"top":301,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_14":{"name":"  node_14","left":5,"top":326,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_15":{"name":"  node_15","left":5,"top":351,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_16":{"name":"  node_16","left":5,"top":376,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_17":{"name":"  node_17","left":5,"top":401,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_18":{"name":"  node_18","left":5,"top":426,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_19":{"name":"  node_19","left":5,"top":451,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_20":{"name":"  node_20","left":5,"top":476,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_21":{"name":"  node_21","left":5,"top":501,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_22":{"name":"  node_22","left":5,"top":526,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_23":{"name":"  node_23","left":5,"top":551,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_24":{"name":"  node_24","left":5,"top":576,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_25":{"name":"  node_25","left":5,"top":601,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_26":{"name":"  node_26","left":5,"top":626,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_27":{"name":"  node_27","left":5,"top":651,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_28":{"name":"  node_28","left":5,"top":676,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_29":{"name":"  node_29","left":5,"top":701,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_30":{"name":"  node_30","left":5,"top":726,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_31":{"name":"  node_31","left":5,"top":751,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_32":{"name":"  node_32","left":5,"top":776,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_33":{"name":"  node_33","left":5,"top":801,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_34":{"name":"  node_34","left":5,"top":826,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_35":{"name":"  node_35","left":5,"top":851,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_36":{"name":"  node_36","left":5,"top":876,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_37":{"name":"  node_37","left":5,"top":901,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_38":{"name":"  node_38","left":5,"top":926,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_39":{"name":"  node_39","left":5,"top":951,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_40":{"name":"  node_40","left":5,"top":976,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_41":{"name":"  node_41","left":5,"top":1001,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_42":{"name":"  node_42","left":5,"top":1026,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_43":{"name":"  node_43","left":5,"top":1051,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_44":{"name":"  node_44","left":5,"top":1076,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_45":{"name":"  node_45","left":5,"top":1101,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_46":{"name":"  node_46","left":5,"top":1126,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_47":{"name":"  node_47","left":5,"top":1151,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_48":{"name":"  node_48","left":5,"top":1176,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_49":{"name":"  node_49","left":5,"top":1201,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_50":{"name":"  node_50","left":5,"top":1226,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_54":{"name":"  node_54","left":480,"top":1,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_55":{"name":"  node_55","left":480,"top":26,"type":"complex mix","width":300,"height":26,"alt":true}
+,"demo_node_56":{"name":"  node_56","left":480,"top":51,"type":"complex mix","width":300,"height":26,"alt":true}
+}
+,"lines":{"demo_line_1":{"type":"sl","from":"demo_node_1","to":"demo_node_54","name":"","alt":true}
+,"demo_line_2":{"type":"sl","from":"demo_node_2","to":"demo_node_56","name":"","alt":true}
+}
+,"areas":{}
+,"initNum":7}
+; 
+
+
+	
+	
+			//{"nodes":{"demo_node_1":{"name":"  node_1","left":5,"top":1,"type":"complex mix","width":300,"height":26,"alt":true},"demo_node_2":{"name":"  node_2","left":5,"top":26,"type":"complex mix","width":300,"height":26,"alt":true},"demo_node_3":{"name":"  node_3","left":5,"top":51,"type":"complex mix","width":300,"height":26,"alt":true},"demo_node_4":{"name":"  node_4","left":480,"top":1,"type":"complex mix","width":300,"height":26,"alt":true},"demo_node_5":{"name":"  node_5","left":480,"top":26,"type":"complex mix","width":300,"height":26,"alt":true},"demo_node_6":{"name":"  node_6","left":480,"top":51,"type":"complex mix","width":300,"height":26,"alt":true}},"lines":{"demo_line_29":{"type":"sl","from":"demo_node_1","to":"demo_node_4","name":"","alt":true}},"areas":{},"initNum":7}; 
+	demo.loadData(jsondata);
+	
+});
+var out;
+function Export(){
+    document.getElementById("result").value=JSON.stringify(demo.exportData());
+}
+</script>
+</head>
+ 
+<body>
+<div id="demo" style=""></div> 
+
+<input id="submit" type="button" value='导出结果' onclick="Export()"/>
+
+
+<textarea id="result" row="6"></textarea>
+<input type="hidden"  id="result1" >
+</body>
+ 
+
+
+
+ </html>

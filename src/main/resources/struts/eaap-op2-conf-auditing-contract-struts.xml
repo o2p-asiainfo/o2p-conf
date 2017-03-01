@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="contract"  extends="default" namespace="/contract">
+		<action name="showContractList" class="com.ailk.eaap.op2.conf.auditing.action.ContractAuditingAction" method="showContractList">
+			<result name="success">/mgr/contractList.jsp</result> 
+		</action>
+		<action name="showContractVersionAndFormatList" class="com.ailk.eaap.op2.conf.auditing.action.ContractAuditingAction" method="showContractVersionAndFormatList">
+			<result name="success">/mgr/contractInfo.jsp</result> 
+		</action>
+		<action name="preInsertContractInfo" class="com.ailk.eaap.op2.conf.auditing.action.ContractAuditingAction" method="preInsertContractInfo">
+			<result name="success">/mgr/contract_add.jsp</result> 
+		</action>
+		<action name="insertContractInfo" class="com.ailk.eaap.op2.conf.auditing.action.ContractAuditingAction" method="insertContractInfo">
+			<result name="success" type="redirectAction">  
+					 <param name="content_Id">${content_Id}</param>
+                     <param name="actionName">preInsertContractVersion</param>  
+               </result>  
+		</action>
+		<action name="preInsertContractVersion" class="com.ailk.eaap.op2.conf.auditing.action.ContractAuditingAction" method="preInsertContractVersion">
+			<result name="success">/mgr/contract_version_add.jsp</result> 
+		</action>
+		<action name="insertContractVersion" class="com.ailk.eaap.op2.conf.auditing.action.ContractAuditingAction" method="insertContractVersion">
+			<result name="success" type="redirectAction">  
+					<param name="content_Id">${content_Id}</param>
+                    <param name="actionName">preInsertContractFormat</param>  
+               </result>  
+		</action>
+		<action name="preInsertContractFormat" class="com.ailk.eaap.op2.conf.auditing.action.ContractAuditingAction" method="preInsertContractFormat">
+			<result name="success">/mgr/contract_format_add.jsp</result> 
+		</action>
+		<action name="insertContractFormat" class="com.ailk.eaap.op2.conf.auditing.action.ContractAuditingAction" method="insertContractFormat">
+			<result name="success" type="redirectAction"> 
+                    <param name="actionName">showContractList</param>  
+               </result>  
+		</action>
+	</package>
+</struts>

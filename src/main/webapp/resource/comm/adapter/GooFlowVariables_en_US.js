@@ -1,0 +1,9 @@
+var gooFlow_nodeUse="The node has been used .";
+var gooFlow_assign="Assign";
+var gooFlow_remove="Remove";
+var gooFlow_move="Move";
+var gooFlow_update="Update";
+var gooFlow_other="Other";
+var gooFlow_line="Line";
+var gooFlow_turnLine="Turning line";
+var gooFlow_operation="Operation";

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="mealRate" extends="default" namespace="/mealRate">
+		
+		<action name="queryMealRateInfo" class="com.ailk.eaap.op2.conf.mealrate.action.MealRateAction" method="queryMealRateInfo">
+			<result name="success">/auditing/mealRate_auditing.jsp</result> 
+		</action>
+		
+		<action name="checkProdOffer" class="com.ailk.eaap.op2.conf.mealrate.action.MealRateAction" method="checkProdOffer">
+			<result name="success">/auditing/mealRate_auditing.jsp</result> 
+		</action>
+		
+	 </package>
+</struts>

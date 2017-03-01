@@ -1,0 +1,6 @@
+.error-inform{margin-top:3px;font-size:11px;color:#f00;}
+#uploadifyUploader{visibility:hidden;width:95px;height:30px;background:url(../images/uploadify-browse.gif) no-repeat 0 0;background-position:center;border:0;}
+.image-upload-list{position:relative;zoom:1;float:left;margin-right:15px;height:20px;width:180px;}
+.image-upload-list:hover{border:1px solid #ff8000;} 
+.image-upload-list .proimg-delete{display:none;position:absolute;top:-5px;right:-5px;}
+.image-upload-list .proimg-delete a{display:block;overflow:hidden;height:16px;width:16px;background:url(../images/uploadify-close.png) no-repeat -81px -46px;}

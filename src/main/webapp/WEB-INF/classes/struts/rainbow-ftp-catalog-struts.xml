@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+   	<package name="catalog" extends="struts-default"  namespace="/catalog">
+          <action name="catalogIndex" class="com.ailk.eaap.op2.conf.catalog.CatalogManagerAction" method="catalogIndex">
+          		<result name="success">/ftpWeb/catalogIndex.jsp</result>
+          </action>
+          <action name="showCatalogGrid" class="com.ailk.eaap.op2.conf.catalog.CatalogManagerAction" method="showCatalogGrid">
+          		<result name="success">/ftpWeb/catalogIndex.jsp</result>
+          </action>
+          <action name="catalogAdd" class="com.ailk.eaap.op2.conf.catalog.CatalogManagerAction" method="catalogAdd">
+          		<result name="success">/ftpWeb/catalogAdd.jsp</result>
+          </action>
+          <action name="catalogAddData" class="com.ailk.eaap.op2.conf.catalog.CatalogManagerAction" method="catalogAddData">
+          		<result name="success">/ftpWeb/catalogIndex.jsp</result>
+          </action>
+          <action name="catalogUpdate" class="com.ailk.eaap.op2.conf.catalog.CatalogManagerAction" method="catalogUpdate">
+          		<result name="success">/ftpWeb/catalogUpdate.jsp</result>
+          </action>
+          <action name="catalogUpdateData" class="com.ailk.eaap.op2.conf.catalog.CatalogManagerAction" method="catalogUpdateData">
+          		<result name="success">/ftpWeb/catalogIndex.jsp</result>
+          </action>
+    </package>
+</struts>

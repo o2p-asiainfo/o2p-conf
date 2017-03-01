@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="orgAndApp" extends="default" namespace="/orgAndApp">
+		<action name="queryOrgInfo" class="com.ailk.eaap.op2.conf.auditing.action.OrgRegAuditingAction" method="queryOrgInfo">
+			<result name="success">/auditing/org_auditing.jsp</result> 
+			<result name="successtoinfo">/mgr/orginfo.jsp</result> 
+			<result name="successtoedit">/mgr/org_edit.jsp</result> 
+		</action>
+		
+		<action name="queryAppInfo" class="com.ailk.eaap.op2.conf.auditing.action.OrgRegAuditingAction" method="queryAppInfo">
+			<result name="success">/auditing/app_auditing.jsp</result> 
+		</action>
+		
+		<action name="showProdOfferInfo" class="com.ailk.eaap.op2.conf.auditing.action.OrgRegAuditingAction" method="showProdOfferInfo">
+			<result name="success">/auditing/pardmix_auditing.jsp</result> 
+			<result name="successToShow">/mgr/prodyyxshow.jsp</result> 
+			
+		</action>
+		
+		<action name="checkOrgOnline" class="com.ailk.eaap.op2.conf.auditing.action.OrgRegAuditingAction" method="checkOrgOnline">
+		</action>
+		<action name="checkPardMix" class="com.ailk.eaap.op2.conf.auditing.action.OrgRegAuditingAction" method="checkPardMix">
+			<result name="success">/auditing/pardmix_auditing.jsp</result> 
+		</action>
+		
+		
+		<action name="checkAppOnlineOrUpgrade" class="com.ailk.eaap.op2.conf.auditing.action.OrgRegAuditingAction" method="checkAppOnlineOrUpgrade">
+		</action>
+		
+		<action name="showOrgList" class="com.ailk.eaap.op2.conf.auditing.action.OrgRegAuditingAction" method="showOrgList">
+			<result name="success">/mgr/orgList.jsp</result> 
+		</action>
+		<action name="updateOrgInfo" class="com.ailk.eaap.op2.conf.auditing.action.OrgRegAuditingAction" method="updateOrgInfo">
+			   <result name="success" type="redirectAction">  
+                      <param name="actionName">showOrgList</param>  
+                     
+               </result>  
+		</action>
+		<action name="preAddOrgInfo" class="com.ailk.eaap.op2.conf.auditing.action.OrgRegAuditingAction" method="preAddOrgInfo">
+			<result name="success">/mgr/org_add.jsp</result> 
+		</action>
+		
+		<action name="insertOrgInfo" class="com.ailk.eaap.op2.conf.auditing.action.OrgRegAuditingAction" method="insertOrgInfo">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">showOrgList</param>  
+               </result>  
+		</action>
+		
+		
+
+		
+		
+	 </package>
+</struts>

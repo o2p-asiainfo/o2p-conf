@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+ 	<context-param>
+		<description>配置spring读取的xml文件，param-name是spring规定，spring自动加载以下内容</description>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+		    <!--classpath*:spring/eaap-op2-common-spring.xml -->
+		    <!-- classpath*:spring/eaap-op2-memCache-spring.xml-->
+			<!--  classpath*:o2p-transform-spring-service.xml-->
+			classpath*:spring/o2p-baseDao-spring.xml
+			classpath*:o2p-session-spring.xml
+			classpath*:spring/**/*conf*spring.xml
+			classpath*:*conf*spring.xml
+			classpath*:o2p-sso-session-userMgr-spring.xml
+			
+			
+			
+
+			<!-- classpath*:applicationContext-workflow.xml 
+			classpath*:com/workflow/engine/**/applicationContext*.xml
+			classpath*:com/workflow/application/**/applicationContext*.xml 
+			classpath:com/ailk/eaap/op2/servicebus/adapter/service/applicationContext-adapterService.xml
+			classpath:applicationContext-adapter_common.xml-->
+			<!--classpath:spring/eaap-o2p-solr.xml
+			classpath:spring/eaap-o2p-hbase.xml
+			classpath:spring/eaap-common-query.xml-->
+		</param-value>
+	</context-param>
+	<context-param>
+		<description>配置spring中webAppRootDey</description>
+		<param-name>webAppRootKey</param-name>
+		<param-value>eaap_conf</param-value>
+	</context-param>
+<!-- 	<context-param> -->
+<!-- 		<param-name>log4jConfigLocation</param-name> -->
+<!-- 		<param-value>/WEB-INF/classes/log4j.properties</param-value> -->
+<!-- 	</context-param> -->
+    <!-- 
+  <context-param>
+	<param-name>o2pConfigLocation</param-name>
+	<param-value>/eaap_common.properties</param-value>
+  </context-param>
+   -->
+  <context-param>
+	<param-name>dao_mode</param-name>
+	<param-value>db</param-value>
+  </context-param>
+  
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+	</listener>
+	<!-- 样式 -->
+	<listener>
+		<listener-class>com.ailk.eaap.op2.common.ContextLoaderListener</listener-class>
+	</listener>
+	
+	<filter>  
+        <filter-name>securityFilter</filter-name>  
+        <filter-class>com.ailk.eaap.o2p.common.interceptor.XssFilter</filter-class>  
+    </filter>  
+    <filter-mapping>  
+        <filter-name>securityFilter</filter-name>  
+        <url-pattern>/*</url-pattern>  
+    </filter-mapping>
+	<!--<filter>  
+        <filter-name>customCookieFilter</filter-name>  
+        <filter-class>com.ailk.eaap.o2p.common.interceptor.CustomCookieFilter</filter-class>  
+    </filter>  
+    <filter-mapping>  
+        <filter-name>customCookieFilter</filter-name>  
+        <url-pattern>/*</url-pattern>  
+    </filter-mapping>-->
+	<!---->
+	<filter>
+		<description>自定义Session</description>
+		<filter-name>O2pSessionRepositoryFilter</filter-name>
+		<filter-class>com.asiainfo.integration.o2p.session.web.http.O2pSessionRepositoryFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>O2pSessionRepositoryFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<!-- sso单点登录部分的过滤器 -->	
+	<filter>
+		<filter-name>SSOFilter</filter-name>
+		<filter-class>com.asiainfo.portal.framework.external.PortalFirstFilter</filter-class>
+		<!--此项配置需为空-->
+		<init-param>
+			<param-name>portal-servername</param-name>
+			<param-value></param-value>
+		</init-param>
+		<!--业务系统实现自身会话保持的实现类-->
+		<init-param>
+			<param-name>impl-classname</param-name>
+			<param-value>com.asiainfo.integration.o2p.sso.SSOPopedomImpl</param-value>
+		</init-param>
+		<init-param>
+			<param-name>4a-servername</param-name>
+			<param-value></param-value>
+		</init-param>
+		<init-param>
+			<param-name>ALLOWPATH</param-name>
+			<param-value>*.jpg;*.gif;*.swf;*.js;*.tld;/webframe/common/*;/jsv2/*;/secframe/common/common.js</param-value>
+		</init-param>
+		<init-param>
+			<param-name>crm-redirectUrl</param-name>
+			<param-value></param-value>
+		</init-param>
+		<init-param>
+			<param-name>resKey</param-name>
+			<param-value>124000</param-value>
+		</init-param>
+		<init-param>
+			<param-name>active-method</param-name>
+			<param-value>post</param-value>
+		</init-param>
+		<init-param>
+			<param-name>cookie-domain</param-name>
+			<param-value>telenor.ai</param-value>
+		</init-param>
+		<init-param>
+			<param-name>ISLOG</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>is-activedirectory</param-name>
+			<param-value>false</param-value>
+		</init-param>
+		<!-- HUB地址-->
+		<init-param>
+		<param-name>portal-servername-getstatus</param-name>
+		<param-value>http://bj.hub.crm.veris7.ai:32000</param-value>
+		</init-param>
+		<!--CRM7.0登录首页地址-->
+		<init-param>
+			<param-name>portal-servername-redirect</param-name>
+			<param-value>http://bj.web.crm.veris7.ai:30051/ARIESRES/crm-bj/agentview/login.html</param-value>
+		</init-param>
+		<!--authframe的servlet前缀，不配置则默认是“auth”-->
+		<init-param>
+			<param-name>hub_context</param-name>
+			<param-value>auth</param-value>
+		</init-param>
+	</filter>
+	 <filter-mapping>
+	    <filter-name>SSOFilter</filter-name>
+	    <url-pattern>/*</url-pattern>
+     </filter-mapping>
+  	 <servlet>
+		<servlet-name>SSOLogout</servlet-name>
+		<servlet-class>com.asiainfo.portal.framework.external.LogoutServlet</servlet-class>
+	 </servlet>
+	 <servlet-mapping>
+		<servlet-name>SSOLogout</servlet-name>
+		<url-pattern>/sso/logout</url-pattern>
+	 </servlet-mapping>
+	 <!-- 
+<filter>
+    <filter-name>SSOFilter</filter-name>
+    <filter-class>com.asiainfo.portal.framework.external.PortalFirstFilter</filter-class>
+     <init-param>
+         <param-name>portal-servername</param-name>
+         <param-value></param-value>
+     </init-param>
+	 <init-param>
+		<param-name>portal-servername-getstatus</param-name>
+		<param-value>http://sso.veris.dk.telenor.eu:40000</param-value>
+	</init-param>
+	 <init-param>
+		<param-name>portal-servername-redirect</param-name>
+		<param-value>https://sso.veris.dk.telenor.eu</param-value>
+	 </init-param>
+     <init-param>
+         <param-name>impl-classname</param-name>
+         <param-value>com.sso.SSOPopedomImpl</param-value>
+    </init-param>
+	<init-param>
+	     <param-name>4a-servername</param-name>
+		 <param-value></param-value>
+	</init-param>
+    <init-param>
+        <param-name>ALLOWPATH</param-name>
+        <param-value>*.jpg;*.gif;*.swf;*.js;*.tld;/webframe/common/*;/jsv2/*;/secframe/common/common.js</param-value>
+    </init-param>
+    <init-param>
+       <param-name>crm-redirectUrl</param-name>
+       <param-value></param-value>
+    </init-param>
+    <init-param> 
+        <param-name>client-name</param-name> 
+        <param-value>o2p</param-value> 
+        </init-param>
+    <init-param>
+        <param-name>resKey</param-name>
+        <param-value>124000</param-value>
+    </init-param>
+    <init-param>
+        <param-name>active-method</param-name>
+        <param-value>post</param-value>
+    </init-param>
+    <init-param>
+        <param-name>cookie-domain</param-name>
+        <param-value>telenor.ai</param-value>
+    </init-param>
+    <init-param>
+        <param-name>ISLOG</param-name>
+        <param-value>true</param-value>
+    </init-param>
+  </filter>
+   <filter-mapping>
+    <filter-name>SSOFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <servlet>
+		<servlet-name>SSOLogout</servlet-name>
+		<servlet-class>com.asiainfo.portal.framework.external.LogoutServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SSOLogout</servlet-name>
+		<url-pattern>/sso/logout</url-pattern>
+	</servlet-mapping>
+   -->
+<!-- ///sso单点登录部分的过滤器 -->
+	<filter>
+		<description>服务容器字符集设置 URIEncoding="GBK" tomcat server.xml Connector 节点 jboss server.xml Connector 节点</description>
+		<filter-name>CharacterEncodingFilter</filter-name>
+		<filter-class>com.linkage.rainbow.ui.filter.SetCharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>CharacterEncodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+<!-- 
+	<filter>
+		<filter-name>struts-cleanup</filter-name>
+		<filter-class>org.apache.struts2.dispatcher.ActionContextCleanUp</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>struts-cleanup</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping> 
+ -->
+	<filter>
+		<description>Struts2 分发过滤器</description>
+		<filter-name>Struts2</filter-name>
+		<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
+		<init-param>
+			<param-name>struts.action.extension</param-name>
+			<param-value>shtml</param-value>
+		</init-param>
+		<!-- 
+		<init-param>
+			<param-name>packages</param-name>
+			<param-value>com.linkage.rainbow</param-value>
+		</init-param>
+		-->
+		<init-param>
+		<param-name>struts.enable.DynamicMethodInvocation</param-name>
+		<param-value>false</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>Struts2</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+    <servlet>
+        <servlet-name>img</servlet-name>
+        <servlet-class>com.ailk.eaap.op2.common.AuthImg</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>img</servlet-name>
+	    <url-pattern>/authImg</url-pattern>
+    </servlet-mapping>
+    
+	<servlet>
+		<description>FreeMarker中使用Struts与JSTL或其它标签</description>
+		<servlet-name>JSPSupportServlet</servlet-name>
+		<servlet-class>org.apache.struts2.views.JspSupportServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>DisplayChart</servlet-name>
+		<servlet-class>org.jfree.chart.servlet.DisplayChart</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DisplayChart</servlet-name>
+		<url-pattern>/servlet/DisplayChart</url-pattern>
+	</servlet-mapping>
+	
+	<security-constraint>    
+    	<web-resource-collection>    
+    		<web-resource-name>conf</web-resource-name>
+     	 	<url-pattern>/*</url-pattern>   
+      		<http-method>PUT</http-method>    
+	  		<http-method>DELETE</http-method>    
+			<http-method>HEAD</http-method>    
+			<http-method>OPTIONS</http-method>    
+			<http-method>TRACE</http-method>    
+   		</web-resource-collection>    
+   		<auth-constraint>    
+   		</auth-constraint>    
+ 	</security-constraint>    
+ 	<login-config>    
+   		<auth-method>BASIC</auth-method>    
+ 	</login-config>   
+	
+	<error-page>
+		<error-code>400</error-code>
+		<location>/index.jsp</location>
+	</error-page>
+	<!-- 
+	<error-page>
+		<error-code>403</error-code>
+		<location>/err403.jsp</location>
+	</error-page> -->
+	<error-page>
+		<error-code>404</error-code>
+		<location>/404.htm</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/500.htm</location>
+	</error-page>
+	<error-page>
+		<exception-type>java.lang.reflect.UndeclaredThrowableException</exception-type>
+		<location>/error.jsp</location>
+	</error-page>
+	<error-page>
+		<exception-type>java.lang.Exception</exception-type>
+		<location>/error.jsp</location>
+	</error-page>
+	<error-page>
+		<exception-type>java.lang.ClassCastException</exception-type>
+		<location>/error.jsp</location>
+	</error-page>
+
+	<error-page>
+		<exception-type>java.lang.NullPointerException</exception-type>
+		<location>/error.jsp</location>
+	</error-page>
+
+	<mime-mapping>
+		<extension>css</extension>
+		<mime-type>text/css</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>xml</extension>
+		<mime-type>text/xml</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>htc</extension>
+		<mime-type>text/x-component</mime-type>
+	</mime-mapping>
+
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+</web-app>

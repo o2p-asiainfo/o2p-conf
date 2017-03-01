@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+	
+<struts>
+	<package name="contractManager" extends="default" namespace="/contractManager">
+		<action name="showContract" class="com.ailk.eaap.op2.conf.contract.action.ContractAction" method="showContract">
+			<result name="success">
+				/contractManager/showContract_1.jsp
+			</result>
+		</action>
+		<action name="isExitConCode" class="com.ailk.eaap.op2.conf.contract.action.ContractAction" method="isExitConCode">
+		</action>
+		<action name="showContractAndVersion" class="com.ailk.eaap.op2.conf.contract.action.ContractAction" method="showContractAndVersion">
+			<result name="success">
+				/contractManager/contractAndVersion.jsp
+			</result>
+		</action>
+		<action name="queryContractList" class="com.ailk.eaap.op2.conf.contract.action.ContractAction" method="queryContractList">
+			<result name="success">
+			</result>
+		</action>
+		<action name="gotoAddContract" class="com.ailk.eaap.op2.conf.contract.action.ContractAction" method="gotoAddContract">
+			<result name="success">
+				/contractManager/addContract_1.jsp
+			</result>
+		</action>
+		<action name="gotoEditContract" class="com.ailk.eaap.op2.conf.contract.action.ContractAction" method="gotoEditContract">
+			<result name="success">
+				/contractManager/editContract_1.jsp
+			</result>
+		</action>
+		<action name="addContract" class="com.ailk.eaap.op2.conf.contract.action.ContractAction" method="addContract">
+			<result name="success" type="redirectAction">
+				<param name="actionName">editContractManager</param>		
+				<param name="contractId">${contractId}</param>	
+			</result>	
+		</action>
+		<action name="editContract" class="com.ailk.eaap.op2.conf.contract.action.ContractAction" method="editContract">
+			<result name="success" type="redirectAction">
+				<param name="actionName">gotoEditContract</param>		
+				<param name="contractId">${contractId}</param>	
+			</result>	
+		</action>
+		<action name="deleteContract" class="com.ailk.eaap.op2.conf.contract.action.ContractAction" method="deleteContract">
+			<result name="success" type="redirectAction">
+				<param name="actionName">showContract</param>				
+			</result>	
+		</action>
+		<action name="deleteContractVersion" class="com.ailk.eaap.op2.conf.contract.action.ContractAction" method="deleteContractVersion">
+			<result name="success" type="redirectAction">
+				<param name="actionName">gotoEditContract</param>		
+				<param name="contractId">${contractId}</param>	
+			</result>	
+		</action>
+		<action name="gotoContractManager" class="com.ailk.eaap.op2.conf.contract.action.ContractAction" method="gotoContractManager">
+			<result name="success">
+				/contractManager/addContractManager_1.jsp
+			</result>	
+		</action> 
+		<action name="editContractManager" class="com.ailk.eaap.op2.conf.contract.action.ContractAction" method="editContractManager">
+			<result name="success">
+				/contractManager/editContractManager_1.jsp
+			</result>	
+		</action>
+		<action name="hasContractVersion" class="com.ailk.eaap.op2.conf.contract.action.ContractAction" method="hasContractVersion">
+		</action>		
+		<action name="addContractManager" class="com.ailk.eaap.op2.conf.contract.action.ContractAction" method="addContractManager">
+			<result name="success">
+				/contractManager/editContractManager_2.jsp
+			</result>	
+		</action>
+		<action name="jumpThisPage" class="com.ailk.eaap.op2.conf.contract.action.ContractAction" method="jumpThisPage">
+			<result name="success">
+				/contractManager/editContractManager_2.jsp
+			</result>	
+		</action>
+		<action name="importDate" class="com.ailk.eaap.op2.conf.contract.action.ContractAction" method="importDate">
+			<result name="success">
+				/contractManager/editContractManager_2.jsp
+			</result>	
+		</action>
+		<action name="importJsonDate" class="com.ailk.eaap.op2.conf.contract.action.ContractAction" method="importJsonDate">
+			<result name="success">
+				/contractManager/editContractManager_2.jsp
+			</result>	
+		</action>
+		<action name="addNextContractManager" class="com.ailk.eaap.op2.conf.contract.action.ContractAction" method="addNextContractManager">
+			<result name="success" type="redirectAction">
+				<param name="actionName">gotoEditContract</param>
+				<param name="contractId">${contractId}</param>							
+			</result>
+		</action>
+		<action name="preAddContract2" class="com.ailk.eaap.op2.conf.contract.action.ContractManagerAction" method="preAddContract2">
+			<result name="success">/contractManager/addContract2.jsp</result> 
+		</action>
+		<action name="addContract2" class="com.ailk.eaap.op2.conf.contract.action.ContractManagerAction" method="addContract2">
+			<result name="success">/contractManager/addSuccess.jsp</result> 
+		</action>
+		<action name="chooseContractBase" class="com.ailk.eaap.op2.conf.contract.action.ContractAction" method="chooseContractBase">
+			<result name="success">/contractManager/chooseContractBase.jsp</result>
+		</action>
+		<action name="saveContract" class="com.ailk.eaap.op2.conf.contract.action.ContractAction" method="saveContract">
+			<result name="success">
+				/contractManager/editContractManager_2.jsp
+			</result>	
+		</action>
+		<action name="delContract" class="com.ailk.eaap.op2.conf.contract.action.ContractAction" method="delContract">
+			<result name="success">
+				/contractManager/editContractManager_2.jsp
+			</result>	
+		</action>
+		<action name="showNodeDesc" class="com.ailk.eaap.op2.conf.contract.action.ContractAction" method="showNodeDesc">
+			<result name="success">
+				/contractManager/showNodeDescList.jsp
+			</result>
+		</action>
+		<action name="templateMock" class="com.ailk.eaap.op2.conf.contract.action.ContractAction" method="templateMock">
+		</action>		
+		</package>
+</struts>

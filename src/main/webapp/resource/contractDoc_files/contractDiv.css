@@ -1,0 +1,27 @@
+
+table.t1{
+    border:1px solid #cad9ea;
+    color:#666;
+    width:1600px;
+}
+table.t1 th {
+    background-image: url(th_bg1.gif);
+    background-repeat::repeat-x;
+    height:30px;
+}
+table.t1 td,table.t1 th{
+    border:1px solid #d3d3d3;
+    padding:0 0.2em 0.2em ;
+}
+table.t1 tr.a1{
+    background-color:#efefef;
+    width:100%;
+}
+/*Ìí¼ÓÑùÊ½*/
+input.style_btn {
+	width:50px;
+	height:30px;
+	line-height:30px;
+	text-align:center;
+	border:1px solid red;
+}

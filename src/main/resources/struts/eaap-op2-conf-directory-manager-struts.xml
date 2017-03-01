@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="directoryManager" extends="default" namespace="/directoryManager">
+		<action name="addDirectory"
+			class="com.ailk.eaap.op2.conf.directoryManager.action.DirectoryManagerAction" method="addDirectory">
+			<result name="success">/directoryManager/addDirectory.jsp</result>
+			<result name="input">/directoryManager/addDirectory.jsp</result>
+		</action>
+		
+		<action name="updateDirectory"
+			class="com.ailk.eaap.op2.conf.directoryManager.action.DirectoryManagerAction" method="updateDirectory">
+		</action>
+		
+ 		<action name="getTestData"
+			class="com.ailk.eaap.op2.conf.directoryManager.action.DirectoryManagerAction" method="getTestData">
+			<result name="success">/directoryManager/addDirectory.jsp</result>
+		</action>
+		
+		<!--下拉选择tree--> 
+		<action name="getTestDataPre" class="com.ailk.eaap.op2.conf.directoryManager.action.DirectoryManagerAction" method="getTestDataPre">
+			<result name="success">/directoryManager/addDirectory.jsp</result>
+		</action>
+	    <!--删除目录节点-->
+		<action name="deleDirNode"
+			class="com.ailk.eaap.op2.conf.directoryManager.action.DirectoryManagerAction" method="deleDirNode">
+			<result name="success">/directoryManager/addDirectory.jsp</result>
+		</action>
+		<action name="showAddDirNodeData"
+			class="com.ailk.eaap.op2.conf.directoryManager.action.DirectoryManagerAction" method="showAddDirNodeData">
+			<result name="success">/directoryManager/addDirectory.jsp</result>
+		</action>
+		<!-- 根据ID查找目录 -->
+		<action name="getDirById"
+			class="com.ailk.eaap.op2.conf.directoryManager.action.DirectoryManagerAction" method="getDirById">
+			<result name="success">/directoryManager/updateDirectory.jsp</result>
+		</action>
+		<action name="isExistDirName"
+			class="com.ailk.eaap.op2.conf.directoryManager.action.DirectoryManagerAction" method="isExistDirName">
+		</action>
+ 
+		<action name="isChildDir"
+			class="com.ailk.eaap.op2.conf.directoryManager.action.DirectoryManagerAction" method="isChildDir">
+		</action>
+	</package>
+</struts>

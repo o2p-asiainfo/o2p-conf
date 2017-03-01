@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="hadoopLog" extends="default" namespace="/hadoopLog">
+		<action name="showHadoopCI" class="com.ailk.eaap.op2.conf.hadoop.action.HadoopLogAction" method="showHadoopCI">
+			<result name="success">/hadoop/logCIView.jsp</result>
+		</action>
+ 		<action name="showHadoopEI" class="com.ailk.eaap.op2.conf.hadoop.action.HadoopLogAction" method="showHadoopCI">
+			<result name="success">/hadoop/logEIView.jsp</result>
+		</action>
+		<action name="gotoCIDetail" class="com.ailk.eaap.op2.conf.hadoop.action.HadoopLogAction" method="gotoCIDetail">
+			<result name="success">/hadoop/logCIDetail.jsp</result>
+		</action>
+		<action name="gotoEIDetail" class="com.ailk.eaap.op2.conf.hadoop.action.HadoopLogAction" method="gotoEIDetail">
+			<result name="success">/hadoop/logEIDetail.jsp</result>
+		</action>
+		
+		<action name="showHadoopCtg" class="com.ailk.eaap.op2.conf.hadoop.action.HadoopLogAction" method="showHadoopCtg">
+			<result name="success">/hadoop/logCtgView.jsp</result>
+		</action>
+		<action name="gotoCtgDetail" class="com.ailk.eaap.op2.conf.hadoop.action.HadoopLogAction" method="gotoCtgDetail">
+			<result name="success">/hadoop/logCtgDetail.jsp</result>
+		</action>
+	</package>
+</struts>

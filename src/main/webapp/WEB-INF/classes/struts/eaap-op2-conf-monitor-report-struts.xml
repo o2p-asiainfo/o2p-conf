@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+	
+<struts>
+	<package name="monitorReport" extends="default" namespace="/monitorReport">
+		<!-- 监控报表首页 查询区显示 -->
+		<action name="showReportIndex" class="com.ailk.eaap.op2.conf.monitor.action.MonitorReportAction" method="showReportIndex">
+			<result name="success">
+				/monitorNew/monitorReport.jsp
+			</result>
+		</action>
+		
+		<!-- 报表区显示 -->
+		<action name="loadReportData" class="com.ailk.eaap.op2.conf.monitor.action.MonitorReportAction" method="loadReportData">
+			<result name="success">
+				/monitorNew/monitorReportResult.jsp
+			</result>
+		</action>
+		
+		<action name="loadDateDiv" class="com.ailk.eaap.op2.conf.monitor.action.MonitorReportAction" method="loadDateDiv">
+			<result name="success">
+				/monitorNew/loadDateDiv.jsp
+			</result>
+		</action>
+	</package>
+</struts>

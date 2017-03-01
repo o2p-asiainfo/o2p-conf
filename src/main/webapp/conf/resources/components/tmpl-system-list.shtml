@@ -1,0 +1,5 @@
+    <script type="text/html" id="tmpl-system-list">
+    {{each systems}}
+      <option value="{{$value.id}}">{{$value.systemName}} </option>
+    {{/each}}
+  </script>

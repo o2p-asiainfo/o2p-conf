@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="workFlowManager" extends="default" namespace="/workFlowManager">
+		<action name="addWorkFlow"
+			class="com.ailk.eaap.op2.conf.workFlowManager.action.WorkFlowAction" method="addWorkFlow">
+			<result name="success">/workFlowManager/addWorkFlow.jsp</result>
+			<result name="input">/workFlowManager/addWorkFlow.jsp</result>
+		</action>
+		
+ 		<action name="getTestData"
+			class="com.ailk.eaap.op2.conf.workFlowManager.action.WorkFlowAction" method="getTestData">
+			<result name="success">/workFlowManager/addWorkFlow.jsp</result>
+		</action>
+		
+		<action name="openAddWorkFlow"
+			class="com.ailk.eaap.op2.conf.workFlowManager.action.WorkFlowAction" method="openAddWorkFlow">
+			<result name="success">/workFlowManager/addWorkFlow.jsp</result>
+		</action>
+		
+		<!--下拉选择tree--> 
+		<action name="getTestDataPre" class="com.ailk.eaap.op2.conf.workFlowManager.action.WorkFlowAction" method="getTestDataPre">
+			<result name="success">/workFlowManager/addWorkFlow.jsp</result>
+		</action>
+		<!-- 根据ID查询 -->
+		<action name="getWorkFlow" class="com.ailk.eaap.op2.conf.workFlowManager.action.WorkFlowAction" method="getWorkFlow">
+			<result name="success">/workFlowManager/updateWorkFlow.jsp</result>
+		</action>
+		<!-- 更新 -->
+		<action name="updateWorkFlow" class="com.ailk.eaap.op2.conf.workFlowManager.action.WorkFlowAction" method="updateWorkFlow">
+		</action>
+		<action name="isExistWorkFlowName" class="com.ailk.eaap.op2.conf.workFlowManager.action.WorkFlowAction" method="isExistWorkFlowName">
+		</action>
+		<action name="isExistBizFunctionCodeWhenEdit" class="com.ailk.eaap.op2.conf.workFlowManager.action.WorkFlowAction" method="isExistBizFunctionCodeWhenEdit">
+		</action>
+	    <!--删除业务流程节点-->
+		<action name="deleWorkFlowNode"
+			class="com.ailk.eaap.op2.conf.workFlowManager.action.WorkFlowAction" method="deleWorkFlowNode">
+			<result name="success">/serviceManager/serviceRegister.jsp</result>
+		</action>
+ 
+		
+	</package>
+</struts>

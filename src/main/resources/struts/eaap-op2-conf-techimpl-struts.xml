@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+	
+<struts>
+	<package name="upload" extends="json-default" namespace="/techimpl">
+		 <action name="uploadFile" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="uploadFile">
+			<result  name="success" type="json">
+				<param name="root">responseJson</param>
+			</result>
+		</action>
+	</package>
+	
+	<package name="techimpl" extends="default" namespace="/techimpl">
+		<!-- 技术实现配置首页 查询区域-->
+		<action name="showTechImplIndex" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="showTechImplIndex">
+			<result name="success">
+				/techImpl/techImplIndex.jsp
+			</result>
+		</action>
+		
+		<!-- 技术实现配置首页 列表集页-->
+		<action name="loadTechImplData" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="loadTechImplData">
+			<result name="success">
+				/techImpl/techImplList.jsp
+			</result>
+		</action>
+		
+		<!-- 加载技术实现配置新增界面 - 显示已配置信息 -->
+		<action name="showTechImpl" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="showTechImpl">
+			<result name="success">
+				/techImpl/showTechImplInfo.jsp
+			</result>
+		</action>
+		
+		<!-- 技术实现配置新增界面(选择按钮 加载已配置的信息)-->
+		<action name="loadHasCfgIndex" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="loadHasCfgIndex">
+			<result name="success">
+				/techImpl/loadHasCfgIndex.jsp
+			</result>
+		</action>
+		<!-- 技术实现配置新增界面(选择按钮 加载已配置的信息iframe)-->
+		<action name="loadHasCfgData" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="loadHasCfgData">
+			<result name="success">
+				/techImpl/loadHasCfgData.jsp
+			</result>
+		</action>
+		
+		<!-- 技术实现配置新增界面 弹出框-->
+		<action name="addTechImplInfo" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="addTechImplInfo">
+			<result name="success">
+				/techImpl/addTechImplInfo.jsp
+			</result>
+		</action>
+		
+		<!-- 技术实现配置加密密码数据-->
+		<action name="encryptionPassword" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="encryptionPassword">
+		</action>
+		
+		<!-- 保存技术服务配置信息 -->
+		<action name="saveTechImpl" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="saveTechImpl">
+			<result name="success" type="redirectAction"> 
+				<param name="actionName">loadHasCfgData</param>
+			</result>
+		</action>
+		
+		<!-- 技术实现配置绑定服务 -->
+		<action name="saveTechImplAndSvc" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="saveTechImplAndSvc">
+			<result name="success" type="redirectAction"> 
+				<param name="actionName">loadTechImplData</param>
+			</result>
+		</action>
+		
+		<!-- 删除服务技术实现配置 -->
+		<action name="deleteTechImpl" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="deleteTechImpl">
+		</action>
+		
+		<!-- 加载技术实现配置修改界面 -->
+		<action name="updateTechImpl" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="updateTechImpl">
+			<result name="success">
+				/techImpl/updateTechImpl.jsp
+			</result>
+		</action>
+		
+		<!-- 加载技术实现配置修改界面 -->
+		<action name="updateTechImplInfo" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="updateTechImplInfo">
+			<result name="success">
+				/techImpl/updateTechImplConfig.jsp
+			</result>
+		</action>
+		
+		<!-- 根据通信协议类型动态加载技术实现属性 -->
+		<action name="loadTechImplAttr" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="loadTechImplAttr">
+		</action>
+		
+		<!-- 根据服务技术实现id加载已配置技术实现属性 -->
+		<action name="loadCfgedTechImplAttr" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="loadCfgedTechImplAttr">
+		</action>
+		
+		<!-- 根据组件加载服务 -->
+		<action name="loadServiceByCompId" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="loadServiceByCompId">
+		</action>
+		
+		<!-- 服务技术实现详情 -->
+		<action name="showTechImplDetail" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="showTechImplDetail">
+			<result name="success">
+				/techImpl/showTechImplDetail.jsp
+			</result>
+		</action>
+		<action name="addTechImplInfoToNext" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="addTechImplInfoToNext">
+			<result name="success">
+				/techImpl/addTechImplInfoToNext.jsp
+			</result>
+		</action>
+	
+		<action name="addTechImpl" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="addTechImpl">
+			<result name="success" type="redirectAction"> 
+				<param name="actionName">showTechImplIndex</param>
+			</result>
+		</action>
+		<action name="updateTechImplConfig" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="updateTechImplConfig">
+			<result name="success" type="redirectAction"> 
+				<param name="actionName">showTechImplIndex</param>
+			</result>
+		</action>
+		<action name="addTechImplConfig" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="addTechImplConfig">
+			<result name="success" type="redirectAction"> 
+				<param name="actionName">showTechImplIndex</param>
+			</result>
+		</action>
+		<action name="addServiceSupRegTechCtl" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="addServiceSupRegTechCtl">
+			<result name="success">
+				/techImpl/techImplIndex.jsp
+			</result>
+		</action>
+		<action name="addServiceSupRegTechCtlUpdate" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="addServiceSupRegTechCtlUpdate">
+			<result name="success">
+				/techImpl/techImplIndex.jsp
+			</result>
+		</action>
+		<action name="updateTechImplData" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="updateTechImplData">
+			<result name="success">
+				/techImpl/techImplIndex.jsp
+			</result>
+		</action>
+		<action name="delServiceSupRegTechCtlUpdate" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="delServiceSupRegTechCtlUpdate">
+			<result name="success">
+				/techImpl/techImplIndex.jsp
+			</result>
+		</action>
+		<action name="getTechAttrSpec" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="getTechAttrSpec">
+			<result name="success">
+				/techImpl/addTechImplInfo.jsp
+			</result>
+	    </action>
+		<action name="getUpdateTechAttrSpec" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="getUpdateTechAttrSpec">
+			<result name="success">
+				/techImpl/updateTechImpl.jsp
+			</result>
+		</action>
+		<!-- 选择技术实现：-->
+		<action name="chooseTechImpl" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="chooseTechImpl">
+			<result name="success">
+				/techImpl/chooseTechImpl.jsp
+			</result>
+		</action>
+		
+		<action name="gotoTechRoute" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="gotoTechRoute">
+			<result name="success">
+				/conf/addressEditList.jsp
+			</result>
+			
+		</action>
+		
+		<action name="editTechRoute" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="editTechRoute">
+			<!-- <result name="success">
+				/conf/addressEditList.jsp
+			</result>-->
+
+		</action>
+
+		<action name="addTechImplRoute" class="com.ailk.eaap.op2.conf.techImpl.action.TechImplAction" method="addTechImplRoute">
+			<!-- <result name="success">
+				/conf/addressEditList.jsp
+			</result> -->
+			
+		</action>
+		
+		
+		
+	</package>
+</struts>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="message" extends="default" namespace="/message">
+		
+		<action name="messageList" class="com.ailk.eaap.op2.conf.message.action.MessageAction" method="goMessageList">
+			<result name="success">/message/messageList.jsp</result>
+		</action>
+		
+		<action name="dataGridOfMsgList" class="com.ailk.eaap.op2.conf.message.action.MessageAction" method="dataGridOfMsgList">
+		</action>
+		
+		<action name="getOrgList" class="com.ailk.eaap.op2.conf.message.action.MessageAction" method="getOrgList">
+		</action>
+		
+		<action name="addOrUpdate" class="com.ailk.eaap.op2.conf.message.action.MessageAction" method="addOrUpdateMessage">
+			<result type="redirectAction">messageList</result>
+		</action>
+		
+		<action name="getMsgById" class="com.ailk.eaap.op2.conf.message.action.MessageAction" method="getMsgById">
+		</action>
+		
+		<action name="addPage" class="com.ailk.eaap.op2.conf.message.action.MessageAction" method="goToAddMsgPage">
+			<result name="success">/message/messageAdd.jsp</result>
+		</action>
+		
+		<action name="selectOrg" class="com.ailk.eaap.op2.conf.message.action.MessageAction" method="selectOrg">
+			<result name="success">/message/orgList.jsp</result>
+		</action>
+		
+		<action name="delMessage" class="com.ailk.eaap.op2.conf.message.action.MessageAction" method="delMessage">
+		</action>
+	 </package>
+</struts>

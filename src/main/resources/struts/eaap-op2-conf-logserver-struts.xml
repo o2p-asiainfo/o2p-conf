@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="logServer" extends="default" namespace="/logServer">
+	
+		<action name="showLogServer" class="com.ailk.eaap.op2.conf.logServer.action.LogServerAction" method="showLogServer">
+			<result name="success">/logServer/logServer.jsp</result> 
+		</action>
+		<action name="delDataSource" class="com.ailk.eaap.op2.conf.logServer.action.LogServerAction" method="delDataSource">
+			<result name="success">/logServer/delDataSource.jsp</result> 
+		</action>
+		<action name="gotoAddData" class="com.ailk.eaap.op2.conf.logServer.action.LogServerAction" method="gotoAddData">
+			<result name="success">/logServer/addDataSource.jsp</result> 
+		</action>
+		<action name="updateDataSource" class="com.ailk.eaap.op2.conf.logServer.action.LogServerAction" method="updateDataSource">
+			<result name="success">/logServer/updateDataSource.jsp</result> 
+		</action>
+		<action name="addSubmit" class="com.ailk.eaap.op2.conf.logServer.action.LogServerAction" method="addSubmit">
+			<result name="success" type="redirectAction"> 
+				<param name="actionName">showLogServer</param>
+			</result>
+		</action>
+		<action name="updateSubmit" class="com.ailk.eaap.op2.conf.logServer.action.LogServerAction" method="updateSubmit">
+			<result name="success" type="redirectAction"> 
+				<param name="actionName">showLogServer</param>
+			</result>
+		</action>
+		<action name="getDataSourceList" class="com.ailk.eaap.op2.conf.logServer.action.LogServerAction" method="getDataSourceList">
+		</action>
+
+		<action name="editDataSource" class="com.ailk.eaap.op2.conf.logServer.action.LogServerAction" method="editDataSource">
+			<result name="success">/logServer/editDataSource.jsp</result> 
+		</action>
+		<action name="editDataSourceSave" class="com.ailk.eaap.op2.conf.logServer.action.LogServerAction" method="editDataSourceSave">
+			<result name="success" type="redirectAction"> 
+				<param name="actionName">showLogServer</param>
+			</result>
+		</action>
+		
+	 </package>
+</struts>

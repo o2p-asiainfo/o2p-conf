@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="messageFlow" extends="default" namespace="/messageFlow">
+		
+ 		<action name="showMessageFlow" class="com.ailk.eaap.op2.conf.messageFlow.action.MessageFlowAction" method="showMessageFlow">
+			<result name="success">/messageFlow/showMessageFlow.jsp</result>
+		</action>
+		<action name="gotoMessageFlowList" class="com.ailk.eaap.op2.conf.messageFlow.action.MessageFlowAction" method="gotoMessageFlowList">
+			<result name="success">/messageFlow/showMessageFlow.jsp</result>
+		</action>
+		<action name="gotoCvsFileList" class="com.ailk.eaap.op2.conf.messageFlow.action.MessageFlowAction" method="gotoCvsFileList">
+			<result name="success">/messageFlow/showCvsTemplete.jsp</result>
+		</action>
+		<action name="gotoAddPage" class="com.ailk.eaap.op2.conf.messageFlow.action.MessageFlowAction" method="gotoAddPage">
+			<result name="success">/messageFlow/addTemplete.jsp</result>
+		</action>
+		<action name="addSubmit" class="com.ailk.eaap.op2.conf.messageFlow.action.MessageFlowAction" method="addSubmit">
+			<result name="success" type="chain"> 
+				<param name="actionName">gotoCvsFileList</param>
+			</result>
+		</action>
+		<action name="updateSubmit" class="com.ailk.eaap.op2.conf.messageFlow.action.MessageFlowAction" method="updateSubmit">
+			<result name="success" type="chain"> 
+				<param name="actionName">gotoCvsFileList</param>
+			</result>
+		</action>
+		<action name="updateTemplate" class="com.ailk.eaap.op2.conf.messageFlow.action.MessageFlowAction" method="updateTemplate">
+			<result name="success">/messageFlow/updateTemplete.jsp</result>
+		</action>
+		<action name="delTemplate" class="com.ailk.eaap.op2.conf.messageFlow.action.MessageFlowAction" method="delTemplate">
+			<result name="success">/messageFlow/addTemplete.jsp</result>
+		</action>
+		<action name="showTechnologyImpl" class="com.ailk.eaap.op2.conf.messageFlow.action.MessageFlowAction" method="showTechImpl">
+			<result name="success">/messageFlow/showTechnologyImpl.jsp</result>
+		</action>
+
+		<action name="gotoCacheStrategyList" class="com.ailk.eaap.op2.conf.messageFlow.action.MessageFlowAction" method="gotoCacheStragyList">
+			<result name="success">/messageFlow/showCacheStragy.jsp</result>
+		</action>
+		<action name="gotoDetail" class="com.ailk.eaap.op2.conf.messageFlow.action.MessageFlowAction" method="gotoDetail">
+			<result name="success">/messageFlow/showDetail.jsp</result>
+		</action>
+		<action name="delStrategy" class="com.ailk.eaap.op2.conf.messageFlow.action.MessageFlowAction" method="delStrategy">
+			<result name="success">/messageFlow/showCacheStragy.jsp</result>
+		</action>
+		<action name="gotoAddStrategyPage" class="com.ailk.eaap.op2.conf.messageFlow.action.MessageFlowAction" method="gotoAddStrategyPage">
+			<result name="success">/messageFlow/updateStrategyPage.jsp</result>
+		</action>
+		<action name="updateStrategyPage" class="com.ailk.eaap.op2.conf.messageFlow.action.MessageFlowAction" method="updateStrategyPage">
+			<result name="success">/messageFlow/updateStrategyPage.jsp</result>
+		</action>
+		<action name="saveCacheStrategy" class="com.ailk.eaap.op2.conf.messageFlow.action.MessageFlowAction" method="saveCacheStrategy">
+			<result name="success" type="chain"> 
+				<param name="actionName">gotoCacheStrategyList</param>
+			</result>
+		</action>
+		<action name="getCacheStrategyById" class="com.ailk.eaap.op2.conf.messageFlow.action.MessageFlowAction" method="getCacheStrategyById">
+		</action>
+		<action name="getCacheStrategyList" class="com.ailk.eaap.op2.conf.messageFlow.action.MessageFlowAction" method="getCacheStrategyList">
+		</action>
+		<action name="delCacheStrategyById" class="com.ailk.eaap.op2.conf.messageFlow.action.MessageFlowAction" method="delCacheStrategyById">
+		</action>
+		<action name="updateCacheStrategy" class="com.ailk.eaap.op2.conf.messageFlow.action.MessageFlowAction" method="updateCacheStrategy">
+		</action>
+		<action name="addCacheStrategy" class="com.ailk.eaap.op2.conf.messageFlow.action.MessageFlowAction" method="addCacheStrategy">
+		</action>
+		<action name="checkCacheKeyIsExist" class="com.ailk.eaap.op2.conf.messageFlow.action.MessageFlowAction" method="checkCacheKeyIsExist">
+		</action>
+	</package>
+</struts>

@@ -1,0 +1,216 @@
+
+body{
+	font-family: 'robotoregular'!important;
+	color:#333!important;
+}
+@font-face {
+    font-family: 'robotoregular';
+    src: url(../fonts/roboto-regular-webfont.eot);
+    src: url(../fonts/roboto-regular-webfont.eot?#iefix) format('embedded-opentype'),
+         url(../fonts/roboto-regular-webfont.woff) format('woff'),
+         url(../fonts/roboto-regular-webfont.svg#robotoregular) format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+.button-text {
+    background-color:#038cd6!important;
+    color:#fff!important;
+}
+.button-base{
+	border:1px solid #0278b8!important;
+}
+.mgr-table TD {
+    border-color: #ffffff #d9d9d9 #d9d9d9 #ffffff!important;
+}
+.panel-header,
+.panel-body{
+    border-color: #038cd6 ! important;
+}
+.datagrid-toolbar {
+    padding: 8px 2px!important;
+}
+a.l-btn span span.l-btn-text {
+    font-size: 14px!important;
+}
+.datagrid-header td, .datagrid-body td, .datagrid-footer td {
+    border-style: solid !important;
+    border-color:#d9d9d9!important;
+}
+
+.datagrid-header-row,
+.datagrid-row {
+	height: 35px!important;
+}
+.datagrid-header-row{
+	background:#ffffff !important;
+	font-weight:bold!important;
+}
+
+/*font-width*/
+.datagrid-cell, .datagrid-cell-group, .datagrid-header-rownumber, .datagrid-cell-rownumber ,
+.datagrid-header .datagrid-cell span {
+    font-size: 14px!important;
+}
+/**/
+.datagrid-row-selected {
+    background: #eaf2ff !important;
+}
+
+/*tool stard*/
+.icon-add {
+    background: url("../ico-comen/edit_add.png") no-repeat !important;
+}
+.icon-edit{
+    background: url("../ico-comen/pencil.png") no-repeat !important;
+}
+.icon-remove {
+    background: url("../ico-comen/edit_remove.png") no-repeat !important;
+}
+/*tool end*/
+
+.pagination-first {
+    background: rgba(0, 0, 0, 0) url("../ico-comen/pagination_icons.png") no-repeat scroll 0 0 !important;
+}
+.pagination-prev {
+    background: rgba(0, 0, 0, 0) url("../ico-comen/pagination_icons.png") no-repeat scroll -16px 0 !important;
+}
+.pagination-next {
+    background: rgba(0, 0, 0, 0) url("../ico-comen/pagination_icons.png") no-repeat scroll -32px 0 !important;
+}
+.pagination-last {
+    background: rgba(0, 0, 0, 0) url("../ico-comen/pagination_icons.png") no-repeat scroll -48px 0 !important;
+}
+.pagination-load {
+    background: rgba(0, 0, 0, 0) url("../ico-comen/pagination_icons.png") no-repeat scroll -64px 0 !important;
+}
+.pagination-loading {
+    background: rgba(0, 0, 0, 0) url("images/loading.gif") no-repeat scroll 0 0;
+}
+
+
+.panel-title {
+    background-color: #038cd6 !important;
+}
+.panel-header {
+    background: rgba(0, 0, 0, 0) linear-gradient(to bottom, #038cd6 0px, #038cd6 100%) repeat-x scroll 0 0 !important;
+    padding: 10px!important;
+}
+
+/*tree start*/
+/*tree end*/
+
+.box2{
+	border:1px solid #d9d9d9!important;
+}
+.formLayout dl {
+    height: 40px!important;
+    line-height:30px !important;
+}
+
+.tag_select{
+	height:30px !important;
+	line-height:30px !important;
+}
+.ui-multiselect{
+	height:30px !important;
+}
+.tag_select_hover,
+.tag_select_open ,
+ul.tag_options,
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active,
+.ui-widget-content,
+.ui-state-hover{
+    border: 1px solid #ccc !important;
+}
+ul.tag_options li.open_selected,
+.ui-widget-header{
+	background:#999 !important;
+}
+
+.datagrid-header, .datagrid-toolbar, .datagrid-pager, .datagrid-footer-inner {
+    border-color: #d9d9d9 !important;
+}
+.datagrid-row-over, .datagrid-header td.datagrid-header-over {
+    background: #eaf2ff !important;
+}
+/*弹出框样式start*/
+
+.aui_w, .aui_e {
+    background-image: url("../img-pop/bg_css3_2.png")!important;
+}
+.aui_nw, .aui_ne, .aui_sw, .aui_se, .aui_n, .aui_s, .aui_close {
+    background-image: url("../img-pop/bg_css3.png")!important;
+}
+/*弹出框样式end*/
+/*.ztree li span.button{
+    background:url("../ico-comen/zTreeStandard.png") no-repeat!important;
+}*/
+.mwui-switch-btn{
+	background:url("../ico-comen/on-bg.png") no-repeat!important;
+}
+/*time plugin start*/
+.WdateDiv #dpTitle {
+    background:#038cd6 none repeat scroll 0 0!important;
+}
+.WdateDiv .dpButton {
+    background: #038cd6 none repeat scroll 0 0!important;
+}
+/* time plugin end*/
+.accordion-header-text{
+	padding:5px!important;
+}
+
+.tabClass{
+	background:#038cd6!important;
+}
+
+element.style{
+	background:#038cd6!important;
+	color:#fffff!important;
+}
+.btn.blue,
+.portlet-title{
+    background: #038cd6!important;
+}
+.tabbable-custom .nav-tabs > li.active{
+    border-top-color: #038cd6!important;
+}
+.portlet.box.blue > .portlet-title {
+    background-color: #038cd6!important;
+}
+
+.portlet{
+	border:1px solid #038cd6!important;
+}
+
+
+a.l-btn-plain:hover {
+    background: #f2f2f2 none repeat scroll 0 0!important;
+    border: 1px solid #038cd6!important;
+    border-radius: 0px!important;
+    color: #004b73!important;
+}
+
+.table-bordered > thead > tr > th, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > tbody > tr > td, .table-bordered > tfoot > tr > td {
+    border: 1px solid #d9d9d9!important;
+}
+.datagrid-toolbar, .datagrid-pager {
+    background: #f2f2f2 !important;
+}
+.accordion-header {
+    border: 1px solid #d9d9d9!important;
+}
+.accordion-header-text {
+    background: #f2f2f2 none repeat scroll 0 0 !important;
+}
+.module-path {
+    border: 1px solid #d9d9d9!important;
+}
+.ztree li a.curSelectedNode {
+    background-color: #60bdf0 !important;
+    border: 1px solid #038cd6!important;
+}
+
+.toast-error{background-color: #cc2929 !important;}
+.toast-success{background-color: #0f943b !important;}
+.toast-warning{background-color: #febd11 !important;}

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+	
+<struts>
+	<package name="getObjNameAndUrlByTaskTypeId" extends="json-default" namespace="/taskManager">
+			 <action name="getObjNameAndUrlByTaskTypeId" class="com.ailk.eaap.op2.conf.task.action.TaskAction" method="getObjNameAndUrlByTaskTypeId">
+				<result  name="success" type="json">
+					<param name="root">responseJson</param>
+				</result>
+			</action>
+	</package>
+	
+	<package name="taskManager" extends="default" namespace="/taskManager">
+		<action name="showTask" class="com.ailk.eaap.op2.conf.task.action.TaskAction" method="showTask">
+			<result name="success">
+				/taskManager/showTask.jsp
+			</result>
+		</action>
+		<action name="gotoAddTask" class="com.ailk.eaap.op2.conf.task.action.TaskAction" method="gotoAddTask">
+			<result name="success">
+				/taskManager/editTask.jsp
+			</result>
+		</action>
+		<action name="operatorTask" class="com.ailk.eaap.op2.conf.task.action.TaskAction" method="operatorTask">
+			<result name="success" type="redirectAction">
+				<param name="actionName">showTask</param>
+			</result>
+		</action>
+		<action name="deleteTask" class="com.ailk.eaap.op2.conf.task.action.TaskAction" method="deleteTask">
+			<result name="success" type="redirectAction">
+				<param name="actionName">showTask</param>
+			</result>
+		</action>
+		<action name="editTask" class="com.ailk.eaap.op2.conf.task.action.TaskAction" method="editTask">
+			<result name="success" type="redirectAction">
+				<param name="actionName">showTask</param>		
+			</result>	
+		</action>
+		<action name="showTaskLog" class="com.ailk.eaap.op2.conf.task.action.TaskLogAction" method="showTaskLog">
+			<result name="success">
+				/taskManager/showTaskLog.jsp
+			</result>
+		</action>
+		<action name="gotoTaskLogDetail" class="com.ailk.eaap.op2.conf.task.action.TaskLogAction" method="gotoTaskLogDetail">
+			<result name="success">
+				/taskManager/taskLogDetail.jsp
+			</result>
+		</action>
+		<action name="showTaskCycle" class="com.ailk.eaap.op2.conf.task.action.TaskCycleAction" method="showTaskCycle">
+			<result name="success">
+				/taskManager/showTaskCycle.jsp
+			</result>
+		</action>
+		<action name="gotoAddTaskCycle" class="com.ailk.eaap.op2.conf.task.action.TaskCycleAction" method="gotoAddTaskCycle">
+			<result name="success">
+				/taskManager/editTaskCycle.jsp
+			</result>
+		</action>
+		<action name="editTaskCycle" class="com.ailk.eaap.op2.conf.task.action.TaskCycleAction" method="editTaskCycle">
+			<result name="success" type="redirectAction">
+				<param name="actionName">showTaskCycle</param>
+				<param name="taskCycleFlag">${taskCycleFlag}</param>		
+			</result>	
+		</action>
+		<action name="deleteTaskCycle" class="com.ailk.eaap.op2.conf.task.action.TaskCycleAction" method="deleteTaskCycle">
+			<result name="success" type="redirectAction">
+				<param name="actionName">showTaskCycle</param>
+			</result>
+		</action>
+		</package>
+</struts>

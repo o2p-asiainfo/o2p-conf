@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "http://ibatis.apache.org/dtd/sql-map-2.dtd" "-//ibatis.apache.org//DTD SQL Map 2.0//EN">
+
+<sqlMap namespace="eaap-op2-conf-apiManager">
+	 <select id="queryGridCount" resultClass="java.lang.String" >	
+          select count(*) from API where TENANT_ID=#tenantId#
+	 </select>
+	 <select id="selectApiSeq" resultClass="java.lang.String" >	
+          select Seq_API.Nextval from dual
+	 </select>
+	 <select id="queryApi" resultClass="com.ailk.eaap.op2.bo.Api" parameterClass="java.util.HashMap">	
+             SELECT SERVICE_ID ,SERVICE_VERSION ,CONTRACT_VERSION_ID , SERVICE_CN_NAME ,SERVICE_EN_NAME ,SERVICE_CODE , STATE , DEFAULT_MSG_FLOW  FROM  
+              (SELECT ROWNUM RECNO, SERVICE_ID,CONTRACT_VERSION_ID,SERVICE_VERSION,SERVICE_EN_NAME,SERVICE_CN_NAME,SERVICE_CODE,STATE, DEFAULT_MSG_FLOW FROM
+                (SELECT * FROM API ORDER BY API_ID DESC ) WHERE <![CDATA[ ROWNUM <= (#startRow# + #rows# - 1) ]]> ORDER BY ROWNUM)
+                WHERE RECNO BETWEEN #startRow# AND (#startRow# + #rows# - 1) 
+	 </select>
+	 
+</sqlMap>

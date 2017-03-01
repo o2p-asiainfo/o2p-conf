@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "http://ibatis.apache.org/dtd/sql-map-2.dtd" "-//ibatis.apache.org//DTD SQL Map 2.0//EN">
+
+<sqlMap namespace="eaap-op2-conf-workFlow">
+
+	<insert id="insertBizFunction" parameterClass="com.ailk.eaap.op2.bo.BizFunction">
+		<selectKey resultClass="java.lang.Integer" keyProperty="bizFunctionId">
+			SELECT Seq_Biz_Function.NEXTVAL FROM DUAL  
+       </selectKey>
+		insert into BIZ_FUNCTION
+		(CREATE_TIME ,STATE_TIME,STATE,TENANT_ID
+		<dynamic>
+			<isNotNull prepend="," property="bizFunctionId">BIZ_FUNCTION_ID</isNotNull>
+			<isNotNull prepend="," property="bizBizFunctionId">BIZ_BIZ_FUNCTION_ID</isNotNull>
+			<isNotNull prepend="," property="name">NAME</isNotNull>
+			<isNotNull prepend="," property="code">CODE</isNotNull>
+			<isNotNull prepend="," property="descriptor">DESCRIPTOR</isNotNull>
+		</dynamic>
+		)
+		values(SYS_EXTRACT_UTC(current_timestamp)+0 ,SYS_EXTRACT_UTC(current_timestamp)+0,'A',#tenantId#
+		<dynamic>
+			<isNotNull prepend="," property="bizFunctionId">#bizFunctionId#</isNotNull>
+			<isNotNull prepend="," property="bizBizFunctionId">#bizBizFunctionId#</isNotNull>
+			<isNotNull prepend="," property="name">#name#</isNotNull>
+			<isNotNull prepend="," property="code">#code#</isNotNull>
+			<isNotNull prepend="," property="descriptor">#descriptor#</isNotNull>
+		</dynamic>
+		)
+	</insert>
+
+	<select id="queryOrgInfoByBizFunctionId" parameterClass="com.ailk.eaap.op2.bo.BizFunction"  resultClass="com.ailk.eaap.op2.bo.BizFunction">
+		select BIZ_FUNCTION_ID bizFunctionId,
+		      BIZ_BIZ_FUNCTION_ID bizBizFunctionId,
+		      NAME name,
+		      CODE code,
+		      CREATE_TIME createTime,
+		      STATE state,
+		      STATE_TIME stateTime,
+		      DESCRIPTOR descriptor
+		from   BIZ_FUNCTION
+		where  STATE ='A'
+	    <dynamic>
+	            <isEmpty prepend="and" property="bizBizFunctionId"> BIZ_BIZ_FUNCTION_ID is null </isEmpty>
+	            <isNotEmpty prepend="and" property="bizBizFunctionId"> BIZ_BIZ_FUNCTION_ID = #bizBizFunctionId#</isNotEmpty>
+	    </dynamic>	   	   
+	 </select>
+	 
+	 <delete id="deleWorkFlowNode" parameterClass="java.lang.String">
+	 delete biz_function a where a.BIZ_FUNCTION_ID in(select a.BIZ_FUNCTION_ID from 
+     biz_function start with a.BIZ_FUNCTION_ID=#nodeId# connect by prior a.BIZ_FUNCTION_ID=a.BIZ_BIZ_FUNCTION_ID) 
+	 </delete>
+
+	<select id="isExistWorkFlowName" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		select count(1) from BIZ_FUNCTION where NAME = #name#
+		<dynamic>
+		        <isNotEmpty prepend="and" property="bizBizFunctionId"> BIZ_BIZ_FUNCTION_ID = #bizBizFunctionId#</isNotEmpty>
+		        <isEmpty prepend="and" property="bizBizFunctionId"> (BIZ_BIZ_FUNCTION_ID is null or BIZ_BIZ_FUNCTION_ID = '')</isEmpty>
+	            <isNotEmpty prepend="and" property="bizFunctionId"> BIZ_FUNCTION_ID != #bizFunctionId#</isNotEmpty>
+	    </dynamic>	
+	</select>
+	
+	<select id="isExistBizFunctionCodeWhenEdit" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		select count(1) from BIZ_FUNCTION where CODE = #bizFunctionCode# and BIZ_FUNCTION_ID != #bizFunctionId#
+	</select>
+
+</sqlMap>

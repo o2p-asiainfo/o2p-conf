@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="testPiles" extends="default" namespace="/testPiles">
+		<action name="testScene" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testScene">
+			<result name="success">/testPiles/testScene.jsp</result>
+		</action>
+		<action name="chooseTechImpl" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testScene_chooseTechImpl">
+			<result name="success">/testPiles/testScene_chooseTechImpl.jsp</result> 
+		</action>
+		<action name="testSceneAdd" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testSceneAdd">
+			<result name="success">/testPiles/testScene_info.jsp</result> 
+		</action>
+		<action name="testSceneInfo" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testSceneInfo">
+			<result name="success">/testPiles/testScene_info.jsp</result> 
+		</action>
+		<action name="testSceneListDelete" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testSceneListDelete">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testScene</param>  
+             </result>  
+		</action>
+		<action name="saveTestSceneData" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="saveTestSceneData">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testScene</param>  
+             </result>  
+		</action>
+		<action name="deleteTestScene" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="deleteTestScene">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testScene</param>  
+             </result>  
+		</action>
+		<action name="testSceneRelaDel" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testSceneRelaDel">
+			<result name="success" type="redirectAction">
+                      <param name="actionName">testSceneInfo</param>
+             </result>
+		</action>
+		<action name="testSceneRela_add" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testSceneRela_add">
+			<result name="success">/testPiles/testSceneRela_add.jsp</result> 
+		</action>
+		<action name="testSceneRela_chooseMod" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testSceneRela_chooseMod">
+			<result name="success">/testPiles/testSceneRela_chooseMod.jsp</result> 
+		</action>
+		<action name="testSceneRelaUpdateMod" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testSceneRelaUpdateMod">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testSceneInfo</param>  
+             </result>  
+		</action>
+		<action name="testSceneRelaModSave" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testSceneRelaModSave">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testSceneRela_chooseMod</param>  
+             </result>  
+		</action>
+		<action name="testSceneRelaModDel" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testSceneRelaModDel">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testSceneRela_chooseMod</param>  
+             </result>  
+		</action>
+		<action name="testSceneRelaSave" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testSceneRelaSave">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testSceneInfo</param>  
+             </result>  
+		</action>
+		
+		
+		
+		<action name="testTask" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testTask">
+			<result name="success">/testPiles/testTask.jsp</result>
+		</action>		
+		<action name="testTaskInfo" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testTaskInfo">
+			<result name="success">/testPiles/testTask_info.jsp</result> 
+		</action>
+		<action name="chooseTestScene" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="chooseTestScene">
+			<result name="success">/testPiles/testScene.jsp</result>
+		</action>
+		<action name="saveTestTaskData" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="saveTestTaskData">
+			<result name="success" type="redirectAction">  
+				<param name="actionName">testTask</param>
+			</result>
+		</action>
+		
+		
+		
+		<action name="testTaskAdd" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testTaskAdd">
+			<result name="success">/testPiles/testTask_add.jsp</result> 
+		</action>
+		<action name="testTaskAddInsert" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testTaskAddInsert">
+             <result name="success" type="redirectAction"> 
+						<param name="actionName">testTaskEdit</param>
+						<param name="TestTask.taskId">${TestTask.taskId}</param>	
+			</result>
+		</action>
+		<action name="testTaskEdit" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testTaskEdit">
+			<result name="success">/testPiles/testTask_edit.jsp</result> 
+		</action>
+		<action name="testTaskEditUpdate" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testTaskEditUpdate">
+             <result name="success" type="redirectAction"> 
+						<param name="actionName">testTask</param>
+			</result>
+		</action>
+		<action name="testTaskDel" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testTaskDel">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testTask</param>
+             </result>
+		</action>
+		<action name="chooseScene" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testTask_chooseScene">
+			<result name="success">/testPiles/testTask_chooseScene.jsp</result> 
+		</action>
+		<action name="chooseSceneSave" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testTask_chooseSceneSave">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testTaskEdit</param>  
+             </result>  
+		</action>
+		
+		<action name="testingList" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testingList">
+			<result name="success">/testPiles/testingList.jsp</result>
+		</action>
+		<action name="testing" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testing">
+			<result name="success">/testPiles/testing.jsp</result>
+		</action>
+		<action name="testExe" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testExe">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testing</param>  
+             </result>  
+		</action>
+		<action name="getLogId" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="getLogId">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testing</param>  
+             </result>  
+		</action>
+		
+		<action name="saveTestResult" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="saveTestResult">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testing</param>  
+             </result>  
+		</action>
+		<action name="createFlow" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="createFlow">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">testTaskEdit</param>  
+             </result>  
+		</action>
+
+		
+		<action name="testResults" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testResults">
+			<result name="success">/testPiles/testResults.jsp</result>
+		</action>
+		<action name="testResultInfo" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testResultInfo">
+			<result name="success">/testPiles/testResultInfo.jsp</result>
+		</action>
+		
+		<action name="chooseSerInvokeIns" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="chooseSerInvokeIns">
+			<result name="success">/testPiles/chooseSerInvokeIns.jsp</result>
+		</action>
+		<action name="chooseTester" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="chooseTester">
+			<result name="success">/testPiles/chooseTester.jsp</result>
+		</action>
+		
+		
+		<action name="showTestMsgMod" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="showTestMsgMod">
+			<result name="success">/testPiles/testMsgMod.jsp</result>
+		</action>
+		<action name="gotoEditTestMsgMod" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="gotoEditTestMsgMod">
+			<result name="success">/testPiles/editTestMsgMod.jsp</result>
+		</action>
+		<action name="editTestMsgMod" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="editTestMsgMod">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">showTestMsgMod</param>  
+            </result>  
+		</action>
+		<action name="saveTestMsgModData" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="saveTestMsgModData">
+		</action>
+		<action name="checkDelayTimeCount" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="checkDelayTimeCount">
+		</action>
+		<action name="delTestMsgMod" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="delTestMsgMod">
+			<result name="success" type="redirectAction">
+				<param name="actionName">showTestMsgMod</param>
+			</result>
+		</action>
+		<action name="testMsgModResponseEdit" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="testMsgModResponseEdit">
+			<result name="success">/testPiles/editTestMsgModResponse.jsp</result>
+		</action>
+		<action name="saveTestMsgModResponse" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="saveTestMsgModResponse">
+		</action>
+		<action name="deleteTestMsgModResponse" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="deleteTestMsgModResponse">
+		</action>
+		
+		<action name="showTestMsgModRela" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="showTestMsgModRela">
+			<result name="success">/testPiles/testMsgModRela.jsp</result>
+		</action>
+		<action name="gotoEditTestMsgModRela" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="gotoEditTestMsgModRela">
+			<result name="success">/testPiles/editTestMsgModRela.jsp</result>
+		</action>
+		<action name="editTestMsgModRela" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="editTestMsgModRela">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">showTestMsgModRela</param>  
+            </result>  
+		</action>
+		<action name="delTestMsgModRela" class="com.ailk.eaap.op2.conf.testPiles.action.TestPilesAction" method="delTestMsgModRela">
+			<result name="success" type="redirectAction">
+				<param name="actionName">showTestMsgModRela</param>
+			</result>
+		</action>
+		
+	</package>
+</struts>

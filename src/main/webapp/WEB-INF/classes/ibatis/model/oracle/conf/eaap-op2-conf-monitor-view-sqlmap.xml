@@ -1,0 +1,620 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="eaap-op2-conf-monitor-view">
+    <!-- 监控视图首页-所有业务-服务使用方 -->
+	<select id="querySvcRequestBizInfo"  parameterClass="java.util.HashMap"   resultClass="com.ailk.eaap.op2.bo.RegStatRecent">
+	<![CDATA[
+     SELECT dateTranId ,SUM(totalTrans) AS totalTrans,SUM(totalBizErr) AS totalBizErr,SUM(totalSysErr) AS totalSysErr
+     	 FROM( SELECT T2.DATE_TRAN_ID AS dateTranId,SUM(T2.TOTAL_TRANS) AS totalTrans,SUM(T2.TOTAL_BIZ_ERR) AS totalBizErr,SUM(T2.TOTAL_SYS_ERR) AS totalSysErr 
+     	 	  FROM USE_STAT_CNT_RECENT T2 WHERE T2.DATE_TYPE = 1 AND T2.tenant_Id =#tenantId# AND T2.DATE_TRAN_ID BETWEEN TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMddhh24miss') AND TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss'), 'yyyyMMddhh24miss') GROUP BY DATE_TRAN_ID
+     	UNION ALL
+     SELECT smonth || shour || sminute dateTranId ,0 totalTrans, 0 totalBizErr ,0 totalSysErr	
+     	FROM (select smonth,case  when shour < 10 then 0 || to_char(shour) else to_char(shour) end shour,case when sminute < 10 then 0 || to_char(sminute) else to_char(sminute) end sminute
+     	 from (select smonth, case  when sminute > 59 then  shour + 1 else shour  end shour,case when sminute > 59 then sminute - 60  else  sminute  end sminute
+     	 from (select to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMdd')) smonth,to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'hh24')) shour, (to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'mi'))-1) + rownum sminute from dual, (select rownum n  from all_objects c  where rownum < 61))))
+       )GROUP BY dateTranId ORDER BY dateTranId
+       ]]>
+    </select>
+    
+     <!-- 监控视图首页-所有业务-服务提供方 -->
+	<select id="querySvcRegBizInfo"   parameterClass="java.util.HashMap"   resultClass="com.ailk.eaap.op2.bo.RegStatRecent">
+	<![CDATA[
+     SELECT dateTranId ,SUM(totalTrans) AS totalTrans,SUM(totalBizErr) AS totalBizErr,SUM(totalSysErr) AS totalSysErr
+     	 FROM( SELECT T1.DATE_TRAN_ID AS dateTranId,SUM(T1.TOTAL_TRANS) AS totalTrans,SUM(T1.TOTAL_BIZ_ERR) AS totalBizErr,SUM(T1.TOTAL_SYS_ERR) AS totalSysErr
+     	 	FROM REG_STAT_RECENT T1 WHERE T1.DATE_TYPE = 1  AND T1.tenant_Id =#tenantId# AND T1.DATE_TRAN_ID BETWEEN TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMddhh24miss') AND TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss'), 'yyyyMMddhh24miss') GROUP BY DATE_TRAN_ID
+     	UNION ALL
+     SELECT smonth || shour || sminute dateTranId ,0 totalTrans, 0 totalBizErr ,0 totalSysErr	
+     	FROM (select smonth,case  when shour < 10 then 0 || to_char(shour) else to_char(shour) end shour,case when sminute < 10 then 0 || to_char(sminute) else to_char(sminute) end sminute
+     	from (select smonth, case  when sminute > 59 then  shour + 1 else shour  end shour, case  when sminute > 59 then sminute - 60  else  sminute  end sminute
+     	from (select to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMdd')) smonth,to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'hh24')) shour, (to_number(to_char(SYS_EXTRACT_UTC(current_timestamp) - 1 / 24, 'mi'))-1) + rownum sminute from dual, (select rownum n from all_objects c  where rownum < 61))))
+       )GROUP BY dateTranId ORDER BY dateTranId
+       ]]>
+    </select>
+    
+     <!-- 监控视图首页-所有业务-性能 -->
+	<select id="queryAllBizPerfomanceInfo"    parameterClass="java.util.HashMap"  resultClass="com.ailk.eaap.op2.bo.RegStatRecent">
+	<![CDATA[
+    SELECT dateTranId ,SUM(avgUsing) AS avgUsing,SUM(avgUsingDst) AS avgUsingDst,SUM(totalTrans) AS totalTrans
+        FROM( SELECT T1.DATE_TRAN_ID AS dateTranId,SUM(T1.AVG_USING) AS avgUsing,SUM(T1.AVG_USING_DST) AS avgUsingDst,(SUM(T1.AVG_USING)+SUM(T1.AVG_USING_DST)) AS totalTrans
+              FROM REG_STAT_RECENT T1 WHERE T1.DATE_TYPE = 1  AND T1.tenant_Id =#tenantId# AND T1.DATE_TRAN_ID BETWEEN TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMddhh24miss') AND TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss'), 'yyyyMMddhh24miss') GROUP BY DATE_TRAN_ID
+    UNION ALL SELECT smonth || shour || sminute dateTranId ,0 avgUsing, 0 avgUsingDst ,0 totalTrans FROM (select smonth,case  when shour < 10 then 0 || to_char(shour) else to_char(shour) end shour,case when sminute < 10 then 0 || to_char(sminute) else to_char(sminute) end sminute
+        from (select smonth, case  when sminute > 59 then  shour + 1 else shour  end shour,case  when sminute > 59 then sminute - 60  else  sminute  end sminute
+        from (select to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMdd')) smonth,to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'hh24')) shour, (to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'mi'))-1) + rownum sminute from dual,(select rownum n  from all_objects c  where rownum < 61))))
+       )GROUP BY dateTranId ORDER BY dateTranId
+    ]]>
+    </select>
+    
+    <!-- 监控视图首页-系统性能仪表盘-总性能 -->
+    <select id="queryAvgUsingNum"   parameterClass="java.util.HashMap"   resultClass="java.lang.Double">
+        SELECT NVL((SUM(AVG_USING) + SUM(AVG_USING_DST))/1000/COUNT(1),0) 
+         FROM REG_STAT_RECENT T1 
+       WHERE T1.DATE_TYPE = 1 
+       	   AND T1.tenant_Id =#tenantId#
+           AND T1.DATE_TRAN_ID BETWEEN TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMddhh24miss') AND TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss'), 'yyyyMMddhh24miss')
+    </select>
+    
+    <!-- 监控视图首页-系统性能仪表盘-落地方 -->
+    <select id="queryAvgUsingDstNum"   parameterClass="java.util.HashMap"   resultClass="java.lang.Double">
+        SELECT NVL(SUM(AVG_USING_DST)/1000/COUNT(1),0) 
+         FROM REG_STAT_RECENT T1 
+       WHERE T1.DATE_TYPE = 1 
+            AND T1.tenant_Id =#tenantId#
+            AND T1.DATE_TRAN_ID BETWEEN TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMddhh24miss') AND TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss'), 'yyyyMMddhh24miss')
+    </select>
+    
+    <!-- 监控视图首页-系统性能仪表盘-CSB性能-->
+    <select id="queryCsbNum"    parameterClass="java.util.HashMap"  resultClass="java.lang.Double">
+        SELECT NVL(SUM(AVG_USING)/COUNT(1),0) 
+         FROM REG_STAT_RECENT T1 
+       WHERE T1.DATE_TYPE = 1 
+       		AND T1.tenant_Id =#tenantId#
+            AND T1.DATE_TRAN_ID BETWEEN TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMddhh24miss') AND TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss'), 'yyyyMMddhh24miss')
+    </select>
+    
+    <!-- 监控视图首页-系统性能 曲线图-总性能 -->
+    <select id="queryLineAvgUsingNum"   parameterClass="java.util.HashMap"   resultClass="com.ailk.eaap.op2.bo.RegStatRecent">
+        SELECT dateTranId ,SUM(avgUsing) AS avgUsing
+     	 FROM( SELECT T1.DATE_TRAN_ID AS dateTranId,(SUM(T1.AVG_USING)+SUM(T1.AVG_USING_DST)) AS avgUsing FROM REG_STAT_RECENT T1 WHERE T1.DATE_TYPE = 1  AND T1.tenant_Id =#tenantId# AND T1.DATE_TRAN_ID BETWEEN TO_CHAR(SYS_EXTRACT_UTC(current_timestamp)+0 - 1 / 24, 'yyyyMMddhh24miss') AND TO_CHAR(SYS_EXTRACT_UTC(current_timestamp)+0, 'yyyyMMddhh24miss') GROUP BY DATE_TRAN_ID
+     	   UNION ALL
+     	<![CDATA[
+     	SELECT smonth || shour || sminute dateTranId ,0 avgUsing	
+     	 FROM (select smonth,case  when shour < 10 then 0 || to_char(shour) else to_char(shour) end shour,case when sminute < 10 then 0 || to_char(sminute) else to_char(sminute) end sminute
+     	 from (select smonth, case  when sminute > 59 then  shour + 1 else shour  end shour, case  when sminute > 59 then sminute - 60  else  sminute  end sminute
+     	 from (select to_number(to_char(SYS_EXTRACT_UTC(current_timestamp)+0 - 1 / 24, 'yyyyMMdd')) smonth,to_number(to_char(SYS_EXTRACT_UTC(current_timestamp)+0 - 1 / 24, 'hh24')) shour, (to_number(to_char(SYS_EXTRACT_UTC(current_timestamp)+0 - 1 / 24, 'mi'))-1) + rownum sminute from dual,(select rownum n  from all_objects c  where rownum < 61))))
+       )GROUP BY dateTranId ORDER BY dateTranId
+       ]]>
+    </select>
+    
+    <!-- 监控视图首页-系统性能 曲线图-落地方 -->
+    <select id="queryLineAvgUsingDstNum"   parameterClass="java.util.HashMap"   resultClass="com.ailk.eaap.op2.bo.RegStatRecent">
+         SELECT dateTranId ,SUM(avgUsingDst) AS avgUsingDst
+     	 FROM( SELECT T1.DATE_TRAN_ID AS dateTranId,SUM(T1.AVG_USING_DST) AS avgUsingDst FROM REG_STAT_RECENT T1 WHERE T1.DATE_TYPE = 1  AND T1.tenant_Id =#tenantId# AND T1.DATE_TRAN_ID BETWEEN TO_CHAR(SYS_EXTRACT_UTC(current_timestamp)+0 - 1 / 24, 'yyyyMMddhh24miss') AND TO_CHAR(SYS_EXTRACT_UTC(current_timestamp)+0, 'yyyyMMddhh24miss') GROUP BY DATE_TRAN_ID
+     	   UNION ALL
+     	<![CDATA[
+     	SELECT smonth || shour || sminute dateTranId ,0 avgUsingDst	
+     	 FROM (select smonth,case  when shour < 10 then 0 || to_char(shour) else to_char(shour) end shour,case when sminute < 10 then 0 || to_char(sminute) else to_char(sminute) end sminute
+     	 from (select smonth, case  when sminute > 59 then  shour + 1 else shour  end shour,case  when sminute > 59 then sminute - 60  else  sminute  end sminute
+     	 from (select to_number(to_char(SYS_EXTRACT_UTC(current_timestamp)+0 - 1 / 24, 'yyyyMMdd')) smonth,to_number(to_char(SYS_EXTRACT_UTC(current_timestamp)+0 - 1 / 24, 'hh24')) shour, (to_number(to_char(SYS_EXTRACT_UTC(current_timestamp)+0 - 1 / 24, 'mi'))-1) + rownum sminute from dual,(select rownum n  from all_objects c  where rownum < 61))))
+       )GROUP BY dateTranId ORDER BY dateTranId
+       ]]>
+    </select>
+    
+     <!-- 监控视图首页-系统性能 曲线图-CSB性能 -->
+    <select id="queryLineCsbNum"   parameterClass="java.util.HashMap"   resultClass="com.ailk.eaap.op2.bo.RegStatRecent">
+         SELECT dateTranId ,SUM(avgUsing) AS avgUsing
+     	 FROM( SELECT T1.DATE_TRAN_ID AS dateTranId,SUM(T1.AVG_USING) AS avgUsing FROM REG_STAT_RECENT T1 WHERE T1.DATE_TYPE = 1  AND T1.tenant_Id =#tenantId# AND T1.DATE_TRAN_ID BETWEEN TO_CHAR(SYS_EXTRACT_UTC(#nDate#)+0 - 1 / 24, 'yyyyMMddhh24miss') AND TO_CHAR(SYS_EXTRACT_UTC(#nDate#)+0, 'yyyyMMddhh24miss') GROUP BY DATE_TRAN_ID
+     	   UNION ALL
+     	<![CDATA[
+     	 SELECT smonth || shour || sminute dateTranId ,0 avgUsing	
+     	 FROM (select smonth,case  when shour < 10 then 0 || to_char(shour) else to_char(shour) end shour,case when sminute < 10 then 0 || to_char(sminute) else to_char(sminute) end sminute
+     	 from (select smonth, case  when sminute > 59 then  shour + 1 else shour  end shour,case  when sminute > 59 then sminute - 60  else  sminute  end sminute
+     	 from (select to_number(to_char(SYS_EXTRACT_UTC(current_timestamp)+0 - 1 / 24, 'yyyyMMdd')) smonth,to_number(to_char(SYS_EXTRACT_UTC(current_timestamp)+0 - 1 / 24, 'hh24')) shour, (to_number(to_char(SYS_EXTRACT_UTC(current_timestamp)+0 - 1 / 24, 'mi'))-1) + rownum sminute from dual,(select rownum n  from all_objects c  where rownum < 61))))
+       )GROUP BY dateTranId ORDER BY dateTranId
+       ]]>
+    </select>
+    
+     <!-- 组件监控视图 获取各组件曲线图数据-性能标签-->
+    <select id="queryPerformanceCompData"  parameterClass="java.util.HashMap" resultClass="com.ailk.eaap.op2.bo.RegStatRecent">
+ 		SELECT dateTranId ,SUM(avgUsing) AS avgUsing,SUM(avgUsingDst) AS avgUsingDst,SUM(totalTrans) AS totalTrans
+        FROM( SELECT T1.DATE_TRAN_ID AS dateTranId,SUM(T1.AVG_USING) AS avgUsing,SUM(T1.AVG_USING_DST) AS avgUsingDst,(SUM(T1.AVG_USING)+SUM(T1.AVG_USING_DST)) AS totalTrans
+          FROM REG_STAT_RECENT T1
+     	 	 <dynamic prepend="WHERE">
+		   		<isNotNull prepend="and" property="arrayDstCode"> 
+		   		T1.DST_CODE IN 
+		   		<iterate property="arrayDstCode" conjunction="," close=")" open="(">
+                  #arrayDstCode[]#
+                </iterate>
+		   		</isNotNull>
+		 	</dynamic>
+		 	 AND T1.DATE_TYPE = 1  AND T1.tenant_Id =#tenantId# AND T1.DATE_TRAN_ID BETWEEN TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMddhh24miss') AND TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss'), 'yyyyMMddhh24miss') GROUP BY DATE_TRAN_ID
+     	 	 UNION ALL
+       <![CDATA[
+     	 	 SELECT smonth || shour || sminute dateTranId ,0 avgUsing, 0 avgUsingDst ,0 totalTrans 	
+     	 	   FROM (select smonth,case  when shour < 10 then 0 || to_char(shour) else to_char(shour) end shour,case when sminute < 10 then 0 || to_char(sminute) else to_char(sminute) end sminute
+     	 	     from (select smonth, case  when sminute > 59 then  shour + 1 else shour  end shour,case  when sminute > 59 then sminute - 60  else  sminute  end sminute
+     	 	     from (select to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMdd')) smonth,to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'hh24')) shour, (to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'mi'))-1) + rownum sminute from dual,(select rownum n  from all_objects c  where rownum < 61))))
+       )GROUP BY dateTranId ORDER BY dateTranId
+       ]]>
+    </select>
+    
+     <!-- 组件监控视图 获取各组件曲线图数据-服务使用方-->
+    <select id="querySvcRequestCompData"  parameterClass="java.util.HashMap" resultClass="com.ailk.eaap.op2.bo.RegStatRecent">
+ 		SELECT dateTranId ,SUM(totalTrans) AS totalTrans,SUM(totalBizErr) AS totalBizErr,SUM(totalSysErr) AS totalSysErr
+     	 FROM( SELECT T2.DATE_TRAN_ID AS dateTranId,SUM(T2.TOTAL_TRANS) AS totalTrans,SUM(T2.TOTAL_BIZ_ERR) AS totalBizErr,SUM(T2.TOTAL_SYS_ERR) AS totalSysErr
+     	 	FROM USE_STAT_CNT_RECENT T2
+     	 	 <dynamic prepend="WHERE">
+		   		<isNotNull prepend="and" property="arrayDstCode"> 
+		   		T2.SYS_CODE IN 
+		   		<iterate property="arrayDstCode" conjunction="," close=")" open="(">
+                  #arrayDstCode[]#
+                </iterate>
+		   		</isNotNull>
+		 	</dynamic>
+		 AND T2.DATE_TYPE = 1 AND T2.tenant_Id =#tenantId# AND T2.DATE_TRAN_ID BETWEEN TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMddhh24miss') AND TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss'), 'yyyyMMddhh24miss') GROUP BY DATE_TRAN_ID
+     	 	 UNION ALL
+       <![CDATA[
+     	 SELECT smonth || shour || sminute dateTranId ,0 totalTrans, 0 totalBizErr ,0 totalSysErr	
+     	 	FROM (select smonth,case  when shour < 10 then 0 || to_char(shour) else to_char(shour) end shour,case when sminute < 10 then 0 || to_char(sminute) else to_char(sminute) end sminute
+     	 	from (select smonth, case  when sminute > 59 then  shour + 1 else shour  end shour,case  when sminute > 59 then sminute - 60  else  sminute  end sminute
+     	 	from (select to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMdd')) smonth,to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'hh24')) shour, (to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'mi'))-1) + rownum sminute from dual,(select rownum n  from all_objects c  where rownum < 61))))
+       )GROUP BY dateTranId ORDER BY dateTranId
+       ]]>
+    </select>
+    
+     <!-- 组件监控视图 获取各组件曲线图数据-服务提供方-->
+    <select id="querySvcRegCompData"  parameterClass="java.util.HashMap" resultClass="com.ailk.eaap.op2.bo.RegStatRecent">
+ 		SELECT dateTranId ,SUM(totalTrans) AS totalTrans,SUM(totalBizErr) AS totalBizErr,SUM(totalSysErr) AS totalSysErr
+     	 FROM( SELECT T1.DATE_TRAN_ID AS dateTranId,SUM(T1.TOTAL_TRANS) AS totalTrans,SUM(T1.TOTAL_BIZ_ERR) AS totalBizErr,SUM(T1.TOTAL_SYS_ERR) AS totalSysErr
+     	 	FROM REG_STAT_RECENT T1 
+     	 	 <dynamic prepend="WHERE">
+		   		<isNotNull prepend="and" property="arrayDstCode"> 
+		   		T1.DST_CODE IN 
+		   		<iterate property="arrayDstCode" conjunction="," close=")" open="(">
+                  #arrayDstCode[]#
+                </iterate>
+		   		</isNotNull>
+		 	</dynamic>
+		 	 AND T1.DATE_TYPE = 1  AND T1.tenant_Id =#tenantId# AND T1.DATE_TRAN_ID BETWEEN TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMddhh24miss') AND TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss'), 'yyyyMMddhh24miss') GROUP BY DATE_TRAN_ID
+     	 	 UNION ALL
+       <![CDATA[
+     	SELECT smonth || shour || sminute dateTranId ,0 totalTrans, 0 totalBizErr ,0 totalSysErr	
+     	 FROM (select smonth,case  when shour < 10 then 0 || to_char(shour) else to_char(shour) end shour,case when sminute < 10 then 0 || to_char(sminute) else to_char(sminute) end sminute
+     	 from (select smonth, case  when sminute > 59 then  shour + 1 else shour  end shour,case  when sminute > 59 then sminute - 60  else  sminute  end sminute
+     	 from (select to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMdd')) smonth,to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'hh24')) shour, (to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'mi'))-1) + rownum sminute from dual,(select rownum n from all_objects c  where rownum < 61))))
+       )GROUP BY dateTranId ORDER BY dateTranId
+       ]]>
+    </select>
+    <!-- 组件监控视图 获取组件总记录数 -->
+	<select id="queryComponentCount" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+	  SELECT COUNT(1) ALLNUM  FROM COMPONENT C,ORG D WHERE C.ORG_ID = D.ORG_ID and D.TENANT_ID=#tenantId#
+		<dynamic>
+		 	<isNotNull prepend="and" property="orgArr"> 
+			 		C.ORG_ID IN 
+			 		<iterate close=")" open="(" property="orgArr"  conjunction=",">
+	                        <![CDATA[ #orgArr[]#  ]]> 
+	          		</iterate>
+		 	</isNotNull>
+		   <isNotNull prepend="and" property="componentArr"> 
+		 		C.COMPONENT_ID IN 
+		 		<iterate close=")" open="(" property="componentArr"  conjunction=",">
+                         <![CDATA[ #componentArr[]#  ]]>  
+          		</iterate>
+		   </isNotNull>
+         </dynamic>
+ 	</select>
+ 	
+    <!-- 组件监控视图 加载多个组件 分页 -->
+    <select id="selectComponentList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+  		 SELECT * FROM (SELECT ROW_NUMBER() OVER( ORDER BY COMPONENT_ID ) rn , newtab.* FROM (
+  		 	SELECT C.COMPONENT_ID COMPONENT_ID , C.ORG_ID ORG_ID , C.CODE CODE , C.NAME NAME,C.STATE STATE, C.DESCRIPTOR DESCRIPTOR,D.NAME ORG_NAME
+            FROM COMPONENT C,ORG D WHERE C.ORG_ID = D.ORG_ID AND D.TENANT_ID=#tenantId#
+         <dynamic>
+		 	<isNotNull prepend="and" property="orgArr"> 
+			 		C.ORG_ID IN 
+			 		<iterate close=")" open="(" property="orgArr"  conjunction=",">
+	                        <![CDATA[ #orgArr[]#  ]]> 
+	          		</iterate>
+		 	</isNotNull>
+		   <isNotNull prepend="and" property="componentArr"> 
+		 		C.COMPONENT_ID IN 
+		 		<iterate close=")" open="(" property="componentArr"  conjunction=",">
+                         <![CDATA[ #componentArr[]#  ]]>  
+          		</iterate>
+		   </isNotNull>
+         </dynamic>
+		   ) newtab ) WHERE rn BETWEEN #pro# AND #end# 
+	</select>
+	
+	 <!-- 组件监控视图 下钻 获取某个组件下所有服务 总记录数 -->
+	<select id="queryComponentSvcCount" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+		SELECT COUNT(1) ALLNUM FROM COMPONENT A, TECH_IMPL B, SER_TECH_IMPL C, SERVICE D
+		 <dynamic prepend="WHERE">
+		    <isNotNull prepend="and" property="componentId"> A.COMPONENT_ID=#componentId#</isNotNull>
+		  </dynamic>
+		  	AND C.STATE NOT IN ('X', 'G')
+	    	AND A.COMPONENT_ID = B.COMPONENT_ID
+			AND B.TECH_IMPL_ID = C.TECH_IMPL_ID
+			AND C.SERVICE_ID = D.SERVICE_ID
+ 	</select>
+ 	
+    <!-- 组件监控视图 下钻 加载某个组件下所有服务 分页 -->
+    <select id="queryComponentSvcList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+  		 SELECT * FROM (SELECT ROW_NUMBER() OVER( ORDER BY COMPONENT_ID ) rn , newtab.* FROM (
+  		 	SELECT D.SERVICE_ID      SERVICE_ID,
+  		 		   D.SERVICE_CODE    SERVICE_CODE,
+			       D.SERVICE_CN_NAME SERVICE_CN_NAME,
+			       D.SERVICE_EN_NAME SERVICE_EN_NAME,
+			       A.COMPONENT_ID    COMPONENT_ID,
+			       A.NAME COMPONENT_NAME,
+                   E.NAME ORG_NAME
+			  FROM COMPONENT A, TECH_IMPL B, SER_TECH_IMPL C, SERVICE D,ORG E
+		 <dynamic prepend="WHERE">
+		    <isNotNull prepend="and" property="componentId"> A.COMPONENT_ID=#componentId#</isNotNull>
+		  </dynamic>
+		  	AND C.STATE NOT IN ('X', 'G')
+	    	AND A.COMPONENT_ID = B.COMPONENT_ID
+			AND B.TECH_IMPL_ID = C.TECH_IMPL_ID
+			AND C.SERVICE_ID = D.SERVICE_ID  AND A.ORG_ID = E.ORG_ID
+		   ) newtab ) WHERE rn BETWEEN #pro# AND #end# 
+	</select>
+	
+    <!-- 组件监控视图 获取某个组件下所有服务的曲线图数据-性能标签-->
+    <select id="queryPerformanceCompSvcData"  parameterClass="java.util.HashMap" resultClass="com.ailk.eaap.op2.bo.RegStatRecent">
+		 SELECT dateTranId ,SUM(avgUsing) AS avgUsing,SUM(avgUsingDst) AS avgUsingDst,SUM(totalTrans) AS totalTrans
+        FROM(SELECT T1.DATE_TRAN_ID AS dateTranId,SUM(T1.AVG_USING) AS avgUsing,SUM(T1.AVG_USING_DST) AS avgUsingDst,(SUM(T1.AVG_USING)+SUM(T1.AVG_USING_DST)) AS totalTrans
+          FROM REG_STAT_RECENT T1
+     	 	 <dynamic prepend="WHERE">
+		    	<isNotNull prepend="and" property="dstCode"> T1.DST_CODE=#dstCode#</isNotNull>
+		    	<isNotNull prepend="and" property="intfCode"> T1.INTF_CODE=#intfCode#</isNotNull>
+			</dynamic>
+			 AND T1.DATE_TYPE = 1  AND T1.tenant_Id =#tenantId# AND T1.DATE_TRAN_ID BETWEEN TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMddhh24miss') AND TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss'), 'yyyyMMddhh24miss') GROUP BY DATE_TRAN_ID
+     	 	 UNION ALL
+       <![CDATA[
+     SELECT smonth || shour || sminute dateTranId ,0 avgUsing, 0 avgUsingDst ,0 totalTrans FROM (select smonth,case  when shour < 10 then 0 || to_char(shour) else to_char(shour) end shour,
+     	case when sminute < 10 then 0 || to_char(sminute) else to_char(sminute) end sminute from (select smonth, case  when sminute > 59 then  shour + 1 else shour  end shour,
+     	case  when sminute > 59 then sminute - 60  else  sminute  end sminute from (select to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMdd')) smonth,to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'hh24')) shour, (to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'mi'))-1) + rownum sminute from dual, (select rownum n  from all_objects c  where rownum < 61))))
+       )GROUP BY dateTranId ORDER BY dateTranId
+       ]]>
+    </select>
+    
+    <!-- 组件监控视图 获取某个组件下所有服务的曲线图数据-服务使用方-->
+    <select id="querySvcRequestCompSvcData"  parameterClass="java.util.HashMap" resultClass="com.ailk.eaap.op2.bo.RegStatRecent">
+		 SELECT dateTranId ,SUM(totalTrans) AS totalTrans,SUM(totalBizErr) AS totalBizErr,SUM(totalSysErr) AS totalSysErr
+     	 FROM(SELECT T2.DATE_TRAN_ID AS dateTranId,SUM(T2.TOTAL_TRANS) AS totalTrans,SUM(T2.TOTAL_BIZ_ERR) AS totalBizErr,SUM(T2.TOTAL_SYS_ERR) AS totalSysErr
+     	 	FROM USE_STAT_CNT_RECENT T2
+     	 	 <dynamic prepend="WHERE">
+		    	<isNotNull prepend="and" property="dstCode"> T2.SYS_CODE=#dstCode#</isNotNull>
+		    	<isNotNull prepend="and" property="intfCode"> T2.BIZ_INTF_CODE=#intfCode#</isNotNull>
+			</dynamic>
+			 AND T2.DATE_TYPE = 1 AND T2.tenant_Id =#tenantId# AND T2.DATE_TRAN_ID BETWEEN TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMddhh24miss') AND TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss'), 'yyyyMMddhh24miss') GROUP BY DATE_TRAN_ID
+     	 	 UNION ALL
+       <![CDATA[
+     	SELECT smonth || shour || sminute dateTranId ,0 totalTrans, 0 totalBizErr ,0 totalSysErr	
+     	 FROM (select smonth,case  when shour < 10 then 0 || to_char(shour) else to_char(shour) end shour,case when sminute < 10 then 0 || to_char(sminute) else to_char(sminute) end sminute
+     	 from (select smonth, case  when sminute > 59 then  shour + 1 else shour  end shour,case  when sminute > 59 then sminute - 60  else  sminute  end sminute
+     	 from (select to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMdd')) smonth, to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'hh24')) shour, (to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'mi'))-1) + rownum sminute from dual,(select rownum n  from all_objects c  where rownum < 61))))
+       )GROUP BY dateTranId ORDER BY dateTranId
+       ]]>
+    </select>
+    
+    <!-- 组件监控视图 获取某个组件下所有服务的曲线图数据-服务提供方-->
+    <select id="querySvcRegCompSvcData"  parameterClass="java.util.HashMap" resultClass="com.ailk.eaap.op2.bo.RegStatRecent">
+		 SELECT dateTranId ,SUM(totalTrans) AS totalTrans,SUM(totalBizErr) AS totalBizErr,SUM(totalSysErr) AS totalSysErr
+     	 FROM(SELECT T1.DATE_TRAN_ID AS dateTranId,SUM(T1.TOTAL_TRANS) AS totalTrans,SUM(T1.TOTAL_BIZ_ERR) AS totalBizErr,SUM(T1.TOTAL_SYS_ERR) AS totalSysErr
+     	 	FROM REG_STAT_RECENT T1
+     	 	 <dynamic prepend="WHERE">
+		    	<isNotNull prepend="and" property="dstCode"> T1.DST_CODE=#dstCode#</isNotNull>
+		    	<isNotNull prepend="and" property="intfCode"> T1.INTF_CODE=#intfCode#</isNotNull>
+			</dynamic>
+			 AND T1.DATE_TYPE = 1  AND T1.tenant_Id =#tenantId# AND T1.DATE_TRAN_ID BETWEEN TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMddhh24miss') AND TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss'), 'yyyyMMddhh24miss') GROUP BY DATE_TRAN_ID
+     	 	 UNION ALL
+       <![CDATA[
+     	SELECT smonth || shour || sminute dateTranId ,0 totalTrans, 0 totalBizErr ,0 totalSysErr	
+     	 FROM (select smonth,case  when shour < 10 then 0 || to_char(shour) else to_char(shour) end shour,case when sminute < 10 then 0 || to_char(sminute) else to_char(sminute) end sminute
+     	 from (select smonth, case  when sminute > 59 then  shour + 1 else shour  end shour,case  when sminute > 59 then sminute - 60  else  sminute  end sminute
+     	from (select to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMdd')) smonth,to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'hh24')) shour, (to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'mi'))-1) + rownum sminute from dual, (select rownum n  from all_objects c  where rownum < 61))))
+       )GROUP BY dateTranId ORDER BY dateTranId
+       ]]>
+    </select>
+    
+    <!-- 服务性能监控视图首页 -->
+    <select id="querySvcPerformanceList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+  		 SELECT * FROM (SELECT ROW_NUMBER() OVER( ORDER BY COMPONENT_ID ) rn , newtab.* FROM (
+  		 	SELECT D.SERVICE_ID      SERVICE_ID,
+  		 		   D.SERVICE_CODE    SERVICE_CODE,
+			       D.SERVICE_CN_NAME SERVICE_CN_NAME,
+			       D.SERVICE_EN_NAME SERVICE_EN_NAME,
+			       A.COMPONENT_ID    COMPONENT_ID,
+			       A.CODE    COMPONENT_CODE,
+             	   A.NAME COMPONENT_NAME,
+                   E.NAME ORG_NAME
+			  FROM COMPONENT A, TECH_IMPL B, SER_TECH_IMPL C, SERVICE D,ORG E 
+			  WHERE  C.STATE NOT IN ('X', 'G')
+		    	AND A.COMPONENT_ID = B.COMPONENT_ID
+				AND B.TECH_IMPL_ID = C.TECH_IMPL_ID
+				AND C.SERVICE_ID = D.SERVICE_ID
+				AND A.ORG_ID = E.ORG_ID
+				AND E.TENANT_ID=#tenantId#
+			  <dynamic>
+		 		<isNotNull prepend="and" property="orgArr"> 
+			 		A.ORG_ID IN 
+			 		<iterate close=")" open="(" property="orgArr"  conjunction=",">
+	                        <![CDATA[ #orgArr[]#  ]]> 
+	          		</iterate>
+		 	   </isNotNull>
+			   <isNotNull prepend="and" property="componentArr"> 
+			 		A.COMPONENT_ID IN 
+			 		<iterate close=")" open="(" property="componentArr"  conjunction=",">
+	                         <![CDATA[ #componentArr[]#  ]]>  
+	          		</iterate>
+			   </isNotNull>
+		 	   <isNotNull prepend="and" property="serviceCodeArr">
+		 			D.SERVICE_CODE IN 
+			 		<iterate close=")" open="(" property="serviceCodeArr"  conjunction=",">
+	                         <![CDATA[ #serviceCodeArr[]#  ]]> 
+	          		</iterate>
+          	  </isNotNull>
+          	</dynamic>
+		   ) newtab ) WHERE rn BETWEEN #pro# AND #end# 
+	</select>
+	
+	<!-- 服务性能监控视图 初始化load服务下拉框 -->
+	<select id="queryServiceList" parameterClass="java.util.HashMap"  resultClass="com.ailk.eaap.op2.bo.Service">
+		 SELECT D.SERVICE_ID      AS serviceId,
+		       D.SERVICE_CN_NAME AS serviceCnName,
+		       D.SERVICE_EN_NAME AS serviceEnName,
+		       D.SERVICE_CODE    AS serviceCode
+		  FROM COMPONENT A, TECH_IMPL B, SER_TECH_IMPL C, SERVICE D
+		 where C.STATE NOT IN ('X', 'G')
+		   AND A.COMPONENT_ID = B.COMPONENT_ID
+		   AND B.TECH_IMPL_ID = C.TECH_IMPL_ID
+		   AND C.SERVICE_ID = D.SERVICE_ID
+		   AND D.TENANT_ID=#tenantId#
+		   <dynamic>
+		 	 <isNotNull prepend="and" property="inArray"> 
+		 	 A.ORG_ID IN <iterate open="("  close=")"  property="inArray"  conjunction=",">#inArray[]#</iterate>
+		 	 </isNotNull>
+		   </dynamic>
+		 GROUP BY D.SERVICE_ID, A.COMPONENT_ID,D.SERVICE_CN_NAME,D.SERVICE_EN_NAME,D.SERVICE_CODE 
+		 ORDER BY D.SERVICE_ID desc
+ 	</select>
+ 	
+	<!-- 服务性能监控视图 总记录数 -->
+	<select id="querySvcPerformanceCount" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+		SELECT COUNT(1) ALLNUM FROM COMPONENT A, TECH_IMPL B, SER_TECH_IMPL C, SERVICE D,ORG E 
+		  WHERE  C.STATE NOT IN ('X', 'G')
+		    	AND A.COMPONENT_ID = B.COMPONENT_ID
+				AND B.TECH_IMPL_ID = C.TECH_IMPL_ID
+				AND C.SERVICE_ID = D.SERVICE_ID
+				AND A.ORG_ID = E.ORG_ID
+				AND E.TENANT_ID=#tenantId#
+			  <dynamic>
+		 		<isNotNull prepend="and" property="orgArr"> 
+			 		A.ORG_ID IN 
+			 		<iterate close=")" open="(" property="orgArr"  conjunction=",">
+	                        <![CDATA[ #orgArr[]#  ]]> 
+	          		</iterate>
+		 	   </isNotNull>
+			   <isNotNull prepend="and" property="componentArr"> 
+			 		A.COMPONENT_ID IN 
+			 		<iterate close=")" open="(" property="componentArr"  conjunction=",">
+	                         <![CDATA[ #componentArr[]#  ]]>  
+	          		</iterate>
+			   </isNotNull>
+		 	   <isNotNull prepend="and" property="serviceCodeArr">
+		 			D.SERVICE_CODE IN 
+			 		<iterate close=")" open="(" property="serviceCodeArr"  conjunction=",">
+	                         <![CDATA[ #serviceCodeArr[]#  ]]> 
+	          		</iterate>
+          	  </isNotNull>
+          	</dynamic>
+ 	</select>
+ 	
+ 	 <!-- 服务监控视图-服务使用方 new-->
+	<select id="querySvcUsePerformanceData" parameterClass="java.util.HashMap" resultClass="com.ailk.eaap.op2.bo.RegStatRecent">
+     SELECT dateTranId ,SUM(totalTrans) AS totalTrans,SUM(totalBizErr) AS totalBizErr,SUM(totalSysErr) AS totalSysErr
+     	 FROM( SELECT T2.DATE_TRAN_ID AS dateTranId,SUM(T2.TOTAL_TRANS) AS totalTrans,SUM(T2.TOTAL_BIZ_ERR) AS totalBizErr,SUM(T2.TOTAL_SYS_ERR) AS totalSysErr
+     	 	FROM USE_STAT_CNT_RECENT T2
+     	 	 <dynamic prepend="WHERE">
+		    	<isNotNull prepend="and" property="dstCode"> T2.SYS_CODE=#dstCode#</isNotNull>
+		    	<isNotNull prepend="and" property="intfCode"> T2.BIZ_INTF_CODE=#intfCode#</isNotNull>
+			 </dynamic>
+          AND T2.DATE_TYPE = 1 AND T2.tenant_Id =#tenantId# AND T2.DATE_TRAN_ID BETWEEN TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMddhh24miss') AND TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss'), 'yyyyMMddhh24miss') GROUP BY DATE_TRAN_ID
+     	 UNION ALL
+     	<![CDATA[
+     	SELECT smonth || shour || sminute dateTranId ,0 totalTrans,0 totalBizErr,0 totalSysErr FROM (select smonth,case  when shour < 10 then 0 || to_char(shour) else to_char(shour) end shour,case when sminute < 10 then 0 || to_char(sminute) else to_char(sminute) end sminute
+     	 from (select smonth, case  when sminute > 59 then  shour + 1 else shour  end shour, case  when sminute > 59 then sminute - 60  else  sminute  end sminute
+     	 from (select to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMdd')) smonth,to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'hh24')) shour, (to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'mi'))-1) + rownum sminute from dual,(select rownum n  from all_objects c  where rownum < 61))))
+       )GROUP BY dateTranId ORDER BY dateTranId
+       ]]>
+    </select>
+    
+     <!--服务监控视图-服务提供方 new-->
+    <select id="querySvcSupplyPerformanceData"  parameterClass="java.util.HashMap" resultClass="com.ailk.eaap.op2.bo.RegStatRecent">
+		 SELECT dateTranId ,SUM(totalTrans) AS totalTrans,SUM(totalBizErr) AS totalBizErr,SUM(totalSysErr) AS totalSysErr
+     	 FROM(SELECT T1.DATE_TRAN_ID AS dateTranId,SUM(T1.TOTAL_TRANS) AS totalTrans,SUM(T1.TOTAL_BIZ_ERR) AS totalBizErr,SUM(T1.TOTAL_SYS_ERR) AS totalSysErr
+     	 	FROM REG_STAT_RECENT T1
+     	 	<dynamic prepend="WHERE">
+				 <isNotNull prepend="and" property="dstCode"> T1.DST_CODE=#dstCode#</isNotNull>
+				 <isNotNull prepend="and" property="intfCode"> T1.INTF_CODE=#intfCode#</isNotNull>
+			</dynamic>
+			 AND T1.DATE_TYPE = 1  AND T1.tenant_Id =#tenantId# AND T1.DATE_TRAN_ID BETWEEN TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMddhh24miss') AND TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss'), 'yyyyMMddhh24miss') GROUP BY DATE_TRAN_ID
+     	 	 UNION ALL
+       <![CDATA[
+     	SELECT smonth || shour || sminute dateTranId ,0 totalTrans, 0 totalBizErr ,0 totalSysErr FROM (select smonth,case  when shour < 10 then 0 || to_char(shour) else to_char(shour) end shour,
+     	 case when sminute < 10 then 0 || to_char(sminute) else to_char(sminute) end sminute from (select smonth, case  when sminute > 59 then  shour + 1 else shour  end shour,
+     	 case  when sminute > 59 then sminute - 60  else  sminute  end sminute from (select to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMdd')) smonth,to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'hh24')) shour, (to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'mi'))-1) + rownum sminute from dual,(select rownum n  from all_objects c  where rownum < 61))))
+       )GROUP BY dateTranId ORDER BY dateTranId
+       ]]>
+    </select>
+    
+     <!--服务监控视图-性能标签 new-->
+    <select id="querySvcPerformanceData"  parameterClass="java.util.HashMap" resultClass="com.ailk.eaap.op2.bo.RegStatRecent">
+ 		SELECT dateTranId ,SUM(avgUsing) AS avgUsing,SUM(avgUsingDst) AS avgUsingDst,SUM(totalTrans) AS totalTrans
+        FROM( SELECT T1.DATE_TRAN_ID AS dateTranId,SUM(T1.AVG_USING) AS avgUsing,SUM(T1.AVG_USING_DST) AS avgUsingDst,(SUM(T1.AVG_USING)+SUM(T1.AVG_USING_DST)) AS totalTrans
+          FROM REG_STAT_RECENT T1
+     	 	 <dynamic prepend="WHERE">
+     	 	  	<isNotNull prepend="and" property="dstCode"> T1.DST_CODE=#dstCode#</isNotNull>
+		   		<isNotNull prepend="and" property="intfCode"> T1.INTF_CODE=#intfCode#</isNotNull>
+		 	</dynamic>
+		 	 AND T1.DATE_TYPE = 1  AND T1.tenant_Id =#tenantId# AND T1.DATE_TRAN_ID BETWEEN TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMddhh24miss') AND TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss'), 'yyyyMMddhh24miss') GROUP BY DATE_TRAN_ID
+     	 	 UNION ALL
+       <![CDATA[
+     	 	 SELECT smonth || shour || sminute dateTranId ,0 avgUsing, 0 avgUsingDst ,0 totalTrans 	
+     	 	   FROM (select smonth,case  when shour < 10 then 0 || to_char(shour) else to_char(shour) end shour,case when sminute < 10 then 0 || to_char(sminute) else to_char(sminute) end sminute
+     	 	     from (select smonth, case  when sminute > 59 then  shour + 1 else shour  end shour,case  when sminute > 59 then sminute - 60  else  sminute  end sminute
+     	 	     from (select to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMdd')) smonth,to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'hh24')) shour, (to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'mi'))-1) + rownum sminute from dual,(select rownum n  from all_objects c  where rownum < 61))))
+       )GROUP BY dateTranId ORDER BY dateTranId
+       ]]>
+    </select>
+    
+    <!-- 单个业务监控视图 加载业务下拉框 -->
+     <select id="queryBizFunctionList" parameterClass="java.util.HashMap" resultClass="com.ailk.eaap.op2.bo.BizFunction">
+     SELECT F.BIZ_FUNCTION_ID AS bizFunctionId,F.CODE AS code,F.NAME AS name 
+		FROM COMPONENT A, TECH_IMPL B, SER_TECH_IMPL C, SERVICE D,FUNC_2_SERVICE E,BIZ_FUNCTION F
+		where C.STATE NOT IN ('X', 'G') 
+			AND A.COMPONENT_ID = B.COMPONENT_ID 
+			AND B.TECH_IMPL_ID = C.TECH_IMPL_ID 
+			AND C.SERVICE_ID = D.SERVICE_ID 
+			AND D.SERVICE_ID = E.SERVICE_ID 
+			AND E.BIZ_FUNCTION_ID = F.BIZ_FUNCTION_ID
+			AND F.TENANT_ID=#tenantId#
+		 <dynamic>
+		    <isNotNull prepend="and" property="inArray">
+		     	A.ORG_ID IN <iterate open="("  close=")"  property="inArray"  conjunction=","> #inArray[]#</iterate>
+		     </isNotNull>
+		 </dynamic>
+		GROUP BY F.BIZ_FUNCTION_ID,F.CODE,F.NAME
+	</select>
+    <!-- 单个业务监控视图 总记录数 -->
+	<select id="querySingleBizCount" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+		SELECT COUNT(1) ALLNUM FROM COMPONENT A, TECH_IMPL B, SER_TECH_IMPL C, SERVICE D,FUNC_2_SERVICE E,BIZ_FUNCTION F,ORG G
+		WHERE C.STATE NOT IN ('X', 'G')
+	    	AND A.COMPONENT_ID = B.COMPONENT_ID
+			AND B.TECH_IMPL_ID = C.TECH_IMPL_ID
+			AND C.SERVICE_ID = D.SERVICE_ID
+      		AND D.SERVICE_ID = E.SERVICE_ID
+      		AND E.BIZ_FUNCTION_ID = F.BIZ_FUNCTION_ID
+      		AND A.ORG_ID = G.ORG_ID
+			AND G.TENANT_ID=#tenantId#
+      	 <dynamic>
+	 	  <isNotNull prepend="and" property="orgArr"> 
+		 		A.ORG_ID IN 
+		 		<iterate close=")" open="(" property="orgArr"  conjunction=",">
+                        <![CDATA[ #orgArr[]#  ]]> 
+          		</iterate>
+	 	   </isNotNull>
+		   <isNotNull prepend="and" property="componentArr"> 
+		 		A.COMPONENT_ID IN 
+		 		<iterate close=")" open="(" property="componentArr"  conjunction=",">
+                         <![CDATA[ #componentArr[]#  ]]>  
+          		</iterate>
+		   </isNotNull>
+	 	   <isNotNull prepend="and" property="bizFuncArr">
+	 			F.CODE IN
+		 		<iterate close=")" open="(" property="bizFuncArr"  conjunction=",">
+                         <![CDATA[ #bizFuncArr[]#  ]]> 
+          		</iterate>
+         	</isNotNull>
+         </dynamic>
+ 	</select>
+ 	
+ 	 <!-- 单笔业务监控视图首页 -->
+    <select id="querySingleBizList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+  		 SELECT * FROM (SELECT ROW_NUMBER() OVER( ORDER BY BIZ_FUNCTION_ID ) rn , newtab.* FROM (
+  		 	SELECT F.BIZ_FUNCTION_ID BIZ_FUNCTION_ID,F.CODE CODE,F.NAME NAME,G.NAME ORG_NAME,A.NAME COMPONENT_NAME
+        FROM COMPONENT A, TECH_IMPL B, SER_TECH_IMPL C, SERVICE D,FUNC_2_SERVICE E,BIZ_FUNCTION F,ORG G
+        WHERE C.STATE NOT IN ('X', 'G')
+	    	AND A.COMPONENT_ID = B.COMPONENT_ID
+			AND B.TECH_IMPL_ID = C.TECH_IMPL_ID
+			AND C.SERVICE_ID = D.SERVICE_ID
+      		AND D.SERVICE_ID = E.SERVICE_ID
+      		AND E.BIZ_FUNCTION_ID = F.BIZ_FUNCTION_ID
+      		AND A.ORG_ID = G.ORG_ID
+      		AND G.TENANT_ID=#tenantId#
+      	<dynamic>
+	 	  <isNotNull prepend="and" property="orgArr"> 
+		 		A.ORG_ID IN 
+		 		<iterate close=")" open="(" property="orgArr"  conjunction=",">
+                        <![CDATA[ #orgArr[]#  ]]> 
+          		</iterate>
+	 	   </isNotNull>
+		   <isNotNull prepend="and" property="componentArr"> 
+		 		A.COMPONENT_ID IN 
+		 		<iterate close=")" open="(" property="componentArr"  conjunction=",">
+                         <![CDATA[ #componentArr[]#  ]]>  
+          		</iterate>
+		   </isNotNull>
+	 	   <isNotNull prepend="and" property="bizFuncArr">
+	 			F.CODE IN
+		 		<iterate close=")" open="(" property="bizFuncArr"  conjunction=",">
+                         <![CDATA[ #bizFuncArr[]#  ]]> 
+          		</iterate>
+         	</isNotNull>
+         </dynamic>
+		   ) newtab ) WHERE rn BETWEEN #pro# AND #end# 
+	</select>
+	
+	<!-- 单笔业务监控视图首页-性能标签接口数据 -->
+    <select id="queryPerformanceSingleBizData" parameterClass="java.util.HashMap" resultClass="com.ailk.eaap.op2.bo.RegStatRecent">
+   SELECT dateTranId ,SUM(avgUsing) AS avgUsing,SUM(avgUsingDst) AS avgUsingDst,SUM(totalTrans) AS totalTrans
+        FROM( SELECT T1.DATE_TRAN_ID AS dateTranId,SUM(T1.AVG_USING) AS avgUsing,SUM(T1.AVG_USING_DST) AS avgUsingDst,(SUM(T1.AVG_USING)+SUM(T1.AVG_USING_DST)) AS totalTrans
+          FROM REG_STAT_RECENT T1
+     	 	 <dynamic prepend="WHERE">
+		   		<isNotNull prepend="and" property="bizCode"> T1.BIZ_CODE=#bizCode#</isNotNull>
+		 	</dynamic>
+     	 	 AND T1.DATE_TYPE = 1  AND T1.tenant_Id =#tenantId# AND T1.DATE_TRAN_ID BETWEEN TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMddhh24miss') AND TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss'), 'yyyyMMddhh24miss') GROUP BY DATE_TRAN_ID
+     	 	 UNION ALL
+       <![CDATA[
+     SELECT smonth || shour || sminute dateTranId ,0 avgUsing, 0 avgUsingDst ,0 totalTrans	
+     	FROM (select smonth,case  when shour < 10 then 0 || to_char(shour) else to_char(shour) end shour,case when sminute < 10 then 0 || to_char(sminute) else to_char(sminute) end sminute
+     	from (select smonth, case  when sminute > 59 then  shour + 1 else shour  end shour,case  when sminute > 59 then sminute - 60  else  sminute  end sminute  from (select to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMdd')) smonth,
+     	 to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'hh24')) shour, (to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'mi'))-1) + rownum sminute from dual,(select rownum n  from all_objects c  where rownum < 61))))
+       )GROUP BY dateTranId ORDER BY dateTranId
+       ]]>
+	</select>
+	
+	<!-- 单笔业务监控视图首页-落地方接口数据 -->
+    <select id="querySvcRegSingleBizData" parameterClass="java.util.HashMap" resultClass="com.ailk.eaap.op2.bo.RegStatRecent">
+     SELECT dateTranId ,SUM(totalTrans) AS totalTrans,SUM(totalBizErr) AS totalBizErr,SUM(totalSysErr) AS totalSysErr
+     	 FROM( SELECT T1.DATE_TRAN_ID AS dateTranId,SUM(T1.TOTAL_TRANS) AS totalTrans,SUM(T1.TOTAL_BIZ_ERR) AS totalBizErr,SUM(T1.TOTAL_SYS_ERR) AS totalSysErr
+     	 	FROM REG_STAT_RECENT T1
+     	 	 <dynamic prepend="WHERE">
+		   		<isNotNull prepend="and" property="bizCode"> T1.BIZ_CODE=#bizCode#</isNotNull>
+		 	</dynamic>
+     	 	 AND T1.DATE_TYPE = 1  AND T1.tenant_Id =#tenantId# AND T1.DATE_TRAN_ID BETWEEN TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMddhh24miss') AND TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss'), 'yyyyMMddhh24miss') GROUP BY DATE_TRAN_ID
+     	 	 UNION ALL
+       <![CDATA[
+     	 	    SELECT smonth || shour || sminute dateTranId ,0 totalTrans, 0 totalBizErr ,0 totalSysErr	
+     	 	        FROM (select smonth,case  when shour < 10 then 0 || to_char(shour) else to_char(shour) end shour,
+     	 	        		case when sminute < 10 then 0 || to_char(sminute) else to_char(sminute) end sminute
+     	 	        	  from (select smonth, case  when sminute > 59 then  shour + 1 else shour  end shour,
+     	 	        	        case  when sminute > 59 then sminute - 60  else  sminute  end sminute
+     	 	        	         from (select to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMdd')) smonth,
+     	 	        	               to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'hh24')) shour, (to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'mi'))-1) + rownum sminute from dual,
+     	 	          					 (select rownum n  from all_objects c  where rownum < 61))))
+       )GROUP BY dateTranId ORDER BY dateTranId
+       ]]>
+	</select>
+	
+	<!-- 单笔业务监控视图首页-服务使用方 接口数据 -->
+    <select id="queryRequestSingleBizData" parameterClass="java.util.HashMap" resultClass="com.ailk.eaap.op2.bo.RegStatRecent">
+     SELECT dateTranId ,SUM(totalTrans) AS totalTrans,SUM(totalBizErr) AS totalBizErr,SUM(totalSysErr) AS totalSysErr
+     	 FROM(SELECT T2.DATE_TRAN_ID AS dateTranId,SUM(T2.TOTAL_TRANS) AS totalTrans,SUM(T2.TOTAL_BIZ_ERR) AS totalBizErr,SUM(T2.TOTAL_SYS_ERR) AS totalSysErr
+     	 	FROM USE_STAT_CNT_RECENT T2
+     	 	 <dynamic prepend="WHERE">
+		   		<isNotNull prepend="and" property="bizCode"> T2.BIZ_CODE=#bizCode#</isNotNull>
+		 	</dynamic>
+     AND T2.DATE_TYPE = 1 AND T2.tenant_Id =#tenantId# AND T2.DATE_TRAN_ID BETWEEN TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMddhh24miss') AND TO_CHAR(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss'), 'yyyyMMddhh24miss') GROUP BY DATE_TRAN_ID
+     UNION ALL
+       <![CDATA[
+     	SELECT smonth || shour || sminute dateTranId ,0 totalTrans, 0 totalBizErr ,0 totalSysErr	
+     	FROM (select smonth,case  when shour < 10 then 0 || to_char(shour) else to_char(shour) end shour,case when sminute < 10 then 0 || to_char(sminute) else to_char(sminute) end sminute
+     	 from (select smonth, case  when sminute > 59 then  shour + 1 else shour  end shour,case  when sminute > 59 then sminute - 60  else  sminute  end sminute
+     	 from (select to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'yyyyMMdd')) smonth,to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'hh24')) shour, (to_number(to_char(to_date(#nDate#,'yyyy-MM-dd hh24:mi:ss') - 1 / 24, 'mi'))-1) + rownum sminute from dual, (select rownum n  from all_objects c  where rownum < 61))))
+       )GROUP BY dateTranId ORDER BY dateTranId
+       ]]>
+	</select>
+</sqlMap> 

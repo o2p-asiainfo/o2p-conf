@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+						http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+       					http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+	<bean id="transformerRuleCache" class="com.ailk.eaap.integration.o2p.transformer.cache.TransformerRuleCacheManager">
+		<property name="cache" ref="transformer.cache"></property>
+		<property name="transformerRuleDao" ref="transformerRuleDao"></property>
+	</bean>
+	<bean id="scriptExecutorFactory" class="com.ailk.eaap.integration.o2p.script.jsr223.ScriptExecutorFactory" init-method="initScriptExecutor">
+		<property name="sington" value="true"></property>
+	</bean>
+	<bean id="scriptExecutorTransformer" class="com.ailk.eaap.integration.o2p.transformer.ScriptExecutorTransformer">
+		<property name="scriptExecutorFactory" ref="scriptExecutorFactory"></property>
+		<property name="jdbcTemplate" ref="confjdbcTemplate"></property>
+	</bean>
+	<bean id="xml2JsonTransformer" class="com.ailk.eaap.integration.o2p.transformer.Xml2JsonTransformer"></bean>
+	<bean id="json2XmlTransformer" class="com.ailk.eaap.integration.o2p.transformer.Json2XmlTransformer"></bean>
+	<bean id="file2ByteArrayTransformer" class="com.ailk.eaap.integration.o2p.transformer.File2ByteArrayTransformer"></bean>
+	<bean id="xslTransformer" class="com.ailk.eaap.integration.o2p.transformer.XSLTransformer">
+		<property name="transformerHelper" ref="xslTransformerFactoryHelper"></property>
+	</bean>
+    <bean id="xQueryTransformer" class="com.ailk.eaap.integration.o2p.transformer.XQueryTransformer"/>
+	<bean id="xslTransformerFactoryHelper" class="com.ailk.eaap.integration.o2p.transformer.xml.TransformerHelper"></bean>
+    <bean id="bigFileTransformer" class="com.ailk.eaap.integration.o2p.transformer.BigFileTransformer"/>
+    <bean id="byte2StringTransformer" class="com.ailk.eaap.integration.o2p.transformer.Byte2StringTransformer"/>
+    <bean id="createMappingFileTransformer" class="com.ailk.eaap.integration.o2p.transformer.CreateMappingFileTransformer"/>
+	<bean id="transformerFactoryProxy" class="com.ailk.eaap.integration.o2p.transformer.TransformerFactoryProxy" >
+		<property name="transformerHolder">
+			<map>
+				<entry key="1" value-ref="defaultTransformer"/>
+				<entry key="2" value-ref="scriptExecutorTransformer"/>
+				<entry key="3" value-ref="scriptExecutorTransformer"/>
+				<entry key="4" value-ref="scriptExecutorTransformer"/>
+				<entry key="5" value-ref="xslTransformer"/>
+				<entry key="6" value-ref="xml2JsonTransformer"/>
+				<entry key="7" value-ref="json2XmlTransformer"/>
+				<entry key="9" value-ref="file2ByteArrayTransformer"/>
+                <entry key="10" value-ref="xQueryTransformer" />
+                <entry key="11" value-ref="bigFileTransformer" />
+                <entry key="12" value-ref="byte2StringTransformer" />
+                <entry key="13" value-ref="createMappingFileTransformer" />
+			</map>
+		</property>
+	</bean>
+	<bean id="defaultTransformer" class="com.ailk.eaap.integration.o2p.transformer.DefaultTransformer">
+		<property name="messageMapperService" ref="messageMapperService"></property>
+	</bean>
+	<bean id="messageMapperService" class="com.ailk.eaap.integration.o2p.message.support.MessageMapperServiceImpl">
+		<property name="cache" ref="transformer.cache"></property>
+		<property name="scriptExecutorFactory" ref="scriptExecutorFactory"></property>
+	</bean>
+	<bean id="transformerRuleService" class="com.ailk.eaap.integration.o2p.transformer.service.TransformerRuleServiceImpl">
+		<property name="cache" ref="transformer.cache"></property>
+		<property name="transformerFactory" ref="transformerFactoryProxy"></property>
+	</bean>
+	<bean id="transformerProcessor" class="com.ailk.eaap.integration.o2p.serviceagent.endpoint.TransformerEndpointProcessor">
+		<property name="transformerRuleService" ref="transformerRuleService"></property>
+	</bean>
+</beans>

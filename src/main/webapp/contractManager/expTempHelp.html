@@ -1,0 +1,17 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+<body>
+
+ BODY  Reference:<br>
+<textarea style="width:100%; height:200px;">
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <soapenv:Body>
+      <ns1:queryServiceResponse soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:ns1="http://service.ws.crm.bss.linkage.com/">
+         <queryServiceReturn xsi:type="xsd:string"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><ContractRoot><TcpCont><ActionCode>1</ActionCode><TransactionID>${messageBO.transactionID}</TransactionID><RspTime>${messageBO.rspTime}</RspTime><Response><RspType>${messageBO.rspType}</RspType><RspCode>${messageBO.EAAPException.code}</RspCode><RspDesc>${messageBO.EAAPException.msg}</RspDesc></Response></TcpCont></ContractRoot>]]></queryServiceReturn>
+      </ns1:queryServiceResponse>
+   </soapenv:Body>
+</soapenv:Envelope>
+</textarea>
+</body>
+</html>

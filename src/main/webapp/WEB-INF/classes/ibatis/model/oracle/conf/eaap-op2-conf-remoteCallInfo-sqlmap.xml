@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "http://ibatis.apache.org/dtd/sql-map-2.dtd" "-//ibatis.apache.org//DTD SQL Map 2.0//EN">
+
+<sqlMap namespace="eaap-op2-conf-remoteCallInfo">
+
+	<select id="getRemoteCallInfoListCount" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	   select count(1) ALLNUM
+	     from remote_call_info
+	     where remote_call_url_status != 'R'
+	  <dynamic>
+	    <isNotNull prepend="and" property="remoteCallUrlCode"> remote_call_url_code like '%'||#remoteCallUrlCode#||'%'</isNotNull>
+	    <isNotNull prepend="and" property="remoteCallUrl"> remote_call_url like '%'||#remoteCallUrl#||'%'</isNotNull>
+	    <isNotNull prepend="and" property="remoteCallUrlStatus"> remote_call_url_status = #remoteCallUrlStatus#</isNotNull>
+	    <isNotNull prepend="and" property="tenantId"> tenant_id =#tenantId#</isNotNull>
+	  </dynamic>
+	</select>
+	
+	<select id="getRemoteCallInfoList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	   select remote_call_url_id, remote_call_url_code, remote_call_url_status, remote_call_url
+	     from remote_call_info
+	    where remote_call_url_status != 'R'
+	  <dynamic>
+	    <isNotNull prepend="and" property="remoteCallUrlCode"> remote_call_url_code like '%'||#remoteCallUrlCode#||'%'</isNotNull>
+	    <isNotNull prepend="and" property="remoteCallUrl"> remote_call_url like '%'||#remoteCallUrl#||'%'</isNotNull>
+	    <isNotNull prepend="and" property="remoteCallUrlStatus"> remote_call_url_status = #remoteCallUrlStatus#</isNotNull>
+	    <isNotNull prepend="and" property="tenantId"> tenant_id =#tenantId#</isNotNull>
+	  </dynamic>
+         Limit #pro_mysql#,#page_record#
+	</select>
+
+    <select id="getRemoteCallInfo" parameterClass="com.ailk.eaap.op2.bo.RemoteCallInfo" resultClass="com.ailk.eaap.op2.bo.RemoteCallInfo">
+	   select remote_call_url_id remoteCallUrlId,
+	          remote_call_url_code  remoteCallUrlCode,
+	          remote_call_url remoteCallUrl,
+	          remote_call_url_status remoteCallUrlStatus
+	     from remote_call_info
+	    where remote_call_url_id = #remoteCallUrlId#
+	    and tenant_id =#tenantId#
+	</select>
+	
+	  <insert id="insertRemoteCallInfo" parameterClass="com.ailk.eaap.op2.bo.RemoteCallInfo">
+		  <selectKey resultClass="int" keyProperty="remoteCallUrlId">
+			SELECT SEQ_REMOTE_CALL_INFO_ID.NEXTVAL FROM DUAL
+		  </selectKey>
+		  insert into remote_call_info(  
+		  <dynamic>
+		    <isNotNull prepend="," property="remoteCallUrlId">remote_call_url_id</isNotNull>	    
+		    <isNotNull prepend="," property="remoteCallUrlCode">remote_call_url_code</isNotNull>
+		    <isNotNull prepend="," property="remoteCallUrl">remote_call_url</isNotNull>
+		    <isNotNull prepend="," property="remoteCallUrlStatus">remote_call_url_status</isNotNull>	
+		    <isNotNull prepend="," property="tenantId">TENANT_ID</isNotNull>
+		  </dynamic>
+		  )values(
+		   <dynamic >
+		    <isNotNull prepend="," property="remoteCallUrlId">#remoteCallUrlId#</isNotNull>
+		    <isNotNull prepend="," property="remoteCallUrlCode">#remoteCallUrlCode#</isNotNull>
+		    <isNotNull prepend="," property="remoteCallUrl">#remoteCallUrl#</isNotNull>
+		    <isNotNull prepend="," property="remoteCallUrlStatus">#remoteCallUrlStatus#</isNotNull>
+		    <isNotNull prepend="," property="tenantId">#tenantId#</isNotNull>
+		    </dynamic>
+		  )
+		</insert>
+	
+		<update id="updateRemoteCallInfo" parameterClass="com.ailk.eaap.op2.bo.RemoteCallInfo">
+		  update remote_call_info
+		  <dynamic prepend="set">
+		    <isNotNull prepend="," property="remoteCallUrlCode">remote_call_url_code=#remoteCallUrlCode#</isNotNull>
+		    <isNotNull prepend="," property="remoteCallUrl">remote_call_url=#remoteCallUrl#</isNotNull>
+		    <isNotNull prepend="," property="remoteCallUrlStatus">remote_call_url_status=#remoteCallUrlStatus#</isNotNull>
+		  </dynamic>
+		  where remote_call_url_id=#remoteCallUrlId# and tenant_id =#tenantId#
+		</update>
+		
+      <delete id="deleteRemoteCallInfo" parameterClass="com.ailk.eaap.op2.bo.RemoteCallInfo">
+		    delete from remote_call_info where remote_call_url_id=#remoteCallUrlId# and tenant_id =#tenantId#
+	  </delete>
+	  
+
+</sqlMap>

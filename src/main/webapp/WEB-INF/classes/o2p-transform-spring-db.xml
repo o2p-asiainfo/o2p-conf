@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+						http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+       					http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+
+<!-- 
+	<bean id="fe.propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:o2p-transform-dev.properties</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName">
+			<value>${jdbcDriver}</value>
+		</property>
+		<property name="url">
+			<value>${dataBase}</value>
+		</property>
+		<property name="username">
+			<value>${user}</value>
+		</property>
+		<property name="password">
+			<value>${password}</value>
+		</property>
+		<property name="maxActive">
+			<value>${maxActive}</value>
+		</property>
+		<property name="maxIdle">
+			<value>${maxIdle}</value>
+		</property>
+		<property name="minIdle">
+			<value>${minIdle}</value>
+		</property>
+		<property name="initialSize">
+			<value>${initialSize}</value>
+		</property>
+		<property name="accessToUnderlyingConnectionAllowed">
+			<value>${accessToUnderlyingConnectionAllowed}
+			</value>
+		</property>
+	</bean>	
+ -->	
+	<bean id="jdbc" class="org.springframework.jdbc.core.JdbcTemplate">
+		<constructor-arg>
+			<ref bean="common-dataSource" />
+		</constructor-arg>
+	</bean>
+	<bean id="transformer.sqlMapClientTemplate" class="org.springframework.orm.ibatis.SqlMapClientTemplate">
+		<property name="sqlMapClient" ref="transformer.sqlMapClient" />
+	</bean>
+	<bean id="transformer.sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+		<property name="dataSource" ref="common-dataSource" />
+		<property name="configLocation" value="classpath:com/ailk/eaap/integration/o2p/transformer/dao/sqlMapConfig.xml" />
+	</bean>
+	<!-- <tx:annotation-driven transaction-manager="txManager"/> -->
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="common-dataSource"></property>
+	</bean>
+
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="insert*" timeout="120" rollback-for="Exception" />
+			<tx:method name="update*" timeout="120" rollback-for="Exception" />
+			<tx:method name="add*" timeout="120" rollback-for="Exception" />
+			<tx:method name="del*" timeout="120" rollback-for="Exception" />
+			<tx:method name="_save*" timeout="120" rollback-for="Exception" />
+			<tx:method name="save*" timeout="120" rollback-for="Exception" />
+			<tx:method name="commit*" timeout="120" rollback-for="Exception" />
+			<tx:method name="*" propagation="SUPPORTS" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+
+	<aop:config>
+		<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.ailk.eaap.integration.o2p..*ServiceImpl.*(..))" />
+	</aop:config>
+</beans>

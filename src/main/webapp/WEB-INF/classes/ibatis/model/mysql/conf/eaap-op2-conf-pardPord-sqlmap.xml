@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "http://ibatis.apache.org/dtd/sql-map-2.dtd" "-//ibatis.apache.org//DTD SQL Map 2.0//EN">
+
+<sqlMap namespace="eaap-op2-conf-pardPord">
+	 <select id="queryProductAttrGroupRelaAndProductAttr" resultClass="com.ailk.eaap.op2.bo.ProductAttr" parameterClass="java.util.HashMap">	
+          select c.PRODUCT_ATTR_ID as productAttrId, c.DEFAULT_VALUE as defaultValue, c.ATTR_SPEC_ID as attrSpecId from PRODUCT_ATTR c where  c.product_attr_id in( select b.product_attr_id from PRODUCT_ATTR_GROUP_RELA b  where b.product_attr_group_id=#productAttrGroupId# )
+          and c.attr_spec_id=#attrSpecId#
+	 </select>
+	 
+	 <select id="queryProductAttrValueAndAttrValue" resultClass="com.ailk.eaap.op2.bo.AttrValue" parameterClass="com.ailk.eaap.op2.bo.ProductAttr">	
+          select m.attr_desc as attrDesc  from ATTR_VALUE m ,PROD_ATTR_VALUE n where m.attr_value_id = n.attr_value_id and  n.product_attr_id=#productAttrId#
+	 </select>
+	 
+</sqlMap>

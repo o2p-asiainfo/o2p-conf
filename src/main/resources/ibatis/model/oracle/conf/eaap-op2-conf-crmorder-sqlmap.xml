@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "http://ibatis.apache.org/dtd/sql-map-2.dtd" "-//ibatis.apache.org//DTD SQL Map 2.0//EN">
+
+<sqlMap namespace="eaap-op2-conf-crmorder">
+	
+<select id="queryAttrSpec" resultClass="java.util.HashMap">
+	SELECT a.attr_spec_id attrId,a.attr_spec_name attrName FROM attr_spec a WHERE a.scale = 5
+</select>	
+	
+<select id="queryCrmUserAddressById" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+	SELECT i.user_id userId,e.attr_spec_id attrId,e.attr_value attrValue FROM prod_inst_user_ext e 
+	LEFT JOIN prod_inst_user_info i ON 
+	e.u_id = i.u_id WHERE 1 = 1 
+	<dynamic>
+  			<isNotNull prepend="and" property="uIds"> 
+  				e.u_id IN (#uIds#) 
+  			</isNotNull>
+   </dynamic>
+   ORDER BY e.attr_seq
+</select>
+
+<select id="queryCrmOrderProductById" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+   SELECT t1.*,
+   t2.maind_id actTypeId,
+   t2.cep_name actType 
+   FROM 
+  	(SELECT t.so_nbr soNbr,i.main_flag mainFlag,i.prod_id prodId,i.prod_name prodName,i.act_type 
+  	FROM prod_inst_info i,
+  		(SELECT b.order_item_id,a.so_nbr FROM cust_order_info a 
+  			LEFT JOIN cust_order_item b ON a.order_id = b.order_id 
+  			WHERE 1 = 1 
+  			<dynamic>
+  					<isNotNull prepend="and" property="orderId"> 
+  						a.order_id = #orderId#
+  					</isNotNull>
+    	    </dynamic>
+  			) t 
+  	    WHERE i.order_item_id = t.order_item_id) t1 
+  	LEFT JOIN (SELECT * FROM main_data m WHERE m.mdt_cd = #CRMORDER_PRODUCT_ACT_TYPE#) 
+  	t2 ON t1.act_type = t2.cep_code 
+</select>	
+	
+<select id="queryCrmOrderUserById" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+ 	 SELECT 
+ 	 a.so_nbr soNbr,
+ 	  a.so_nbr soNbr,
+ 	 a.u_id uId,
+ 	 a.user_id userId,
+ 	 m.maind_id userTypeId,
+ 	 m.cep_name userType, 
+ 	 a.company_name companyName,
+ 	 a.first_name firstName,
+ 	 a.middle_name middleName,
+ 	 a.last_name lastName,
+ 	 a.address_info addressInfo,
+ 	 a.phone phone 
+ 	 FROM 
+    	(SELECT t.so_nbr,p.* FROM prod_inst_user_info p,
+    		(SELECT r.u_id,t.so_nbr FROM prod_inst_user_rel r,
+    		(SELECT t1.prod_inst_id,t3.so_nbr FROM prod_inst_info t1 
+    			LEFT JOIN cust_order_item t2 ON t1.order_item_id = t2.order_item_id 
+    			LEFT JOIN cust_order_info t3 ON t2.order_id  = t3.order_id 
+    			WHERE 1 = 1 
+    			<dynamic>
+  					<isNotNull prepend="and" property="orderId"> 
+  						t3.order_id = #orderId# 
+  					</isNotNull>
+    			</dynamic>
+    		) t WHERE r.prod_inst_id = t.prod_inst_id) t 
+    	WHERE p.u_id = t.u_id) a 
+    LEFT JOIN (SELECT * FROM main_data m WHERE m.mdt_cd = #CRMORDER_USER_TYPE_ID#) m ON a.user_type = m.cep_code
+</select>
+
+<select id="queryCrmOrderCustomerById" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+ 	SELECT i.so_nbr soNber,
+ 	i.order_nbr orderNbr,
+ 	c.cust_id custId,
+ 	c.state state,
+ 	m.maind_id userTypeId,
+ 	m.cep_name userType,
+ 	c.company_name companyName,
+ 	c.first_name firstName,
+ 	c.mid_name midName,
+ 	c.last_name lastName, 
+ 	c.country country 
+ 	FROM cust_info c 
+  	LEFT JOIN (SELECT * FROM main_data m WHERE m.mdt_cd = #CRMORDER_CUST_TYPE_ID#) m ON c.cust_type_id = m.cep_code
+  	LEFT JOIN cust_order_info i ON c.order_id = i.order_id
+  	where 1 = 1
+  	<dynamic>
+  		<isNotNull prepend="and" property="orderId"> 
+  			c.order_id = #orderId# 
+  		</isNotNull>
+    </dynamic>
+</select>
+
+<select id="queryCrmOrderById" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+ 	SELECT c.order_id orderId,
+  	c.so_nbr soNbr,
+  	c.so_nbr soNbr,
+  	m.maind_id cepId,
+  	m.cep_name cepName,
+  	to_char(c.accept_date, 'yyyy-mm-dd') acceptDate,
+  	c.contry_code countryCode,
+  	c.locality locality,
+  	c.main_server_id mainServerId,
+  	n.maind_id tradeTypeCodeId,
+  	n.cep_name tradeTypeCode,
+  	c.proc_id procId,
+  	c.orignal_so_nbr orignalSoNbr,
+  	o.maind_id orderStatusId,
+  	o.cep_name orderStatus
+  	FROM cust_order_info c 
+  	LEFT JOIN cust_order_item i ON c.order_id = i.order_id 
+  	LEFT JOIN (SELECT * FROM main_data m WHERE m.mdt_cd = #CRM_ORDER_TYPE#) m ON c.so_type = m.cep_code 
+  	LEFT JOIN (SELECT * FROM main_data n WHERE n.mdt_cd = #CRMORDER_TRADE_TYPE_CODE#) n ON i.trade_type_code = n.cep_code 
+  	LEFT JOIN (SELECT * FROM main_data n WHERE n.mdt_cd = #CRM_ORDER_STATUS#) o ON c.order_status = o.cep_code
+  	WHERE 1 = 1 
+  	<dynamic>
+  		<isNotNull prepend="and" property="orderId"> 
+  			c.order_id = #orderId# 
+  		</isNotNull>
+    </dynamic>
+</select>
+
+<select id="queryCrmOrderList" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+ 	SELECT c.order_id orderId,
+ 	c.order_nbr orderNbr,
+  	c.so_nbr soNbr,
+  	m.maind_id cepId,
+  	m.cep_name cepName,
+  	to_char(c.accept_date, 'yyyy-mm-dd') acceptDate,
+  	c.contry_code countryCode,
+  	c.locality locality,
+  	c.main_server_id mainServerId,
+  	n.maind_id tradeTypeCodeId,
+  	n.cep_name tradeTypeCode,
+  	c.proc_id procId,
+  	t.maind_id orderStatusId,
+  	t.cep_name orderStatusName,
+  	q.maind_id crmResultId,
+    q.cep_name crmResultName
+  	FROM cust_order_info c 
+  	LEFT JOIN cust_order_item i ON c.order_id = i.order_id 
+  	LEFT JOIN (SELECT * FROM main_data m WHERE m.mdt_cd = #CRM_ORDER_TYPE#) m ON c.so_type = m.cep_code 
+  	LEFT JOIN (SELECT * FROM main_data n WHERE n.mdt_cd = #CRMORDER_TRADE_TYPE_CODE#) n ON i.trade_type_code = n.cep_code
+  	LEFT JOIN (SELECT * FROM main_data n WHERE n.mdt_cd = #CRM_ORDER_STATUS#) t ON c.order_status = t.cep_code
+  	LEFT JOIN (SELECT * FROM main_data n WHERE n.mdt_cd = #CRM_ORDER_RESULT#) q ON c.crm_result = q.cep_code
+  	WHERE 1 = 1 and <![CDATA[c.order_status <> 9 ]]>
+  	<dynamic>
+  		<isNotNull prepend="and" property="soNbr"> 
+  			c.so_nbr LIKE '%'||#soNbr#||'%'
+  		</isNotNull>
+  		<isNotNull prepend="and" property="orderNbr"> 
+  			c.order_nbr LIKE '%'||#orderNbr#||'%'
+  		</isNotNull>
+  		<isNotNull prepend="and" property="soType"> 
+  			c.so_type = #soType# 
+  		</isNotNull>
+  		<isNotNull prepend="and" property="startAcceptDate"> 
+  			<![CDATA[ c.accept_date >= #startAcceptDate# ]]> 
+  		</isNotNull>
+  		<isNotNull prepend="and" property="endAcceptDate"> 
+  			<![CDATA[ c.accept_date <= #endAcceptDate# ]]> 
+  		</isNotNull> 
+    </dynamic>
+    ORDER BY c.order_id DESC
+    LIMIT #pro_mysql#,#page_record#
+</select>
+
+ <select id="queryCrmOrderCount" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+ 	SELECT COUNT(*) ALLNUM FROM cust_order_info c WHERE 1 = 1
+  	<dynamic>
+  		<isNotNull prepend="and" property="soNbr"> 
+  			c.so_nbr LIKE '%'||#soNbr#||'%'
+  		</isNotNull>
+  		<isNotNull prepend="and" property="orderNbr"> 
+  			c.order_nbr LIKE '%'||#orderNbr#||'%'
+  		</isNotNull>
+  		<isNotNull prepend="and" property="soType"> 
+  			c.so_type = #soType# 
+  		</isNotNull>
+  		<isNotNull prepend="and" property="startAcceptDate"> 
+  			<![CDATA[ c.accept_date >= #startAcceptDate# ]]> 
+  		</isNotNull>
+  		<isNotNull prepend="and" property="endAcceptDate"> 
+  			<![CDATA[ c.accept_date <= #endAcceptDate# ]]> 
+  		</isNotNull> 
+    </dynamic>
+</select>
+
+
+</sqlMap>

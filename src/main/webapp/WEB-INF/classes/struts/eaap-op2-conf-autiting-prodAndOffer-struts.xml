@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="prodAndOffer" extends="default" namespace="/prodAndOffer">
+		
+		<action name="queryPardPordInfo" class="com.ailk.eaap.op2.conf.auditing.action.ProdAndOfferAuditingAction" method="queryPardPordInfo">
+			<result name="success">/auditing/pardProduct_auditing.jsp</result>
+		</action>
+		
+		<action name="checkPardProduct"
+			class="com.ailk.eaap.op2.conf.auditing.action.ProdAndOfferAuditingAction" method="checkPardProduct">
+		</action>
+		
+		<action name="showProdOfferInfo" class="com.ailk.eaap.op2.conf.auditing.action.ProdAndOfferAuditingAction" method="showProdOfferInfo">
+			<result name="success">/auditing/pardOffer_auditing.jsp</result> 
+		</action>
+		
+		<action name="checkPardOffer" class="com.ailk.eaap.op2.conf.auditing.action.ProdAndOfferAuditingAction" method="checkPardOffer"></action>
+	 </package>
+</struts>

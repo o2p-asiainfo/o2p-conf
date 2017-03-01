@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "http://ibatis.apache.org/dtd/sql-map-2.dtd" "-//ibatis.apache.org//DTD SQL Map 2.0//EN">
+
+<sqlMap namespace="eaap-op2-conf-flowcontrol">
+
+	<select id="getSerInvokeInsList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		 SELECT  SER_INVOKE_INS_ID ,SER_INVOKE_INS_NAME 
+		 FROM SER_INVOKE_INS  
+		 WHERE STATE = 'A'  
+	</select>
+ 
+ 	<select id="getControlCountermsList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		 SELECT CC_CD , NAME    
+	     FROM CONTROL_COUNTERMS
+	</select>
+	
+	<select id="queryExistsPolicy" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		 SELECT A.SER_INVOKE_INS_NAME ,C.NAME ,B.CYCLE_VALUE,B.CUTMS_VALUE,B.EFFECT_STATE,TO_CHAR(B.CONFIG_TIME,'yyyy-MM-dd HH24:mi') CONFIG_TIME,B.CTL_C_2_COMP_ID  ,B.CYCLE_TYPE      
+	     FROM SER_INVOKE_INS A ,CTL_COUNTERMS_2_COMP B , CONTROL_COUNTERMS C 
+	     WHERE A.SER_INVOKE_INS_ID = B.SER_INVOKE_INS_ID AND B.CC_CD = C.CC_CD AND B.EFFECT_STATE = 'A'  AND A.SER_INVOKE_INS_ID = #data# 
+	     ORDER BY B.CC_SEQ 
+	</select>
+	
+	<select id="querySerInvokeInsCount" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+	    SELECT COUNT(1) ALLNUM  FROM SER_INVOKE_INS A ,CTL_COUNTERMS_2_COMP B , CONTROL_COUNTERMS C  ,COMPONENT D , SERVICE E WHERE A.SER_INVOKE_INS_ID = B.SER_INVOKE_INS_ID AND B.CC_CD = C.CC_CD AND B.EFFECT_STATE = 'A' AND A.COMPONENT_ID = D.COMPONENT_ID AND A.SERVICE_ID = E.SERVICE_ID  
+        AND A.STATE = 'A'  
+		<dynamic >
+		 	<isNotNull prepend="AND" property="componentId"> A.COMPONENT_ID=#componentId#</isNotNull>
+		 	<isNotNull prepend="AND" property="serviceId"> A.SERVICE_ID=#serviceId# </isNotNull>
+		</dynamic>
+		  
+ 	</select>
+ 	
+ 	<select id="querySerInvokeInsList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">	
+	   SELECT * FROM (SELECT ROW_NUMBER() OVER( ORDER BY CTL_C_2_COMP_ID DESC ) rn , newtab.* FROM (
+       SELECT A.SER_INVOKE_INS_NAME ,C.NAME ,B.CYCLE_VALUE,B.CUTMS_VALUE,B.EFFECT_STATE,TO_CHAR(B.CONFIG_TIME,'yyyy-MM-dd HH24:mi') CONFIG_TIME,B.CTL_C_2_COMP_ID  ,B.CYCLE_TYPE  ,B.CC_SEQ ,E.SERVICE_CN_NAME  ,D.NAME DNAME          
+       FROM SER_INVOKE_INS A ,CTL_COUNTERMS_2_COMP B , CONTROL_COUNTERMS C  ,COMPONENT D , SERVICE E  
+       WHERE A.SER_INVOKE_INS_ID = B.SER_INVOKE_INS_ID AND B.CC_CD = C.CC_CD AND B.EFFECT_STATE = 'A' AND A.COMPONENT_ID = D.COMPONENT_ID AND A.SERVICE_ID = E.SERVICE_ID  
+		 <dynamic>
+		 	<isNotNull prepend="AND" property="componentId"> A.COMPONENT_ID=#componentId#</isNotNull>
+		 	<isNotNull prepend="AND" property="serviceId"> A.SERVICE_ID=#serviceId# </isNotNull>
+		 </dynamic>
+		   AND A.STATE = 'A' 
+		  ) newtab ) WHERE rn BETWEEN #pro# AND #end# 
+	</select>
+	
+	<select id="querySerInvokeInsExist" parameterClass="com.ailk.eaap.op2.bo.SerInvokeIns" resultClass="java.lang.String">
+		 SELECT  A.SER_INVOKE_INS_ID  
+		 FROM SER_INVOKE_INS A 
+		 WHERE A.STATE = 'A'  
+		 <dynamic>
+		 	<isNotNull prepend="AND" property="componentId"> A.COMPONENT_ID=#componentId#</isNotNull>
+		 	<isNotNull prepend="AND" property="serviceId"> A.SERVICE_ID=#serviceId# </isNotNull>
+		 </dynamic>
+	</select>
+	
+	<select id="getServiceInfo" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		 SELECT   C.SERVICE_ID , C.SERVICE_CN_NAME 
+		 FROM COMPONENT A ,SER_INVOKE_INS B ,SERVICE C    
+		 WHERE  A.COMPONENT_ID = B.COMPONENT_ID AND B.SERVICE_ID = C.SERVICE_ID AND B.STATE = 'A'  AND A.COMPONENT_ID = #data#
+	</select>
+	
+	 <select id="getCtlCounterms2CompById" resultClass="java.util.HashMap" parameterClass="com.ailk.eaap.op2.bo.CtlCounterms2Comp" >
+		   SELECT A.CTL_C_2_COMP_ID , A.CC_CD , A.SER_INVOKE_INS_ID , A.CUTMS_VALUE ,A.EFFECT_STATE ,A.CYCLE_TYPE , A.CYCLE_VALUE   ,B.COMPONENT_ID ,B.SERVICE_ID     
+		   FROM CTL_COUNTERMS_2_COMP A , SER_INVOKE_INS B  
+		   WHERE A.SER_INVOKE_INS_ID = B.SER_INVOKE_INS_ID AND  CTL_C_2_COMP_ID = #ctlC2CompId# 
+	 </select>
+	 
+</sqlMap>

@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="eaap-op2-conf-monitor-report">
+	 <!--监控报表 加载业务下拉框 -->
+     <select id="queryBizFunctionList" parameterClass="java.util.HashMap" resultClass="com.ailk.eaap.op2.bo.BizFunction">
+  		SELECT F.BIZ_FUNCTION_ID AS bizFunctionId,F.CODE AS code,F.NAME AS name FROM COMPONENT A, TECH_IMPL B, SER_TECH_IMPL C, SERVICE D,FUNC_2_SERVICE E,BIZ_FUNCTION F
+		  	WHERE C.STATE NOT IN ('X', 'G') AND A.COMPONENT_ID = B.COMPONENT_ID AND B.TECH_IMPL_ID = C.TECH_IMPL_ID AND C.SERVICE_ID = D.SERVICE_ID AND D.SERVICE_ID = E.SERVICE_ID AND E.BIZ_FUNCTION_ID = F.BIZ_FUNCTION_ID 
+		 <dynamic>
+		    <isNotNull prepend="and" property="inArray"> 
+		    A.ORG_ID IN 
+		    <iterate property="inArray" conjunction="," close=")" open="(">
+                  #inArray[]#
+             </iterate>
+		    </isNotNull>
+		 </dynamic>
+	</select>
+	
+	<!--监控报表 初始化load服务下拉框 -->
+	<select id="queryServiceList" parameterClass="java.util.HashMap"  resultClass="com.ailk.eaap.op2.bo.Service">
+		SELECT DISTINCT(D.SERVICE_ID) AS serviceId,D.SERVICE_CN_NAME AS serviceCnName,D.SERVICE_EN_NAME AS serviceEnName,D.SERVICE_CODE AS serviceCode FROM COMPONENT A, TECH_IMPL B, SER_TECH_IMPL C, SERVICE D
+		    WHERE  C.STATE NOT IN ('X', 'G') AND A.COMPONENT_ID = B.COMPONENT_ID AND B.TECH_IMPL_ID = C.TECH_IMPL_ID AND C.SERVICE_ID = D.SERVICE_ID 
+		 <dynamic>
+		 	 <isNotNull prepend="and" property="inArray"> 
+		 	 A.ORG_ID IN 
+		 	 <iterate property="inArray" conjunction="," close=")" open="(">
+                  #inArray[]#
+             </iterate>
+		 	 </isNotNull>
+		  </dynamic>
+ 	</select>
+ 	
+ 	<!--查询动态产生的分组数据 服务调用方-->
+	<!-- 
+	//GROUP_COLS       分组字段,用于放在group by 后面
+	//GROUP_COL_NAMES  显示分组字段,用于放在select 后面
+	//STAT_ITEMS       统计指标字段,用于放在select 后面
+	-->
+	<select id="selectReportResult" resultClass="java.util.LinkedHashMap" parameterClass="map" remapResults="true">
+		<![CDATA[
+		SELECT $GROUP_COL_NAMES$,$STAT_ITEMS$
+			  FROM ORG o,
+			  	   COMPONENT c,
+			  	   SERVICE s,
+			  	   TECH_IMPL t,
+			  	   SER_TECH_IMPL a,
+			  	   REG_STAT_RECENT r
+         WHERE 1=1 AND o.ORG_ID = c.ORG_ID
+                   AND c.COMPONENT_ID = t.COMPONENT_ID 
+                   AND t.TECH_IMPL_ID = a.TECH_IMPL_ID
+                   AND a.SERVICE_ID = s.SERVICE_ID
+                   AND r.DST_CODE = c.CODE
+         ]]>
+		<dynamic>
+   			<isNotEmpty prepend="and" property="arrayCode"> 
+   			 r.BIZ_CODE IN 
+   			 <iterate property="arrayCode" conjunction="," close=")" open="(">
+                  #arrayCode[]#
+             </iterate>
+   			 </isNotEmpty>
+   			<isNotEmpty prepend="and" property="servicecode"> 
+   			r.INTF_CODE IN 
+   			<iterate property="servicecode" conjunction="," close=")" open="(">
+                  #servicecode[]#
+             </iterate>
+   			</isNotEmpty>
+   			<isNotEmpty prepend="and" property="componentCode">
+   			 r.DST_CODE IN
+   			  <iterate property="componentCode" conjunction="," close=")" open="(">
+                  #componentCode[]#
+             </iterate>
+   			 </isNotEmpty>
+   			<isNotEmpty prepend="and" property="beginTime"> <![CDATA[ DATE_TRAN_ID >= #beginTime# ]]></isNotEmpty>
+	   		<isNotEmpty prepend="and" property="endTime"> <![CDATA[ DATE_TRAN_ID <= #endTime# ]]></isNotEmpty>
+	   		<isNotEmpty prepend="and" property="DATE_TYPE"> r.DATE_TYPE = #DATE_TYPE#</isNotEmpty> 
+   		</dynamic>
+			 group by $GROUP_COLS$
+	</select>	
+	<!-- 服务使用方 -->
+	<select id="selectSvcUseReportResult" resultClass="java.util.LinkedHashMap" parameterClass="map" remapResults="true">
+		<![CDATA[
+		SELECT $GROUP_COL_NAMES$,$STAT_ITEMS$
+			  FROM ORG o,
+			  	   COMPONENT c,
+			  	   SERVICE s,
+			  	   TECH_IMPL t,
+			  	   SER_TECH_IMPL a,
+			  	   USE_STAT_CNT_RECENT r
+         WHERE 1=1 AND o.ORG_ID = c.ORG_ID
+                   AND c.COMPONENT_ID = t.COMPONENT_ID 
+                   AND t.TECH_IMPL_ID = a.TECH_IMPL_ID
+                   AND a.SERVICE_ID = s.SERVICE_ID
+                   AND r.SYS_CODE = c.CODE
+         ]]>
+		<dynamic>
+   			<isNotEmpty prepend="and" property="arrayCode">  
+   			r.BIZ_CODE IN 
+   			<iterate property="arrayCode" conjunction="," close=")" open="(">
+                  #arrayCode[]#
+             </iterate>
+   			</isNotEmpty>
+   			<isNotEmpty prepend="and" property="servicecode"> 
+   			r.BIZ_INTF_CODE IN 
+   			<iterate property="servicecode" conjunction="," close=")" open="(">
+                  #servicecode[]#
+             </iterate>
+   			</isNotEmpty>
+   			<isNotEmpty prepend="and" property="componentCode"> 
+   			r.SYS_CODE IN 
+   			<iterate property="componentCode" conjunction="," close=")" open="(">
+                  #componentCode[]#
+             </iterate>
+   			</isNotEmpty>
+   			<isNotEmpty prepend="and" property="beginTime"> <![CDATA[ substr(DATE_TRAN_ID,0,8) >= #beginTime# ]]></isNotEmpty>
+	   		<isNotEmpty prepend="and" property="endTime"> <![CDATA[ substr(DATE_TRAN_ID,0,8) <= #endTime# ]]></isNotEmpty>
+	   		<isNotEmpty prepend="and" property="DATE_TYPE"> r.DATE_TYPE = #DATE_TYPE#</isNotEmpty>  
+   		</dynamic>
+			 group by $GROUP_COLS$
+	</select>	
+</sqlMap> 

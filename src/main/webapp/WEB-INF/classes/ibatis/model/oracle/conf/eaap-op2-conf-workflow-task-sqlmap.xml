@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "http://ibatis.apache.org/dtd/sql-map-2.dtd" "-//ibatis.apache.org//DTD SQL Map 2.0//EN">
+
+<sqlMap namespace="eaap-op2-conf-workflow-task">
+	
+	<select id="getWorkFlowTaskResultList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select * from (
+		SELECT
+		  row_number() over( order by A.ID desc ) rn,
+		  A.ID, 
+		  A.ACT_ID,
+		  B.ACT_NAME,
+		  to_char(
+	        C.CREATE_DATE,
+	        'YYYY-MM-DD HH:MI:SS'
+	      ) CREATE_DATE,
+		  A.RESULT 
+		FROM
+		  ACTIVE_TASK_RESULT A 
+		  LEFT JOIN BPM_ACT_MODEL B 
+		    ON A.ACT_MOD = B.ACT_MOD 
+		  LEFT JOIN VBPM_ACT C 
+		    ON A.ACT_ID = C.ACT_ID 
+		    where 1 = 1 
+		    <dynamic>
+		  		<isNotNull prepend="and" property="ACT_ID"> 
+		  			A.ACT_ID = #ACT_ID# 
+		  		</isNotNull>
+		  		<isNotNull prepend="and" property="ACT_NAME"> 
+		  			B.ACT_NAME like CONCAT('%',#ACT_NAME#,'%')
+		  		</isNotNull>
+		  		<isNotNull prepend="and" property="RESULT"> 
+		  			A.RESULT = #RESULT# 
+		  		</isNotNull>
+		  		<isNotEmpty prepend="and" property="START_DATE">
+		  			<![CDATA[ C.CREATE_DATE >= #START_DATE#]]>
+		  		</isNotEmpty>
+				<isNotEmpty prepend="and" property="END_DATE">
+					<![CDATA[ C.CREATE_DATE <= #END_DATE#]]>
+				</isNotEmpty>
+	    	</dynamic>
+		    ORDER BY CREATE_DATE DESC)
+		    where rn between #pro# and #end# 
+	</select>
+	
+	<select id="getWorkFlowTaskResultCount" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT
+		  COUNT(*) ALLNUM
+		FROM
+		  ACTIVE_TASK_RESULT A 
+		  LEFT JOIN BPM_ACT_MODEL B 
+		    ON A.ACT_MOD = B.ACT_MOD 
+		  LEFT JOIN VBPM_ACT C 
+		    ON A.ACT_ID = C.ACT_ID 
+		    where 1 = 1 
+		    <dynamic>
+		  		<isNotNull prepend="and" property="ACT_ID"> 
+		  			A.ACT_ID = #ACT_ID# 
+		  		</isNotNull>
+		  		<isNotNull prepend="and" property="ACT_NAME"> 
+		  			B.ACT_NAME like CONCAT('%',#ACT_NAME#,'%')
+		  		</isNotNull>
+		  		<isNotNull prepend="and" property="RESULT"> 
+		  			A.RESULT = #RESULT# 
+		  		</isNotNull>
+		  		<isNotEmpty prepend="and" property="START_DATE">
+		  			<![CDATA[ C.CREATE_DATE >= #START_DATE#]]>
+		  		</isNotEmpty>
+				<isNotEmpty prepend="and" property="END_DATE">
+					<![CDATA[ C.CREATE_DATE <= #END_DATE#]]>
+				</isNotEmpty>
+	    	</dynamic>
+	</select>
+	
+	<update id="updateWorkFlowTaskReslt" parameterClass="java.util.HashMap">
+		UPDATE ACTIVE_TASK_RESULT SET RESULT = 'R' WHERE 1 = 1 AND ID = #ID#
+	</update>	
+
+</sqlMap>

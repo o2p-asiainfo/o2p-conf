@@ -1,0 +1,45 @@
+<div id="platformListTmpl">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title i18n">CNF00000010</h4>
+  </div>
+  <div class="modal-body" id="multipleSelectBox">
+  <img src="resources/img/input_spinner.gif">
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default i18n" data-dismiss="modal">CNF00000013</button>
+    <button type="button" class="btn theme-btn i18n" id="btn-start-sync" i18n-set="data-loading-text" data-loading-text="CNF00000018" autocomplete="off">CNF00000014</button>
+  </div>
+</div>
+<script type="text/html" id="art-multipleSelectBox">
+  <div class="multiple-select-box">
+  {{each data}}
+    <div class="multiple-select-group">
+      <span class="multiple-select-group-letter">{{$value.country}}</span>
+      {{each $value.items}}
+      <a href="javascript:;" onclick="$(this).toggleClass('select')" sdata="{{$value.id}}">{{$value.name}}</a>
+      {{/each}}
+    </div>
+  {{/each}}  
+  </div>
+</script>
+<script>
+  /**
+   * modal关闭时清空存在body上的platform,里面记录的是当前checkbox的选中情况
+   */
+  (function() {
+    var $modal = $('#platformListTmpl').closest('.modal'); //获取当前modal对象        
+    App.transferI18nRes('#platformListTmpl');
+    $modal.modal();
+    App.template(App.urls.platformListData, 'art-multipleSelectBox', 'multipleSelectBox', {
+        productId: $modal.data('myData')
+      }, function() {
+       $modal.modal('layout');
+      })
+      //删除存储在body上的数据
+    $modal.on('hidden.bs.modal', function() {
+      $('body').data('platform', []);
+    })
+
+  })()
+</script>

@@ -1,0 +1,264 @@
+{
+    "libName": "common",
+    "icon": "lib_comm.png",
+    "functionList": [
+        {
+            "name": "concat",
+            "icon": "func_concat.png",
+            "paramDetail": [
+                {
+                    "paramName": "str",
+                    "inOut":"in",
+                    "dataType": "string",
+                    "isMulti":true,
+                    "desc": "connect str"
+                }
+            ]
+        },
+         {
+            "name": "split",
+            "icon": "func_split.png",
+            "paramDetail": [
+                {
+                    "paramName": "str",
+                    "dataType": "string",
+                    "inOut":"in",
+                    "desc": "the original string"
+                },
+                {
+                    "paramName": "regex",
+                    "dataType": "string",
+                    "inOut":"in",
+                    "desc": "split regex"
+                },
+                {
+                    "paramName": "index",
+                    "dataType": "int",
+                    "inOut":"in",
+                    "desc": "index"
+                }
+            ]
+        },
+        {
+            "name": "substring",
+            "icon": "func_substring.png",
+            "paramDetail": [
+                {
+                    "paramName": "str",
+                    "dataType": "string",
+                    "inOut":"in",
+                    "desc": "the original string"
+                },
+                {
+                    "paramName": "beginIndex",
+                    "dataType": "int",
+                    "inOut":"in",
+                    "desc": "beginIndex"
+                },
+                {
+                    "paramName": "endIndex",
+                    "dataType": "int",
+                    "inOut":"in",
+                    "desc": "endIndex"
+                }
+            ]
+        },
+        {
+            "name": "lower",
+            "icon": "func_lower.png",
+            "paramDetail": [
+                {
+                    "paramName": "str",
+                    "dataType": "string",
+                    "inOut":"in",
+                    "desc": "the original str"
+                }
+            ]
+        },
+        {
+            "name": "upper",
+            "icon": "func_upper.png",
+            "paramDetail": [
+                {
+                    "paramName": "str",
+                    "dataType": "string",
+                    "inOut":"in",
+                    "desc": "the original string"
+                }
+            ]
+        },
+        {
+            "name": "length",
+            "icon": "func_length.png",
+            "paramDetail": [
+                {
+                    "paramName": "str",
+                    "dataType": "string",
+                    "inOut":"in",
+                    "desc": "the string length"
+                }
+            ]
+        },
+        {
+            "name": "dateFormat",
+            "icon": "func_dateFormat.png",
+            "paramDetail": [
+                {
+                    "paramName": "str",
+                    "dataType": "string",
+                    "inOut":"in",
+                    "desc": "the original string"
+                },
+                {
+                    "paramName": "srourceFormat",
+                    "dataType": "string",
+                    "inOut":"in",
+                    "desc": "the source data format"
+                },
+                {
+                    "paramName": "targetFormat",
+                    "dataType": "string",
+                    "inOut":"in",
+                    "desc": "the target data format"
+                }
+            ]
+        },
+        {
+            "name": "sysdate",
+            "icon": "func_sysdate.png",
+            "paramDetail": [
+                {
+                    "paramName": "str",
+                    "dataType": "string",
+                    "inOut":"in",
+                    "desc": "the original string"
+                }
+            ]
+        },
+        {
+            "name": "md5",
+            "icon": "func_md5.png",
+            "paramDetail": [
+                {
+                    "paramName": "str",
+                    "dataType": "string",
+                    "inOut":"in",
+                    "desc": "the original string"
+                },
+                {
+                    "paramName": "salt",
+                    "dataType": "string",
+                    "inOut":"in",
+                    "desc": "the md5 salt"
+                }
+            ]
+        },
+        {
+            "name": "jwt",
+            "icon": "func_jwt.png",
+            "paramDetail": [
+                {
+                    "paramName": "signatureAlgorithm",
+                    "dataType": "string",
+                    "inOut":"in",
+                    "desc": "the Signature Algorithm"
+                },
+                {
+                    "paramName": "secretkey",
+                    "dataType": "string",
+                    "inOut":"in",
+                    "desc": "the secret key"
+                },
+                {
+                    "paramName": "str",
+                    "dataType": "string",
+                    "inOut":"in",
+                    "desc": "the payload"
+                }
+            ]
+        },
+        {
+            "name": "decode",
+            "icon": "func_decode.png",
+            "paramDetail": [
+                {
+                    "paramName": "calculateExp",
+                    "dataType": "string",
+                    "inOut":"in",
+                    "desc": "the calculate expression"
+                },
+                {
+                    "paramName": [
+                    	{
+                    		"paramName": "value",
+		                    "dataType": "string",
+		                    "inOut":"in",
+		                    "desc": "the expression"
+                    	},
+                    	{
+	                    	"paramName": "result",
+		                    "dataType": "string",
+		                    "inOut":"out",
+		                    "desc": "the function result"
+                    	}
+                    ],
+                    "isMulti":true,
+                    "dataType": "union",
+                    "desc": "the value and result"
+                },
+                {
+                    "paramName": "defaultResult",
+                    "dataType": "string",
+                    "inOut":"out",
+                    "desc": "the default function result"
+                }
+            ]
+        },
+        {
+            "name": "case",
+            "icon": "func_case.png",
+            "paramDetail": [
+                {
+                    "paramName": [
+                    	{
+                    		"paramName": "caseExp",
+		                    "dataType": "string",
+		                    "inOut":"in",
+		                    "desc": "the case expression"
+                    	},
+                    	{
+	                    	"paramName": "result",
+		                    "dataType": "string",
+		                    "inOut":"out",
+		                    "desc": "the function result"
+                    	}
+                    ],
+                    "isMulti":true,
+                    "dataType": "union",
+                    "desc": "the case expression and result"
+                },
+                {
+                    "paramName": "defaultResult",
+                    "dataType": "string",
+                    "inOut":"out",
+                    "desc": "the default function result"
+                }
+            ]
+        },
+         {
+            "name": "cache",
+            "icon": "func_concat.png",
+            "paramDetail": [
+                {
+                    "paramName": "str",
+                    "inOut":"in",
+                    "dataType": "string",
+                    "isMulti":false,
+                    "desc": "cache key"
+                }
+            ]
+        }
+    ],
+    "help": "http://function-demo.html",
+    "desc": "common function list"
+}

@@ -1,0 +1,120 @@
+<div id="billingDiscount">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Billing Discount</h4>
+  </div>
+  <div class="modal-body">
+    <div class="section clearfix">
+      <h4 class="form-section mt5">Basic Information</h4>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="control-label"> <font color="FF0000">*</font> Tax Type</label>
+            <select class="form-control">
+              <option value="2">VAT inclusive</option>
+              <option value="1">VAT exclusive</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="control-label"> <font color="FF0000">*</font> Priority</label>
+            <input type="text" class="form-control">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="control-label"> <font color="FF0000">*</font> Effective Time</label>
+            <div data-date-format="mm/dd/yyyy" data-date-start-date="+0d" data-date="10/11/2012" class="input-group date-picker input-daterange" data-error-container="#error-container">
+              <input type="text" name="from2" class="form-control od">
+              <span class="input-group-addon"> to </span>
+              <input type="text" name="to2" class="form-control od">
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="control-label"><font color="FF0000">*</font>Max Discount Money </label>
+            <div class="row">
+              <div class="col-md-6">
+                <input type="text" value="1" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <select class="form-control" data-class="currency">
+                  <option value="11403">DKK</option>
+                  <option value="11503">HUF</option>
+                  <option value="10201">DollarCent</option>
+                  <option value="10202">Dollar</option>
+                  <option value="10301">EuroCent</option>
+                  <option value="10302">EuroCent</option>
+                  <option value="10403">Fen</option>
+                  <option value="10404">Yuan</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="control-label"><font color="FF0000">*</font>Charge </label>
+            <div class="table-responsive">
+              <table class="table table-bordered text-middle">
+                <thead>
+                  <tr>
+                    <th class="th-check"> <i class="fa fa-plus"></i> </th>
+                    <th> Charge Arrange <span class="label label-yellow"> <span data-class="currencyArea">DKK</span></th>
+                    <th> Discount</th>
+                    <th class="th-operation text-center"> Operation </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td><div class="input-group">
+                        <input type="text" name="from3" class="form-control">
+                        <span class="input-group-addon"> to </span>
+                        <input type="text" name="to3" class="form-control">
+                      </div>
+                    <td><input type="text" name="" placeholder="" class="form-control input-xs"></td>
+                    <td class="text-center"><a class="btn-opt" href="javascript:;"><i class="fa fa-trash-o"></i></a></td>
+                  </tr>
+                  <tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="control-label">Description </label>
+            <textarea rows="3" class="form-control"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <button type="button" class="btn theme-btn">OK</button>
+  </div>
+</div>
+<script>
+(function() {
+   var selector = '#billingDiscount';
+ var $modal = $(selector).closest('.modal'); //获取当前modal对象
+ $modal.modal();
+
+   //表单联动
+ $(selector).on('change', '[data-class="currency"]', function() {
+  var currency = $(this).find('option:selected').text();
+  $(selector + ' [data-class="currencyArea"]').html(currency);
+ })
+
+})()
+</script> 

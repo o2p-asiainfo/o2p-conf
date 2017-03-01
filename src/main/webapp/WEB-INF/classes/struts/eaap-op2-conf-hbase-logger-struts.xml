@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="hbaseLogger" extends="default" namespace="/hbaseLogger">
+		<action name="showGrid"
+			class="com.ailk.eaap.op2.conf.monitor.action.HbaseLoggerViewAction" method="showGrid">
+			<result name="success">/HbaseLogger/loggerView1.jsp</result>
+		</action>
+		<action name="contractInteraction"
+			class="com.ailk.eaap.op2.conf.monitor.action.HbaseLoggerViewAction" method="contractInteraction">
+			<result name="success">/HbaseLogger/loggerView1.jsp</result>
+		</action>
+		<action name="clearSession"
+			class="com.ailk.eaap.op2.conf.monitor.action.HbaseLoggerViewAction" method="clearSession">
+			<result name="success">/HbaseLogger/loggerView1.jsp</result>
+		</action>
+		<action name="showDetail"
+			class="com.ailk.eaap.op2.conf.monitor.action.HbaseLoggerViewAction" method="showDetail">
+			<result name="success">/HbaseLogger/loggerViewDetail.jsp</result>
+		</action>	
+		<action name="showDetailGrid"
+			class="com.ailk.eaap.op2.conf.monitor.action.HbaseLoggerViewAction" method="showDetailGrid">
+			<result name="success">/HbaseLogger/loggerViewDetail.jsp</result>
+		</action>	
+		<action name="showDetailGrid1"
+			class="com.ailk.eaap.op2.conf.monitor.action.HbaseLoggerViewAction" method="showDetailGrid1">
+			<result name="success">/HbaseLogger/loggerViewDetail.jsp</result>
+		</action>	
+		<action name="showDetailGrid2"
+			class="com.ailk.eaap.op2.conf.monitor.action.HbaseLoggerViewAction" method="showDetailGrid2">
+			<result name="success">/HbaseLogger/loggerViewDetail.jsp</result>
+		</action>
+		<action name="showDetailGrid3"
+			class="com.ailk.eaap.op2.conf.monitor.action.HbaseLoggerViewAction" method="showDetailGrid3">
+			<result name="success">/HbaseLogger/loggerViewDetail.jsp</result>
+		</action>
+	</package>
+</struts>

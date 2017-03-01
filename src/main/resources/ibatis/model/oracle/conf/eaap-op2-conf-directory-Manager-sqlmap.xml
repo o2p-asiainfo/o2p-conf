@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "http://ibatis.apache.org/dtd/sql-map-2.dtd" "-//ibatis.apache.org//DTD SQL Map 2.0//EN">
+
+<sqlMap namespace="eaap-op2-conf-directoryManager">
+
+	<insert id="insertDirectory" parameterClass="com.ailk.eaap.op2.bo.Directory">
+		<selectKey resultClass="java.lang.Integer" keyProperty="dirId">
+			SELECT to_char(SEQ_DIRECTORY.NEXTVAL) FROM DUAL  
+       </selectKey>
+		insert into directory
+		( DIR_LASTEST_TIME ,DIR_CREATE_TIME,DIR_STATE,DIR_CODE
+		<dynamic>
+			<isNotNull prepend="," property="dirId">dir_id</isNotNull>
+			<isNotNull prepend="," property="faDirId">fa_dir_id</isNotNull>
+			<isNotNull prepend="," property="sFileId">s_file_id</isNotNull>
+			<isNotNull prepend="," property="dirName">dir_name</isNotNull>
+			<isNotNull prepend="," property="dirType">dir_type</isNotNull>
+		</dynamic>
+		)
+		values(SYS_EXTRACT_UTC(current_timestamp)+0 ,SYS_EXTRACT_UTC(current_timestamp)+0,'A',sys_guid()
+		<dynamic>
+			<isNotNull prepend="," property="dirId">#dirId#</isNotNull>
+			<isNotNull prepend="," property="faDirId">#faDirId#</isNotNull>
+			<isNotNull prepend="," property="sFileId">#sFileId#</isNotNull>
+			<isNotNull prepend="," property="dirName">#dirName#</isNotNull>
+			<isNotNull prepend="," property="dirType">#dirType#</isNotNull>
+		</dynamic>
+		)
+	</insert>
+
+	<select id="queryOrgInfoByFaDirId" parameterClass="com.ailk.eaap.op2.bo.Directory"  resultClass="com.ailk.eaap.op2.bo.Directory">
+		select dir_id dirId,
+		      fa_dir_id faDirId,
+		      s_file_id sFileId,
+		      dir_name dirName,
+		      dir_create_time dirCreateTime,
+		      dir_state dirState,
+		      dir_type dirType,
+		      dir_lastest_time dirLastestTime
+		from   directory
+		where  dir_state ='A'
+	    <dynamic>
+	            <isEmpty prepend="and" property="faDirId"> fa_dir_id is null </isEmpty>
+	            <isNotEmpty prepend="and" property="faDirId"> fa_dir_id = #faDirId#</isNotEmpty>
+	            <isNotNull prepend="and" property="dirType"> dir_type = #dirType#</isNotNull>
+	    </dynamic>	   	   
+	 </select>
+	 <delete id="deleDirNode" parameterClass="java.lang.String">
+	delete directory a where a.dir_id in(select a.dir_id from 
+    directory start with a.dir_id=#nodeId# connect by prior a.dir_id=a.fa_dir_id)
+	 </delete>
+    <select id="isExistDirName" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		select count(1) 
+		  from directory 
+		 where dir_name = #dirName# and dir_type = #dirType#
+		<dynamic>
+	            <isNotEmpty prepend="and" property="faDirId"> fa_dir_id = #faDirId#</isNotEmpty>
+	            <isEmpty prepend="and" property="faDirId"> (fa_dir_id is null or fa_dir_id = '')</isEmpty>
+	            <isNotEmpty prepend="and" property="dirId"> dir_id != #dirId#</isNotEmpty>
+	    </dynamic>
+	</select>
+</sqlMap>

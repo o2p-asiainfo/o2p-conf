@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+	
+<struts>
+	<package name="autocomplete" extends="default" namespace="/autocomplete">
+		<!-- 组件自动补全接口 -->
+		<action name="cmptAutoComplete" class="com.ailk.eaap.op2.conf.autoComplete.action.AutoCompleteAction" method="cmptAutoComplete">
+		</action>
+		
+		<!-- load组件首页 -->
+		<action name="showCompIndex" class="com.ailk.eaap.op2.conf.autoComplete.action.AutoCompleteAction" method="showCompIndex">
+			<result name="success">
+				/autoComplete/showComponentIndex.jsp
+			</result>
+		</action>
+		
+		<!-- load所有组件 -->
+		<action name="loadAllComponent" class="com.ailk.eaap.op2.conf.autoComplete.action.AutoCompleteAction" method="loadAllComponent">
+			<result name="success">
+				/autoComplete/showComponentInfo.jsp
+			</result>
+		</action>
+		
+		<!-- 服务自动补全接口 -->
+		<action name="serviceAutoComplete" class="com.ailk.eaap.op2.conf.autoComplete.action.AutoCompleteAction" method="serviceAutoComplete">
+		</action>
+		
+		<!-- load服务首页 -->
+		<action name="showServiceIndex" class="com.ailk.eaap.op2.conf.autoComplete.action.AutoCompleteAction" method="showServiceIndex">
+			<result name="success">
+				/autoComplete/showServiceIndex.jsp
+			</result>
+		</action>
+		
+		<!-- load所有服务 -->
+		<action name="loadAllService" class="com.ailk.eaap.op2.conf.autoComplete.action.AutoCompleteAction" method="loadAllService">
+			<result name="success">
+				/autoComplete/showServiceInfo.jsp
+			</result>
+		</action>
+		
+		<!-- 机构自动补全接口 -->
+		<action name="orgAutoComplete" class="com.ailk.eaap.op2.conf.autoComplete.action.AutoCompleteAction" method="orgAutoComplete">
+		</action>
+		
+		<!-- load机构首页 -->
+		<action name="showOrgIndex" class="com.ailk.eaap.op2.conf.autoComplete.action.AutoCompleteAction" method="showOrgIndex">
+			<result name="success">
+				/autoComplete/showOrgIndex.jsp
+			</result>
+		</action>
+		
+		<!-- load所有机构 -->
+		<action name="loadAllOrg" class="com.ailk.eaap.op2.conf.autoComplete.action.AutoCompleteAction" method="loadAllOrg">
+			<result name="success">
+				/autoComplete/showOrgInfo.jsp
+			</result>
+		</action>
+	</package>
+</struts>

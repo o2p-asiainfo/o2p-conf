@@ -1,0 +1,45 @@
+.ui-layout-north{height: 50px;}
+.main-top{height: 50px;z-index:-99;}
+.main-top .main-top-table{ width:100%; height:50px; border:0px; border-spacing:0;border-collapse:collapse; }
+.main-top .main-top-table .top-left{BACKGROUND-IMAGE: url(../images/tel/head-01.png); width:550px;VERTICAL-ALIGN: top;}
+.main-top .main-top-table .top-middle{/*BACKGROUND-IMAGE: url(../images/tel/head-02.png);*/ VERTICAL-ALIGN: top;TEXT-ALIGN: left;}
+.main-top .main-top-table .top-right{/*BACKGROUND-IMAGE: url(../images/tel/head-02.png);*/ width:191px; VERTICAL-ALIGN: top;TEXT-ALIGN: left;}
+
+.main-top-mini{height: 25px;}
+.main-top-mini .main-top-table{ height:25px; }
+.main-top-mini .main-top-table .top-left{BACKGROUND-IMAGE: url(../images/tel/head-mini-01.png) ; }
+.main-top-mini .main-top-table .top-middle{/*BACKGROUND-IMAGE: url(../images/tel/head-02.png);*/ }
+.main-top-mini .main-top-table .top-right{/*BACKGROUND-IMAGE: url(../images/tel/head-02.png);*/ }
+
+
+.main-top-content{position:absolute ;top:2px;right:20px;text-align:right;z-index:-98;}
+.main-top-content .main-top-content-item{color:#868686;}
+.main-top-content A{color:#000000;}
+.main-top-content	A:hover {COLOR: #FF6600; TEXT-DECORATION: underline;}
+.main-top-content .greetings{}
+.main-top-content .task{}
+.main-top-content .stick{cursor: pointer;src:url(../resource/blue/images/stuck.png);}
+
+.main-top-content-mini .greetings{float:left;MARGIN-TOP:3px;}
+.main-top-content-mini .task{float:right;MARGIN-LEFT:30px;}
+
+.main-top-menu { MARGIN-TOP:0px;width:100%;height:28px;BACKGROUND: url(../images/top-bar-bg.png )  repeat-x 0 0;BORDER-BOTTOM: #ff9900 1px solid;  BORDER-TOP: #ff9900 1px solid;}*/
+
+
+
+.ztree .node_open {margin-top:5px;}
+.ztree .node_open a:hover{TEXT-DECORATION: none;}
+.ztree .node_open span{font-size:14px;}
+.ztree .node_close {margin-top:5px;}
+.ztree .node_close a:hover{TEXT-DECORATION: none;}
+.ztree .node_close span{font-size:14px;}
+
+.ztree .node_docu {margin-top:5px;height:32px;}
+.ztree .node_docu a{height:32px;}
+.ztree .node_docu a:hover{TEXT-DECORATION: none;}
+.ztree .node_docu span{height:32px;VERTICAL-ALIGN:-22px;font-size:14px;}
+.ztree li span.button.ico_docu{width:32px; height:32px;}
+
+.ui-tabs .ui-tabs-nav li a { padding: 2px 1em;  }
+.ui-tabs .ui-tabs-nav li a{ font-size:14px;}
+.ui-tabs-panel{MARGIN:0px;padding:0px !important;border:0px;width:100%;height:100%;}

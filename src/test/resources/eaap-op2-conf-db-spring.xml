@@ -1,0 +1,601 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"  xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+						http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+       					http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+       					http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd" 
+ default-autowire="byName">
+ 	
+	<bean id="zkPropertiesLoad" class="com.ailk.eaap.o2p.common.spring.config.O2pPropertyPlaceholderConfigurer">
+        <property name="remoteOverride" value="true"></property>
+        <property name="cacheHolder" ref="cacheHolder"></property>
+    </bean>
+
+     <bean id="cacheHolder" class="com.ailk.eaap.o2p.common.spring.config.ZKCfgCacheHolder">
+        <property name="ignoreResourceNotFound" value="true"></property>
+    </bean>
+	<!--  -->
+    <bean id="common-dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"   destroy-method="close">
+        <property name="driverClass"><value>${o2pCommon.jdbcDriver}</value></property>
+		<property name="jdbcUrl"><value>${o2pCommon.database}</value></property>
+		<property name="user"><value>${o2pCommon.user}</value></property>
+		<property name="password"><value>${o2pCommon.password}</value></property>
+         <property name="maxPoolSize"><value>${o2pCommon.maxActive}</value></property>
+         <property name="initialPoolSize"><value>${o2pCommon.initialSize}</value></property>
+         <property name="minPoolSize"><value>1</value></property>
+         <property name="maxIdleTime"><value>1800</value></property>
+         <property name="acquireIncrement"><value>2</value></property>
+         <property name="maxStatements"><value>0</value></property>
+         <property name="testConnectionOnCheckout"><value>${o2pCommon.testConnectionOnCheckout}</value></property> 
+         <property name="testConnectionOnCheckin"><value>${o2pCommon.testConnectionOnCheckin}</value></property> 
+         <property name="breakAfterAcquireFailure"><value>${o2pCommon.breakAfterAcquireFailure}</value></property>
+         <property name="idleConnectionTestPeriod"><value>${o2pCommon.idleConnectionTestPeriod}</value></property>
+         <property name="acquireRetryAttempts"><value>${o2pCommon.acquireRetryAttempts}</value></property>
+         <property name="acquireRetryDelay"><value>${o2pCommon.maxWait}</value></property>
+	</bean>
+	
+	<!-- Spring 管理数据库连接池 用于在tomcat下做测试使用   -->
+    <bean id="eaapconfDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"   destroy-method="close">
+        <property name="driverClass"><value>${o2pCommon.jdbcDriver}</value></property>
+		<property name="jdbcUrl"><value>${o2pCommon.database}</value></property>
+		<property name="user"><value>${o2pCommon.user}</value></property>
+		<property name="password"><value>${o2pCommon.password}</value></property>
+         <property name="minPoolSize"><value>1</value></property>
+         <property name="maxPoolSize"><value>${o2pCommon.maxActive}</value></property>
+         <property name="maxIdleTime"><value>1800</value></property>
+         <property name="acquireIncrement"><value>2</value></property>
+         <property name="maxStatements"><value>0</value></property>
+         <property name="initialPoolSize"><value>${o2pCommon.initialSize}</value></property>
+         <property name="testConnectionOnCheckout"><value>${o2pCommon.testConnectionOnCheckout}</value></property> 
+         <property name="testConnectionOnCheckin"><value>${o2pCommon.testConnectionOnCheckin}</value></property> 
+         <property name="breakAfterAcquireFailure"><value>${o2pCommon.breakAfterAcquireFailure}</value></property>
+         <property name="idleConnectionTestPeriod"><value>${o2pCommon.idleConnectionTestPeriod}</value></property>
+         <property name="acquireRetryAttempts"><value>${o2pCommon.acquireRetryAttempts}</value></property>
+         <property name="acquireRetryDelay"><value>${o2pCommon.maxWait}</value></property>
+	</bean>
+   
+    <bean id="eaapdepDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"   destroy-method="close">
+        <property name="driverClass"><value>${driverClassName}</value></property>
+		<property name="jdbcUrl"><value>${dep_db_url}</value></property>
+		<property name="user"><value>${dep_db_username}</value></property>
+		<property name="password"><value>${dep_db_password}</value></property>
+         <property name="minPoolSize"><value>1</value></property>
+         <property name="maxPoolSize"><value>${db_maxActive}</value></property>
+         <property name="maxIdleTime"><value>1800</value></property>
+         <property name="acquireIncrement"><value>2</value></property>
+         <property name="maxStatements"><value>0</value></property>
+         <property name="initialPoolSize"><value>${o2pCommon.initialSize}</value></property>
+          <property name="testConnectionOnCheckout"><value>${o2pCommon.testConnectionOnCheckout}</value></property> 
+         <property name="testConnectionOnCheckin"><value>${o2pCommon.testConnectionOnCheckin}</value></property> 
+         <property name="breakAfterAcquireFailure"><value>${o2pCommon.breakAfterAcquireFailure}</value></property>
+         <property name="idleConnectionTestPeriod"><value>${o2pCommon.idleConnectionTestPeriod}</value></property>
+         <property name="acquireRetryAttempts"><value>${o2pCommon.acquireRetryAttempts}</value></property>
+         <property name="acquireRetryDelay"><value>${o2pCommon.maxWait}</value></property>
+	</bean>
+     
+    <bean id="eaapstatDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"   destroy-method="close">
+        <property name="driverClass"><value>${driverClassName}</value></property>
+		<property name="jdbcUrl"><value>${logStatistic.database}</value></property>
+		<property name="user"><value>${logStatistic.user}</value></property>
+		<property name="password"><value>${logStatistic.password}</value></property>
+         <property name="minPoolSize"><value>1</value></property>
+         <property name="maxPoolSize"><value>${db_maxActive}</value></property>
+         <property name="maxIdleTime"><value>1800</value></property>
+         <property name="acquireIncrement"><value>2</value></property>
+         <property name="maxStatements"><value>0</value></property>
+         <property name="initialPoolSize"><value>${o2pCommon.initialSize}</value></property>
+          <property name="testConnectionOnCheckout"><value>${o2pCommon.testConnectionOnCheckout}</value></property> 
+         <property name="testConnectionOnCheckin"><value>${o2pCommon.testConnectionOnCheckin}</value></property> 
+         <property name="breakAfterAcquireFailure"><value>${o2pCommon.breakAfterAcquireFailure}</value></property>
+         <property name="idleConnectionTestPeriod"><value>${o2pCommon.idleConnectionTestPeriod}</value></property>
+         <property name="acquireRetryAttempts"><value>${o2pCommon.acquireRetryAttempts}</value></property>
+         <property name="acquireRetryDelay"><value>${o2pCommon.maxWait}</value></property>
+	</bean>
+	
+    <bean id="eaapSmDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"   destroy-method="close">
+        <property name="driverClass"><value>${driverClassName}</value></property>
+		<property name="jdbcUrl"><value>${sm_db_url}</value></property>
+		<property name="user"><value>${sm_db_username}</value></property>
+		<property name="password"><value>${sm_db_password}</value></property>
+         <property name="minPoolSize"><value>1</value></property>
+         <property name="maxPoolSize"><value>${db_maxActive}</value></property>
+         <property name="maxIdleTime"><value>1800</value></property>
+         <property name="acquireIncrement"><value>2</value></property>
+         <property name="maxStatements"><value>0</value></property>
+         <property name="initialPoolSize"><value>${o2pCommon.initialSize}</value></property>
+          <property name="testConnectionOnCheckout"><value>${o2pCommon.testConnectionOnCheckout}</value></property> 
+         <property name="testConnectionOnCheckin"><value>${o2pCommon.testConnectionOnCheckin}</value></property> 
+         <property name="breakAfterAcquireFailure"><value>${o2pCommon.breakAfterAcquireFailure}</value></property>
+         <property name="idleConnectionTestPeriod"><value>${o2pCommon.idleConnectionTestPeriod}</value></property>
+         <property name="acquireRetryAttempts"><value>${o2pCommon.acquireRetryAttempts}</value></property>
+         <property name="acquireRetryDelay"><value>${o2pCommon.maxWait}</value></property>
+	</bean>
+  
+    
+	<!--  JBoos MySql 数据库连接池 
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean" abstract="false" singleton="true" lazy-init="default" autowire="default" dependency-check="default">
+		<property name="jndiName">
+			<value>java:CAR_DS</value>	
+    	</property>
+	</bean>
+	-->
+ 	<!--  Tomcat 数据库连接池 
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean" abstract="false" singleton="true" lazy-init="default" autowire="default" dependency-check="default">
+		<property name="jndiName">
+			<value>java:comp/env/TLC_DS</value>
+		</property>
+	</bean>
+	-->
+	
+	<!--  Weblogic 数据库连接池  
+	 
+	<bean id="dsJndiTemplate" class="org.springframework.jndi.JndiTemplate" abstract="false" singleton="true" lazy-init="default" autowire="default" dependency-check="default">
+        <property name="environment">
+            <props>
+                <prop key="java.naming.provider.url">t3://127.0.0.1:7001</prop>
+                <prop key="java.naming.factory.initial">weblogic.jndi.WLInitialContextFactory</prop>
+                <prop key="java.naming.security.principal">weblogic</prop>
+                <prop key="java.naming.security.credentials">weblogic</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean" abstract="false" singleton="true" lazy-init="default" autowire="default" dependency-check="default">
+        <property name="jndiTemplate">
+            <ref local="dsJndiTemplate"/>
+        </property>
+        <property name="jndiName">
+       
+            <value>TLC_DX</value>  
+        </property>
+    </bean>
+    --> 
+	  <!-- <value>CL_DS</value> -->
+	
+  	<!-- Spring iBatis相关 -->
+  	<bean id="lobHandler" class="org.springframework.jdbc.support.lob.DefaultLobHandler"/>
+  	
+  	<!-- jndi连接数据源  
+  	<bean id="eaapconfDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+	    <property name="jndiName">
+	        <value>${eaapconf.jndiName}</value>
+	    </property>
+	    <property name="resourceRef"> 
+ 			 <value>true</value>
+		 </property>
+	</bean>
+	
+	<bean id="eaapdepDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+	    <property name="jndiName">
+	        <value>${eaapdep.jndiName}</value>
+	    </property>
+	    <property name="resourceRef"> 
+ 			 <value>true</value>
+		 </property>
+	 </bean>
+	
+	 <bean id="eaapSmDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+	    <property name="jndiName">
+	        <value>${eaapsm.jndiName}</value>
+	    </property>
+	    <property name="resourceRef"> 
+ 			 <value>true</value>
+		 </property>
+	 </bean>
+	 
+	 <bean id="common-dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+	    <property name="jndiName">
+	        <value>${common.jndiName}</value>
+	    </property>
+	    <property name="resourceRef"> 
+ 			 <value>true</value>
+		 </property>
+	 </bean>
+	-->
+	
+  	<bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean" abstract="false" scope="singleton" lazy-init="default" autowire="default" dependency-check="default">
+  		<description>Spring iBatis结合</description>
+    	<property name="configLocation" value="classpath:sqlMap-config-conf.xml"/>
+    	<!-- 新修改配置 -->
+    	<property name="mappingLocations">
+    			<list>
+    	            <value>classpath:/ibatis/model/${databaseType}/conf/*-sqlmap.xml</value>
+					<value>classpath:/ibatis/model/${databaseType}/fileShare-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/org-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/provide-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/component-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/app-sqlmap.xml</value>
+				    <value>classpath:/ibatis/model/${databaseType}/mainData-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/mainDataType-sqlmap.xml</value>
+				    <value>classpath:/ibatis/model/${databaseType}/orgRole-sqlmap.xml</value>
+				    <value>classpath:/ibatis/model/${databaseType}/portalPanel-sqlmap.xml</value>
+				    <value>classpath:/ibatis/model/${databaseType}/prodOffer-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/offerProdRel-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/valueAddedProdInfo-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/productAttr-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/attrSpec-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/pricing-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/prodOfferChannelType-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/productAttrGroup-sqlmap.xml</value>
+					<value>classpath:/ibatis/model/${databaseType}/ctlCounterms2Tech-sqlmap.xml</value>  
+					<value>classpath:/ibatis/model/${databaseType}/serTechImpl-sqlmap.xml</value> 
+					<value>classpath:/ibatis/model/${databaseType}/techImpAtt-sqlmap.xml</value> 
+					<value>classpath:/ibatis/model/${databaseType}/techImpl-sqlmap.xml</value> 
+					<value>classpath:/ibatis/model/${databaseType}/commProtocal-sqlmap.xml</value> 	
+					<value>classpath:/ibatis/model/${databaseType}/controlCounterms-sqlmap.xml</value>
+					<value>classpath:/ibatis/model/${databaseType}/service-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/proofEffect-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/proofValues-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/ctlCounterms2Comp-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/serInvokeIns-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/contactInfo-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/corporation-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/corporationLicense-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/orgContactInfo-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/partnerAccount-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/partnerPaymentPlan-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/sysCardType-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/sysPerson-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/orgPerson-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/partnerContract-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/partnerContractAttach-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/baseMessage-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/loadCommon-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/serviceSpec-sqlmap.xml</value>
+			  		<value>classpath:/ibatis/model/productServiceRel-sqlmap.xml</value>
+			  		<value>classpath:/ibatis/model/${databaseType}/act-exception-log-sqlmap.xml</value>
+			  	    <value>classpath:/ibatis/model/${databaseType}/busiDataInfo-sqlmap.xml</value>
+    	        </list>
+    	</property>
+    	<!-- //////////新修改配置 -->
+    	<property name="dataSource" ref="eaapconfDataSource"/>
+    	<property name="lobHandler" ref="lobHandler"/>
+  	</bean>
+  	
+  	<bean id="sqlMapClientSm" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean" abstract="false" scope="singleton" lazy-init="default" autowire="default" dependency-check="default">
+  		<description>Spring iBatis结合</description>
+    	<property name="configLocation" value="classpath:sqlMap-config-conf.xml"/>
+    	<!-- 新修改配置 -->
+    	<property name="mappingLocations">
+    			<list>
+    	            <value>classpath:/ibatis/model/${databaseType}/conf/*-sqlmap.xml</value>
+					<value>classpath:/ibatis/model/${databaseType}/fileShare-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/org-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/provide-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/component-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/app-sqlmap.xml</value>
+				    <value>classpath:/ibatis/model/${databaseType}/mainData-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/mainDataType-sqlmap.xml</value>
+				    <value>classpath:/ibatis/model/${databaseType}/orgRole-sqlmap.xml</value>
+				    <value>classpath:/ibatis/model/${databaseType}/portalPanel-sqlmap.xml</value>
+				    <value>classpath:/ibatis/model/${databaseType}/prodOffer-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/offerProdRel-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/valueAddedProdInfo-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/productAttr-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/attrSpec-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/pricing-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/prodOfferChannelType-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/productAttrGroup-sqlmap.xml</value>
+					<value>classpath:/ibatis/model/${databaseType}/ctlCounterms2Tech-sqlmap.xml</value>  
+					<value>classpath:/ibatis/model/${databaseType}/serTechImpl-sqlmap.xml</value> 
+					<value>classpath:/ibatis/model/${databaseType}/techImpAtt-sqlmap.xml</value> 
+					<value>classpath:/ibatis/model/${databaseType}/techImpl-sqlmap.xml</value> 
+					<value>classpath:/ibatis/model/${databaseType}/commProtocal-sqlmap.xml</value> 	
+					<value>classpath:/ibatis/model/${databaseType}/controlCounterms-sqlmap.xml</value>
+					<value>classpath:/ibatis/model/${databaseType}/service-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/proofEffect-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/proofValues-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/ctlCounterms2Comp-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/serInvokeIns-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/contactInfo-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/corporation-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/corporationLicense-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/orgContactInfo-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/partnerAccount-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/partnerPaymentPlan-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/sysCardType-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/sysPerson-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/orgPerson-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/partnerContract-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/partnerContractAttach-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/baseMessage-sqlmap.xml</value>
+    	        </list>
+    	</property>
+    	<!-- //////////新修改配置 -->
+    	<property name="dataSource" ref="eaapSmDataSource"/>
+    	<property name="lobHandler" ref="lobHandler"/>
+  	</bean>
+  	
+  	<bean id="sqlMapClientdep" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean" abstract="false" scope="singleton" lazy-init="default" autowire="default" dependency-check="default">
+  		<description>Spring iBatis结合</description>
+    	<property name="configLocation" value="classpath:sqlMap-config-conf.xml"/>
+    	<!-- 新修改配置 -->
+    	<property name="mappingLocations">
+    			<list>
+    	            <value>classpath:/ibatis/model/${databaseType}/conf/*-sqlmap.xml</value>
+					<value>classpath:/ibatis/model/${databaseType}/fileShare-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/org-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/provide-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/component-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/app-sqlmap.xml</value>
+				    <value>classpath:/ibatis/model/${databaseType}/mainData-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/mainDataType-sqlmap.xml</value>
+				    <value>classpath:/ibatis/model/${databaseType}/orgRole-sqlmap.xml</value>
+				    <value>classpath:/ibatis/model/${databaseType}/portalPanel-sqlmap.xml</value>
+				    <value>classpath:/ibatis/model/${databaseType}/prodOffer-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/offerProdRel-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/valueAddedProdInfo-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/productAttr-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/attrSpec-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/pricing-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/prodOfferChannelType-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/productAttrGroup-sqlmap.xml</value>
+					<value>classpath:/ibatis/model/${databaseType}/ctlCounterms2Tech-sqlmap.xml</value>  
+					<value>classpath:/ibatis/model/${databaseType}/serTechImpl-sqlmap.xml</value> 
+					<value>classpath:/ibatis/model/${databaseType}/techImpAtt-sqlmap.xml</value> 
+					<value>classpath:/ibatis/model/${databaseType}/techImpl-sqlmap.xml</value> 
+					<value>classpath:/ibatis/model/${databaseType}/commProtocal-sqlmap.xml</value> 	
+					<value>classpath:/ibatis/model/${databaseType}/controlCounterms-sqlmap.xml</value>
+					<value>classpath:/ibatis/model/${databaseType}/service-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/proofEffect-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/proofValues-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/ctlCounterms2Comp-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/serInvokeIns-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/contactInfo-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/corporation-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/corporationLicense-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/orgContactInfo-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/partnerAccount-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/partnerPaymentPlan-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/sysCardType-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/sysPerson-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/orgPerson-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/partnerContract-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/partnerContractAttach-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/baseMessage-sqlmap.xml</value>
+    	        </list>
+    	</property>
+    	<!-- //////////新修改配置 -->
+    	<property name="dataSource" ref="eaapdepDataSource"/>
+    	<property name="lobHandler" ref="lobHandler"/>
+  	</bean>
+  	
+  	
+  	<bean id="sqlMapClientstat" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean" abstract="false" scope="singleton" lazy-init="default" autowire="default" dependency-check="default">
+  		<description>Spring iBatis结合</description>
+    	<property name="configLocation" value="classpath:sqlMap-config-conf.xml"/>
+    	<!-- 新修改配置 -->
+    	<property name="mappingLocations">
+    			<list>
+    	            <value>classpath:/ibatis/model/${databaseType}/conf/*-sqlmap.xml</value>
+					<value>classpath:/ibatis/model/${databaseType}/fileShare-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/org-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/provide-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/component-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/app-sqlmap.xml</value>
+				    <value>classpath:/ibatis/model/${databaseType}/mainData-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/mainDataType-sqlmap.xml</value>
+				    <value>classpath:/ibatis/model/${databaseType}/orgRole-sqlmap.xml</value>
+				    <value>classpath:/ibatis/model/${databaseType}/portalPanel-sqlmap.xml</value>
+				    <value>classpath:/ibatis/model/${databaseType}/prodOffer-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/offerProdRel-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/valueAddedProdInfo-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/productAttr-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/attrSpec-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/pricing-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/prodOfferChannelType-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/productAttrGroup-sqlmap.xml</value>
+					<value>classpath:/ibatis/model/${databaseType}/ctlCounterms2Tech-sqlmap.xml</value>  
+					<value>classpath:/ibatis/model/${databaseType}/serTechImpl-sqlmap.xml</value> 
+					<value>classpath:/ibatis/model/${databaseType}/techImpAtt-sqlmap.xml</value> 
+					<value>classpath:/ibatis/model/${databaseType}/techImpl-sqlmap.xml</value> 
+					<value>classpath:/ibatis/model/${databaseType}/commProtocal-sqlmap.xml</value> 	
+					<value>classpath:/ibatis/model/${databaseType}/controlCounterms-sqlmap.xml</value>
+					<value>classpath:/ibatis/model/${databaseType}/service-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/proofEffect-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/proofValues-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/ctlCounterms2Comp-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/serInvokeIns-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/contactInfo-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/corporation-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/corporationLicense-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/orgContactInfo-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/partnerAccount-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/partnerPaymentPlan-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/sysCardType-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/sysPerson-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/orgPerson-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/partnerContract-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/partnerContractAttach-sqlmap.xml</value>
+				  	<value>classpath:/ibatis/model/${databaseType}/baseMessage-sqlmap.xml</value>
+    	        </list>
+    	</property>
+    	<!-- //////////新修改配置 -->
+    	<property name="dataSource" ref="eaapstatDataSource"/>
+    	<property name="lobHandler" ref="lobHandler"/>
+  	</bean>
+  	
+  	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<ref local="eaapconfDataSource" />
+		</property>
+  	</bean>
+  	
+  	
+  	<bean id="iBatisSqlMapDAO" class="com.linkage.rainbow.dao.impl.IBatisSqlMapDAOImpl" scope="prototype" >
+		<description>数据库基础操作工具包</description>
+		<property name="sqlMapClient" ref="sqlMapClient"/>
+	</bean>
+   
+   <bean id="iBatisSqlMapDAOSm" class="com.linkage.rainbow.dao.impl.IBatisSqlMapDAOImpl" scope="prototype" >
+		<description>监控视图面板(PortalPanel)操作工具包</description>
+		<property name="sqlMapClient" ref="sqlMapClientSm"/>
+	</bean>
+	
+	<bean id="iBatisSqlMapDAOdep" class="com.linkage.rainbow.dao.impl.IBatisSqlMapDAOImpl" scope="prototype" >
+		<description>数据库基础操作工具包</description>
+		<property name="sqlMapClient" ref="sqlMapClientdep"/>
+	</bean>
+	
+	<bean id="iBatisSqlMapDAOstat" class="com.linkage.rainbow.dao.impl.IBatisSqlMapDAOImpl" scope="prototype" >
+		<description>数据库基础操作工具包(统计报表)</description>
+		<property name="sqlMapClient" ref="sqlMapClientstat"/>
+	</bean>
+	
+   <bean id="orgRegAuditingDao" class="com.ailk.eaap.op2.conf.auditing.dao.OrgRegAuditingDaoImpl" scope="prototype" >
+		<description>用户信息查询(ORG)基础操作工具包</description>
+		<property name="sqlMapDao" ref="iBatisSqlMapDAO"/>
+	</bean>
+	
+	<bean id="compRegAuditingDao" class="com.ailk.eaap.op2.conf.auditing.dao.CompRegAuditingDaoImpl" scope="prototype" >
+		<description>组件信息查询(COMPONENT)拓展操作工具包</description>
+		<property name="sqlMapDao" ref="iBatisSqlMapDAO"/>
+	</bean>
+	
+	<bean id="contractRegAuditingDao" class="com.ailk.eaap.op2.conf.auditing.dao.ContractRegAuditingDaoImpl" scope="prototype" >
+		<description>协议信息查询(CONTRACT)拓展操作工具包</description>
+		<property name="sqlMapDao" ref="iBatisSqlMapDAO"/>
+	</bean>
+	<bean id="prodOfferDao" class="com.ailk.eaap.op2.conf.prodOffer.dao.ProdOfferDaoImpl" scope="prototype" >
+		<description>产品信息操作工具包</description>
+		<property name="sqlMapDao" ref="iBatisSqlMapDAO"/>
+	</bean>
+	 <bean id="fileShareSqlDao" class="com.ailk.eaap.op2.dao.FileShareDaoImpl" scope="prototype" >
+		<description>文件共享(FileShare)基础操作工具包</description>
+		<property name="sqlMapDao" ref="iBatisSqlMapDAO"/>
+	</bean>
+	<bean id="mainDataSqlDAO" class="com.ailk.eaap.op2.dao.MainDataDaoImpl" scope="prototype" >
+		<description>主数据(MAIN_DATA)基础操作工具包</description>
+		<property name="sqlMapDao" ref="iBatisSqlMapDAO"/>
+	</bean>
+	<bean id="pardPordDao" class="com.ailk.eaap.op2.conf.pard.dao.PardPordDaoImpl" scope="prototype" >
+		<description>合作伙伴基础操作工具包</description>
+		<property name="sqlMapDao" ref="iBatisSqlMapDAO"/>
+	</bean>	
+	<bean id="mealRateDAO" class="com.ailk.eaap.op2.conf.mealrate.dao.MealRateDaoImpl" scope="prototype" >
+		<description>套餐议价基础操作工具包</description>
+		<property name="sqlMapDao" ref="iBatisSqlMapDAO"/>
+	</bean>	
+	<bean id="authenticateDAO" class="com.ailk.eaap.op2.conf.authenticate.dao.AuthenticateDaoImpl" scope="prototype" >
+		<description>认证鉴权基础操作工具包</description>
+		<property name="sqlMapDao" ref="iBatisSqlMapDAO"/>
+	</bean>
+	
+	<bean id="flowcontrolDAO" class="com.ailk.eaap.op2.conf.flowcontrol.dao.FlowControlDaoImpl" scope="prototype" >
+		<description>流量控制基础操作工具包</description>
+		<property name="sqlMapDao" ref="iBatisSqlMapDAO"/>
+	</bean>
+	<bean id="orgSqlDAO" class="com.ailk.eaap.op2.dao.OrgDaoImpl" scope="prototype" >
+		<description>机构(ORG)基础操作工具包</description>
+		<property name="sqlMapDao" ref="iBatisSqlMapDAO"/>
+	</bean>
+	
+	<bean id="mainDataTypeSqlDAO" class="com.ailk.eaap.op2.dao.MainDataTypeDaoImpl" scope="prototype" >
+		<description>主数据类型(MAIN_DATA_TYPE)基础操作工具包</description>
+		<property name="sqlMapDao" ref="iBatisSqlMapDAO"/>
+	</bean>
+	
+	<bean id="messageBaseSqlDAO" class="com.ailk.eaap.op2.dao.MessageBaseDaoImpl" scope="prototype" >
+		<description>消息(MESSAGE)基础操作工具包</description>
+		<property name="sqlMapDao" ref="iBatisSqlMapDAO"/>
+	</bean>
+	
+	<bean id="prodSellAuditDao" class="com.ailk.eaap.op2.conf.pard.dao.ProdSellAuditDaoImpl" scope="prototype" >
+		<description>销售产品审核(PROD_SELL)基础操作工具包</description>
+		<property name="sqlMapDao" ref="iBatisSqlMapDAO"/>
+	</bean>
+  	
+	<bean id="testPilesDao"  class="com.ailk.eaap.op2.conf.testPiles.dao.TestPilesDaoImpl"  scope="prototype">
+		<description>测试桩(testPiles)基础操作工具包</description>
+		<property name="sqlMapDao" ref="iBatisSqlMapDAO" />
+	</bean>
+	
+	<bean id="remoteCallInfoDao"  class="com.ailk.eaap.op2.conf.remoteCallInfo.dao.RemoteCallInfoDaoImpl"  scope="prototype">
+		<description>远程调用地址编码基础操作工具包</description>
+		<property name="sqlMapDao" ref="iBatisSqlMapDAO" />
+	</bean>
+	
+	<bean id="wsdlImportDao"  class="com.ailk.eaap.op2.conf.wsdlImport.dao.WsdlImportDaoImpl"  scope="prototype">
+		<description>WSDL导入基础操作工具包</description>
+		<property name="sqlMapDao" ref="iBatisSqlMapDAO" />
+	</bean>
+	
+	<bean id="messageFlowDao"  class="com.ailk.eaap.op2.conf.messageFlow.dao.MessageFlowDaoImpl"  scope="prototype">
+		<description>消息流基础操作工具包</description>
+		<property name="sqlMapDao" ref="iBatisSqlMapDAO" />
+	</bean>
+	
+	<bean id="serviceSpecDAO" name="serviceSpecDAO" class="com.ailk.eaap.op2.dao.ServiceSpecDaoImpl" scope="prototype" >
+		<description>服务(serviceSpec)基础操作工具包</description>
+		<property name="sqlMapDao" ref="iBatisSqlMapDAO"/>
+	</bean>
+	
+	<bean id="productServiceDAO" name="productServiceDAO" class="com.ailk.eaap.op2.dao.ProductServiceDAOImpl" scope="prototype" >
+		<description>产品服务(productService)基础操作工具包</description>
+		<property name="sqlMapDao" ref="iBatisSqlMapDAO"/>
+	</bean>
+	
+	<bean id="exceptionLogDao" class="com.ailk.eaap.op2.dao.ExceptionLogDaoImpl" scope="prototype" >
+		<description>审批异常调度工具包</description>
+		<property name="sqlMapDao" ref="iBatisSqlMapDAO"/>
+	</bean>
+	
+	
+	<bean id="busiDataInfoDao" class="com.ailk.eaap.op2.dao.BusiDataInfoDaoImpl"  scope="prototype">
+		<description>业务数据信息工具包</description>
+		<property name="sqlMapDao" ref="iBatisSqlMapDAO"/>
+	</bean>
+	
+	<bean id="jobConsoleService" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
+		<property name="serviceUrl">
+			<value>${fileExchangeServiceUrl}</value>
+		</property>
+		<property name="serviceInterface" value="com.ailk.eaap.op2.conf.task.service.IJobConsoleService" />
+	</bean>	
+	
+   	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" scope="singleton" >
+  		<description>Spring 事务管理</description>
+    	<property name="dataSource" ref="eaapconfDataSource"/>
+  	</bean>  	
+  	
+  	<!-- 系统事务处理AOP配置 -->
+	<aop:config proxy-target-class="false">
+		<!-- 需事务控制切入点 -->
+		<aop:pointcut id="txPointcut" expression="execution(* com.ailk.eaap.op2.conf.*.service..*(..))  and !execution(* com.ailk.eaap.op2.conf.task.service..*(..))"/>
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="txPointcut"/>
+	</aop:config>
+	<!-- 系统事务控制配置 -->
+	<tx:advice id="txAdvice" transaction-manager="txManager" >
+		<tx:attributes>
+			<tx:method name="insert*" propagation="NESTED" rollback-for="Exception"/>
+			<tx:method name="add*" propagation="NESTED" rollback-for="Exception"/>
+			<tx:method name="do*" propagation="NESTED" rollback-for="Exception"/>
+			<tx:method name="update*" propagation="NESTED" rollback-for="Exception"/>
+			<tx:method name="modify*" propagation="NESTED" rollback-for="Exception"/>
+			<tx:method name="edit*" propagation="NESTED" rollback-for="Exception"/>
+			<tx:method name="del*" propagation="NESTED" rollback-for="Exception"/>
+			<tx:method name="get*" read-only="true"/>
+			<tx:method name="find*" read-only="true"/>
+			<tx:method name="query*" read-only="true"/>
+			<tx:method name="search*" read-only="true"/>
+			<tx:method name="select*" read-only="true"/>
+			<tx:method name="count*" read-only="true"/>
+		</tx:attributes>
+	</tx:advice>
+	<!--
+		Spring中常用事务类型：
+			REQUIRED	支持当前事务，如果当前没有事务，就新建一个事务。这是最常见的选择。
+			SUPPORTS	支持当前事务，如果当前没有事务，就以非事务方式执行。
+			MANDATORY	支持当前事务，如果当前没有事务，就抛出异常。
+			REQUIRES_NEW	新建事务，如果当前存在事务，把当前事务挂起。
+			NOT_SUPPORTED	以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。
+			NEVER	以非事务方式执行，如果当前存在事务，则抛出异常。
+			NESTED	如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则进行与PROPAGATION_REQUIRED类似的操作。 
+	 -->
+	 
+	 <bean id="springContextUtil" class="com.ailk.eaap.op2.util.SpringContextUtil" />
+	
+	<context:component-scan base-package="com.ailk.eaap.op2.conf.auditing.dao" />
+	<context:component-scan base-package="com.ailk.eaap.op2.conf.auditing.service" />
+</beans>

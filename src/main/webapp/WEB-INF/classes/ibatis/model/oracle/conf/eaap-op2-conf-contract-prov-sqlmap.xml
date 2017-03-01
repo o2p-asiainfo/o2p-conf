@@ -1,0 +1,383 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="eaap-op2-conf-contract-prov">
+	<!-- 展示协议的基类 -->
+	<select id="getBaseContract" resultClass="java.util.HashMap">
+		SELECT A.CONTRACT_ID BASEID,A.NAME NAME FROM CONTRACT A WHERE A.is_base = 1
+	</select>
+	<!-- 展示协议版本文档 -->
+	<select id="getContractDoc" resultClass="java.util.HashMap">
+		SELECT A.CONTRACT_DOC_ID DOCID,A.DOC_NAME DOCNAME FROM CONTRACT_DOC A
+	</select>
+<update id="updateContractVersion" parameterClass="com.ailk.eaap.op2.bo.ContractVersion">
+  update CONTRACT_VERSION  set CREATE_TIME = SYS_EXTRACT_UTC(current_timestamp)+0
+  <dynamic >
+    <isNotNull prepend="," property="version">VERSION=#version#</isNotNull>
+    <isNotNull prepend="," property="contractId">CONTRACT_ID=#contractId#</isNotNull>
+    <isNotNull prepend="," property="state">STATE=#state#</isNotNull>
+    <isNotNull prepend="," property="lastestTime">LASTEST_TIME=#lastestTime#</isNotNull>
+    <isNotNull prepend="," property="effDate">EFF_DATE=#effDate#</isNotNull>
+    <isNotNull prepend="," property="expDate">EXP_DATE=#expDate#</isNotNull>
+    <isNotNull prepend="," property="descriptor">DESCRIPTOR=#descriptor#</isNotNull>
+    <isNotNull prepend="," property="isNeedCheck">IS_NEED_CHECK=#isNeedCheck#</isNotNull>
+  </dynamic>
+  where CONTRACT_VERSION_ID=#contractVersionId#
+</update>
+	<!-- 统计协议信息 -->
+	<select id="countContract" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+	     SELECT * FROM (SELECT X.*,ROWNUM ROW_NUM FROM (SELECT C.CONTRACT_ID CONTRACTID, (SELECT B.NAME FROM  CONTRACT B WHERE B.CONTRACT_ID=C.BASE_CONTRACT_ID) BASENAME,
+         C.NAME NAME, C.CODE CODE, C.STATE STATE, C.IS_BASE ISBASE, TO_CHAR(C.CREATE_TIME,'yyyy-mm-dd hh24:mi') CREATETIME FROM CONTRACT C 
+	<dynamic prepend="where">
+	   	<isNotNull prepend="and" property="contractName"> NAME LIKE '%'||#contractName#||'%' </isNotNull>
+	    <isNotNull prepend="and" property="contractNode"> CODE LIKE '%'||#contractNode#||'%'</isNotNull>
+	    <isNotNull prepend="and" property="statu"> STATE=#statu#</isNotNull>
+	    <isNotNull prepend="and" property="base">  BASE_CONTRACT_ID=#base#</isNotNull>
+		<isNotNull prepend="and" property="isBase"> IS_BASE=#isBase#</isNotNull>
+	  </dynamic>
+	  ORDER BY C.CONTRACT_ID)X WHERE <![CDATA[ ROWNUM <= #endPage# ) Y  WHERE Y.ROW_NUM >= #startPage# ]]>
+	</select>
+	<select id="queryContractList" parameterClass="java.util.Map"
+		resultClass="java.util.HashMap">
+		select c.contract_id contractId, c.name name, c.code code from
+		contract c
+		<dynamic prepend="where">
+			<isNotNull prepend="and" property="name"> c.name like '%'||#name#||'%'
+			</isNotNull>
+			<isNotNull prepend="and" property="code"> c.code like '%'||#code#||'%'
+			</isNotNull>
+		</dynamic>
+	</select>
+	<!-- 统计协议信息总数 -->
+	<select id="countContractSum" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+	     SELECT COUNT(CONTRACT_ID) NUM FROM CONTRACT C 
+	<dynamic prepend="where">
+	   	<isNotNull prepend="and" property="contractName"> NAME LIKE '%'||#contractName#||'%' </isNotNull>
+	    <isNotNull prepend="and" property="contractNode"> CODE LIKE '%'||#contractNode#||'%'</isNotNull>
+	    <isNotNull prepend="and" property="statu"> STATE=#statu#</isNotNull>
+	    <isNotNull prepend="and" property="base">  BASE_CONTRACT_ID=#base#</isNotNull>
+		<isNotNull prepend="and" property="isBase"> IS_BASE=#isBase#</isNotNull>
+	  </dynamic> 
+	</select>
+	<!-- 统计协议版本信息 -->
+	<select id="countContractVersion" parameterClass="java.util.Map" resultClass="java.util.HashMap">	
+	   SELECT * FROM (SELECT X.*,ROWNUM ROW_NUM FROM (
+	   SELECT A.CONTRACT_VERSION_ID VERSIONID,
+       A.CONTRACT_ID CONTRACTID,
+       A.VERSION VERSION,
+       TO_CHAR(A.CREATE_TIME, 'yyyy-mm-dd hh24:mi') CREATETIME,
+       A.STATE STATE,
+       A.DESCRIPTOR DESCRIPTOR,
+       A.IS_NEED_CHECK ISNEEDCHECK,
+       B.NAME NAME FROM CONTRACT_VERSION A,CONTRACT B 
+       WHERE A.CONTRACT_ID=B.CONTRACT_ID AND A.CONTRACT_ID=#contractId#
+	  ORDER BY A.CONTRACT_VERSION_ID)X WHERE
+      <![CDATA[ ROWNUM <= #endPage# ) Y  WHERE Y.ROW_NUM >= #startPage# ]]>
+	</select>
+	<!-- 统计协议版本信息总数 -->
+	<select id="countContractVersionSum" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+	     SELECT COUNT(CONTRACT_VERSION_ID) NUM FROM CONTRACT_VERSION C 
+	     <dynamic prepend="where">
+	   		<isNotNull prepend="and" property="contractId"> C.CONTRACT_ID=#contractId#</isNotNull>
+	     </dynamic>
+	</select>
+	<!-- 选择父节点 -->
+	<select id="chooseNodeDesc" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+ SELECT * FROM (SELECT ROW_NUMBER() OVER( ORDER BY NODE_DESC_ID ) rn ,  newtab.node_name,
+            newtab.NODE_CODE,newtab.PARENT_NODE_NAME,newtab.NODE_PATH,newtab.NODE_DESC_ID
+ FROM (
+	select nd.*,
+           (select node_name 
+              from node_desc pnd 
+             where pnd.node_desc_id = nd.parent_node_id) parent_node_name
+      from node_desc nd
+     where state = 'A'
+       and tcp_ctr_f_id = #tcpCtrFId#
+    <dynamic>
+    	<isNotNull prepend="and" property="nodeDescId"> NODE_DESC_ID!=#nodeDescId#</isNotNull>
+    	<isNotNull prepend="and" property="nodeCode"> NODE_CODE like '%'||#nodeCode#||'%'</isNotNull>
+   		<isNotNull prepend="and" property="nodeName"> NODE_NAME like '%'||#nodeName#||'%'</isNotNull>
+   		<isNotNull prepend="or" property="baseTcpFId"> tcp_ctr_f_id = #baseTcpFId#</isNotNull>
+    </dynamic>  
+       ) newtab ) WHERE rn BETWEEN #startPage# AND #endPage# 
+</select>
+<select id="countChooseNodeDescSum" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		select count(*)
+	      from node_desc nd
+	     where state = 'A'
+	       and tcp_ctr_f_id = #tcpCtrFId#
+	    <dynamic>
+	    	<isNotNull prepend="and" property="nodeDescId"> NODE_DESC_ID!=#nodeDescId#</isNotNull>
+	    	<isNotNull prepend="and" property="nodeCode"> NODE_CODE like '%'||#nodeCode#||'%'</isNotNull>
+    		<isNotNull prepend="and" property="nodeName"> NODE_NAME like '%'||#nodeName#||'%'</isNotNull>
+    		<isNotNull prepend="or" property="baseTcpFId"> tcp_ctr_f_id =#baseTcpFId#</isNotNull>
+	    </dynamic>  
+	</select>
+	<!-- 基类协议协议格式ID -->
+	<select id="getBaseTcpFIdById" parameterClass="java.lang.String"
+		resultClass="java.util.HashMap">
+		select cf.TCP_CTR_F_ID
+		from CONTRACT_FORMAT cf
+		where cf.CONTRACT_VERSION_ID =
+		(select cv.CONTRACT_VERSION_ID
+		from CONTRACT_VERSION cv
+		where cv.CONTRACT_ID =
+		(select BASE_CONTRACT_ID
+		from CONTRACT
+		where CONTRACT_ID =
+		(select CONTRACT_ID
+		from CONTRACT_VERSION
+		where CONTRACT_VERSION_ID =
+		(select CONTRACT_VERSION_ID
+		from CONTRACT_FORMAT
+		where cf.req_rsp = req_rsp and TCP_CTR_F_ID = #tcpCtrFId#)))) order by cf.TCP_CTR_F_ID desc
+	</select>
+	<!--  协议请求格式 -->
+	 <select id="selectConType" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT B.MAIND_ID MAINDID,B.CEP_NAME CEPNAME,B.CEP_VALUES CEPVALUES 
+		 FROM MAIN_DATA B 
+		WHERE MDT_CD=#mdtCd# 
+		     and TENANT_ID=#tenantId#
+		order by CEP_VALUES
+	 </select>
+	 
+  <resultMap class="java.util.HashMap" id="Model_htmlMap_1">    
+         <result property="REQRSP" column="REQRSP" javaType="String"/> 
+         <result property="TCPCTRFID" column="TCPCTRFID" javaType="String"/>  
+         <result property="CONTYPE" column="CONTYPE" javaType="String"/>
+         <result property="DESCRIPTOR" column="DESCRIPTOR" javaType="String"/>  
+         <result property="XSDHEADERFOR" column="XSDHEADERFOR" nullValue="" javaType="java.lang.String" jdbcType="CLOB"/> 
+         <result property="XSDFORMAT" column="XSDFORMAT" nullValue="" javaType="java.lang.String" jdbcType="CLOB"/>
+         <result property="XSDDEMO" column="XSDDEMO" nullValue="" javaType="java.lang.String" jdbcType="CLOB"/>
+         <result property="XSDEXCEPTION" column="XSDEXCEPTION" nullValue="" javaType="java.lang.String" jdbcType="CLOB"/>
+   </resultMap>  	
+   	<!-- 通过TECH_IMP_ATT_ID查询协议格式表内容 -->
+	<select id="contractFormatList" parameterClass="java.util.HashMap" resultMap="Model_htmlMap_1">
+		SELECT TCP_CTR_F_ID TCPCTRFID, REQ_RSP REQRSP, CON_TYPE CONTYPE, XSD_HEADER_FOR XSDHEADERFOR,XSD_FORMAT XSDFORMAT, 
+		XSD_DEMO  XSDDEMO, DESCRIPTOR DESCRIPTOR,XSD_EXCEPTION XSDEXCEPTION  FROM Contract_Format 
+		<dynamic prepend="where">
+	     <isNotNull prepend="and" property="versionId"> CONTRACT_VERSION_ID=#versionId#</isNotNull>
+    	 <isNotNull prepend="and" property="reqRsp"> REQ_RSP=#reqRsp#</isNotNull>	 
+	  </dynamic>
+	</select>
+	<select id="selectNodeDesc" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+  		SELECT nd.NODE_DESC_ID nodeDescId,nd.TCP_CTR_F_ID tcpCtrFId, NODE_NAME
+		nodeName,NODE_CODE nodeCode, NODE_PATH nodePath, NODE_LENGTH_CONS
+		nodeLengthCons,
+		NODE_TYPE_CONS nodeTypeCons, NODE_TYPE nodeType, NODE_NUMBER_CONS nodeNumberCons,
+		NEVL_CONS_TYPE nevlConsType, NEVL_CONS_VALUE
+		nevlConsValue,NEVL_CONS_DESC nevlConsDesc,
+		IS_NEED_CHECK isNeedCheck, nd.STATE state, DESCRIPTION description,CREATE_TIME
+		createTime, JAVA_FIELD javaField,IS_NEED_SIGN
+		isNeedSign,PARENT_NODE_ID parentNodeId,
+		(select node_name from node_desc pnd where pnd.node_desc_id =
+		nd.parent_node_id) parentNodeName,
+		(case when nd.NEVL_CONS_TYPE='3' then (SELECT t.mdt_name from
+		main_data_type t where t.mdt_cd=nd.NEVL_CONS_VALUE) else '' end) as
+		mdtName ,
+		cnf.CONTRACT_NODE_FUZZY_ID,
+		fe.FUZZY_ENCRYPTION_ID,
+		fe.FUZZY_ENCRYPTION_TYPE,
+		fe.FUZZY_ALTERNATIVE,
+		fe.FUZZY_START,
+		fe.FUZZY_END
+		from NODE_DESC nd
+		left join CONTRACT_NODE_FUZZY cnf on cnf.NODE_DESC_ID = nd.NODE_DESC_ID
+		left join FUZZY_ENCRYPTION fe on fe.FUZZY_ENCRYPTION_ID =
+		cnf.FUZZY_ENCRYPTION_ID
+		<dynamic prepend="where">
+			<isNotNull prepend="and" property="tcpCtrFId"> nd.TCP_CTR_F_ID=#tcpCtrFId#
+			</isNotNull>
+			<isNotNull prepend="and" property="nodeName"> nd.NODE_NAME=#nodeName#
+			</isNotNull>
+			<isNotNull prepend="and" property="nodePath"> nd.NODE_PATH=#nodePath#
+			</isNotNull>
+			<isNotNull prepend="and" property="state"> nd.STATE=#state#
+			</isNotNull>
+		</dynamic>
+	</select>
+	<!--  删除掉修改过的NODE_DESC节点信息 -->
+	<delete id="deleteNodeDescInfo" parameterClass="java.util.HashMap">
+		DELETE FROM NODE_DESC WHERE TCP_CTR_F_ID=#tcpCtrFId# and TENANT_ID=#tenantId#
+	</delete>	
+	
+	<!-- 统计协议与对应协议版本信息 -->
+	<select id="countContractAndVersion" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+	    SELECT *
+        FROM (SELECT X.*, ROWNUM ROW_NUM
+           FROM (select b.name NAME, a.contract_id CONTRACTID, a.version VERSION,a.contract_version_id VERSIONID,b.CODE, b.STATE
+                   from CONTRACT_VERSION a, CONTRACT b
+                  where a.contract_id = b.contract_id
+                  and b.tenant_id=#tenantId#
+				<dynamic>
+					<isNotNull prepend="and" property="contractName"> b.NAME LIKE '%'||#contractName#||'%' </isNotNull>
+					<isNotNull prepend="and" property="contractNode"> b.CODE LIKE '%'||#contractNode#||'%'</isNotNull>
+					<isNotNull prepend="and" property="statu"> b.STATE=#statu# </isNotNull>
+					<isNotNull prepend="and" property="base"> b.BASE_CONTRACT_ID=#base# </isNotNull>
+				</dynamic>
+                  order by a.contract_id desc) X
+           WHERE <![CDATA[ ROWNUM <= #endPage#) Y
+           WHERE Y.ROW_NUM >= #startPage# ]]>
+	</select>
+	<!-- 统计协议与对应协议版本信息总数 -->
+	<select id="countContractAndVersionSum" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+	  select count(*)from CONTRACT_VERSION a, CONTRACT b
+      where a.contract_id = b.contract_id
+          and b.tenant_id=#tenantId#
+		<dynamic>
+			<isNotNull prepend="and" property="contractName"> b.NAME LIKE '%'||#contractName#||'%' </isNotNull>
+			<isNotNull prepend="and" property="contractNode"> b.CODE LIKE '%'||#contractNode#||'%'</isNotNull>
+			<isNotNull prepend="and" property="statu"> b.STATE=#statu# </isNotNull>
+			<isNotNull prepend="and" property="base"> b.BASE_CONTRACT_ID=#base# </isNotNull>
+		</dynamic>
+	</select>
+	<select id="isExitCode" parameterClass="java.lang.String" resultClass="java.lang.Integer">
+		select count(1) from CONTRACT where CODE = #code#
+	</select>
+	<!-- 得到协议格式ID -->
+	<select id="selectContractFormatById" parameterClass="java.util.Map" resultClass="java.lang.String">
+		select TCP_CTR_F_ID from CONTRACT_FORMAT where CONTRACT_VERSION_ID  = #contractVersionId#  and REQ_RSP =  #req_rsp#
+	</select>
+	<!--  删除的NODE_DESC节点信息 -->
+	<delete id="delNodeDescById" parameterClass="java.lang.String">
+ 	 DELETE FROM NODE_DESC  WHERE TCP_CTR_F_ID=#tcp_ctr_f_id#
+	</delete>	
+	
+	<select id="queryAttrDefine_MainDataTypeList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+  		select d.maind_id,d.cep_name,d.cep_values
+		  from main_data d 
+		where d.maind_id in(SELECT a.maind_id from contract_attr_define a WHERE a.state='A')
+			and d.state='A'
+			and d.mdt_cd=#mdtCd#
+	</select>
+	<select id="queryAttrDefine_MainDataList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select
+		s.attr_spec_id,s.attr_spec_name,s.attr_spec_code,s.default_value,s.nullable,
+		(select case when count(*)>0 then cs.value else s.default_value end
+		from contract_2_attr_spec cs where cs.attr_spec_id=s.attr_spec_id and
+		cs.tcp_ctr_f_id=#tcpCtrFId# group by cs.value) as value
+		from contract_attr_define d, attr_spec s
+		where s.attr_spec_id =
+		d.attr_spec_id
+		and d.maind_id=#maindId#
+	</select>
+	<delete id="deleteContract2AttrSpec" parameterClass="java.util.HashMap">
+ 	 	DELETE FROM contract_2_attr_spec where TCP_CTR_F_ID =#tcpCtrFId# and ATTR_SPEC_ID in (SELECT attr_spec_id from contract_attr_define where maind_id =#maindId#)
+	</delete>
+	<insert id="saveContract2AttrSpec" parameterClass="com.ailk.eaap.op2.bo.Contract2AttrSpec">
+		insert into CONTRACT_2_ATTR_SPEC(CONTRACT_2_ATTR_SPEC_ID, TCP_CTR_F_ID, ATTR_SPEC_ID, VALUE,STATE)
+		values(SEQ_CONTRACT_2_ATTR_SPEC.NEXTVAL, #tcpCtrFId#, #attrSpecId#,#value#, #state#)
+	</insert>
+	<!-- 获取属性值 -->
+	<select id="getAttrSpecValueList" resultClass="java.util.HashMap">
+		SELECT T1.TASK_TYPE_ID ID,T1.QUEUE_NAME NAME FROM TASK_TYPE T1
+	</select>	
+	<!-- 获取属性值 -->
+	<select id="getObjNameAndUrlByTaskTypeId" resultClass="java.util.HashMap"
+		parameterClass="java.util.HashMap">
+		SELECT T2.OBJ_NAME NAME,T3.VIEW_URL URL FROM TASK_TYPE
+		T1,OBJ_TYPE T2,OBJ_TYPE_2_VIEW T3
+		WHERE T1.OBJ_TYPE_CD = T2.OBJ_TYPE_ID
+		AND T2.OBJ_TYPE_ID = T3.OBJ_TYPE_CD
+		AND T1.TASK_TYPE_ID =#TASKTYPEID#
+	</select>
+	<!-- 获取服务对象名称 -->
+	<select id="getObjNameByObjId" resultClass="java.util.HashMap"
+		parameterClass="java.util.HashMap">
+		SELECT SER_INVOKE_INS_NAME OBJNAME FROM SER_INVOKE_INS
+		WHERE SER_INVOKE_INS_ID = #ObjId#
+	</select>
+	<!-- 获取任务类型 -->
+	<select id="getTaskTypeList" resultClass="java.util.HashMap">
+		SELECT T1.TASK_TYPE
+		ID,T1.TASK_TYPE_NAME NAME FROM TASK_TYPE T1
+	</select>
+	<!-- 插入组件信息 -->
+	<insert id="INSERT_TASK_MANAGE" parameterClass="com.ailk.eaap.o2p.task.model.TaskContentBean">
+		<selectKey resultClass="int" keyProperty="taskId">
+			select SEQ_DOC_CONTRACT.NEXTVAL from dual;
+		</selectKey>
+		insert into TASK_MANAGER
+		(
+		<dynamic>
+			<isNotNull prepend="" property="taskId">task_id</isNotNull>
+			<isNotNull prepend="," property="taskCode">task_code</isNotNull>
+			<isNotNull prepend="," property="taskName">task_name</isNotNull>
+			<isNotNull prepend="," property="gcCd">gc_cd</isNotNull>
+			<isNotNull prepend="," property="threadNumber">thread_number</isNotNull>
+			<isNotNull prepend="," property="startDate">state_date</isNotNull>
+			<isNotNull prepend="," property="stopDate">stop_date</isNotNull>
+			<isNotNull prepend="," property="taskState">task_state</isNotNull>
+			<isNotNull prepend="," property="stateLastDate">state_last_date</isNotNull>
+			<isNotNull prepend="," property="taskDesc">task_desc</isNotNull>
+		</dynamic>
+		)
+		values
+		(
+		<dynamic>
+			<isNotNull prepend="" property="taskId">#taskId#</isNotNull>
+			<isNotNull prepend="," property="taskCode">#taskCode#</isNotNull>
+			<isNotNull prepend="," property="taskName">#taskName#</isNotNull>
+			<isNotNull prepend="," property="gcCd">#gcCd#</isNotNull>
+			<isNotNull prepend="," property="threadNumber">#threadNumber#</isNotNull>
+			<isNotNull prepend="," property="startDate">#startDate#</isNotNull>
+			<isNotNull prepend="," property="stopDate">#stopDate#</isNotNull>
+			<isNotNull prepend="," property="taskState">#taskState#</isNotNull>
+			<isNotNull prepend="," property="stateLastDate">#stateLastDate#</isNotNull>
+			<isNotNull prepend="," property="taskDesc">#taskDesc#</isNotNull>
+		</dynamic>
+		)
+	</insert>
+	<!-- 获取任务周期 -->
+	<select id="getCycleList" resultClass="java.util.HashMap">
+		SELECT A.GC_CD GCCD,A.NAME
+		NAME FROM GATHER_CYCLE A
+	</select>
+	
+	<!-- 获取任务风格 -->
+	<select id="getTaskStyleList" resultClass="java.util.HashMap">
+		select TASK_STYLE,TASK_STYLE_DESC from TASK_STYLE
+	</select>
+	
+	<update id="updateNodeDescById" parameterClass="java.util.HashMap">
+       update node_desc set parent_node_id=null where tcp_ctr_f_id=#tcp_ctr_f_id#  and  parent_node_id=#nodeDescId#
+    </update>
+    <update id="updateNodeDescByMap" parameterClass="java.util.HashMap">
+       update node_desc set parent_node_id=#parentNodeId# 
+       where tcp_ctr_f_id=#tcp_ctr_f_id# 
+       and parent_node_id = #currentNodeId#
+    </update>
+    <select id="getNodeIdByPath" parameterClass="java.util.HashMap"
+		resultClass="java.lang.String">
+		select node_desc_id from node_desc where node_path = #path# and tcp_ctr_f_id=#tcpCtrFId#
+	</select>
+	<update id="updateParentId" parameterClass="java.lang.Integer">
+	     update NODE_DESC  set parent_node_id=null where parent_node_id = #nodeDescId#
+	</update>
+	
+	<select id="isExitMapper" parameterClass="java.lang.Integer" resultClass="java.lang.Integer">
+	     select count(1) from node_desc_maper nm where (nm.src_node_desc_id = #nodeDescId# or nm.tar_node_desc_id = #nodeDescId#) and exists (
+			select 1 from endpoint_attr_value ev where ev.attr_value = nm.CONTRACT_ADAPTER_ID and ev.endpoint_spec_attr_id = 28
+		 )	
+	</select>
+	
+	<select id="queryTemplate" parameterClass="com.ailk.eaap.op2.bo.Template" resultClass="com.ailk.eaap.op2.bo.Template">
+	  select TEMPLATE_ID templateId,  TCP_CTR_F_ID tcpCtrFId, TEMPLATE_HEADER templateHeader, TEMPLATE_BODY templateBody, TEMPLATE_TYPE templateType, IS_GLOBAL isGlobal 
+	    from CONTENT_TEMPLATE
+	  <dynamic prepend="where">
+	    <isNotNull prepend="and" property="templateId"> TEMPLATE_ID=#templateId#</isNotNull>
+	    <isNotNull prepend="and" property="tcpCtrFId"> TCP_CTR_F_ID=#tcpCtrFId#</isNotNull>
+	    <isNotNull prepend="and" property="isGlobal"> IS_GLOBAL=#isGlobal#</isNotNull>
+	  </dynamic>
+	</select>
+	<delete id="deleteTemplate" parameterClass="com.ailk.eaap.op2.bo.Template">
+		delete from content_template where tcp_ctr_f_id=#tcpCtrFId#
+	</delete>
+	<insert id="insertTemplate" parameterClass="com.ailk.eaap.op2.bo.Template">
+		insert into content_template(template_id,tcp_ctr_f_id,template_header,template_body,template_type,is_global)
+		values(SEQ_CONTENT_TEMPLATE_ID.NEXTVAL,#tcpCtrFId#,#templateHeader#,#templateBody#,#templateType#,#isGlobal#)
+	</insert>
+	
+</sqlMap> 
+

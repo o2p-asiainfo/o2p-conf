@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+	
+<struts>
+	<package name="prodSell" extends="default" namespace="/prodSell">
+		<!-- 待审核产品查询 -->
+		<action name="applyProdQuery" class="com.ailk.eaap.op2.conf.pard.action.ProdSellAuditAction" method="queryApplyInfo">
+			<result name="success">
+				/pard/applyProdQuery.jsp
+			</result>
+		</action>
+		
+		<!-- 产品审核-->
+		<action name="prodAudit" class="com.ailk.eaap.op2.conf.pard.action.ProdSellAuditAction" method="prodAudit">
+			<result name="success">
+				/pard/success.jsp
+			</result>
+		</action>
+	</package>
+</struts>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+	
+<struts>
+	<package name="adapter" extends="default" namespace="/adapter">
+	
+		<!-- 获取新的节点ID -->
+		<action name="getNewNodeId" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="getNewNodeId">
+			<result name="success" type="httpheader"></result>
+		</action>
+		
+		<!-- 获取新的节点内容操作配置ID -->
+		<action name="getNewNodeOperId" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="getNewNodeOperId">
+			<result name="success" type="httpheader"></result>
+		</action>
+		
+		<!-- 获取新的NODE_PATH_CONFIG路径ID -->
+		<action name="getNewPathId" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="getNewPathId">
+			<result name="success" type="httpheader"></result>
+		</action>
+		
+		<!-- 获取某个数据集SQL的信息 -->
+		<action name="querySomeQuerySQLInfo" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="querySomeQuerySQLInfo">
+			<result name="success" type="httpheader"></result>
+		</action>			
+		
+		<!-- 获取某个扩展方式的信息 -->
+		<action name="querySomeExtendMethodInfo" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="querySomeExtendMethodInfo">
+			<result name="success" type="httpheader"></result>
+		</action>		
+	
+		<action name="toMainAdapterConfig" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="toMainAdapterConfig">
+			<result name="success">/adapter/adapterMain.jsp</result> 
+			<result name="adapterManager">/adapter/adapterManager.jsp</result>
+		</action>
+
+		<action name="adapterManagerSave" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="adapterManagerSave">
+			<result name="success">/adapter/adapterMain.jsp</result> 
+		</action>
+		 
+		<action name="toDataSetManager" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="toDataSetManager">
+			<result name="success">/adapter/manager/dataSetManager.jsp</result> 
+		</action>
+		
+		<action name="toExtendManager" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="toExtendManager">
+			<result name="success">/adapter/manager/extendManager.jsp</result> 
+		</action>
+		
+		<action name="queryExtendMethod" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="queryExtendMethod">
+			<result name="success">/adapter/manager/extendManager.jsp</result> 
+		</action>		
+		
+		<action name="testProtocalAdapter" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="testProtocalAdapter">
+			<result name="success" type="httpheader"></result>
+		</action>		
+		
+		<action name="queryDataSet" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="queryDataSet">
+			<result name="success">/adapter/manager/dataSetManager.jsp</result> 
+		</action>		
+		<action name="queryDataSetJSON" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="queryDataSetJSON" />
+		<action name="getDataSouceList" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="getDataSouceList" />
+		<action name="saveDataSet" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="saveDataSet" >
+			<result type="redirectAction">queryDataSet</result>
+		</action>
+		<action name="generateTreeStructure" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="generateTreeStructure">
+			<result name="success" type="httpheader"></result>
+		</action>
+		
+		<action name="getAdapterConfigInfo" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="getAdapterConfigInfo">
+			<result name="success" type="httpheader"></result>
+		</action>
+		
+		<!-- 保存协议适配配置 -->
+		<action name="saveProcotolAdapter" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="saveProcotolAdapter">
+			<result name="success" type="httpheader"></result>			
+		</action>		
+		
+		<!-- 测试action  协议适配页面 -->
+		<action name="show" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="adapterTest">
+			 <!--<result name="success">/adapter/showAdapter.jsp</result> 	 -->
+			<result name="success">/adapter/showOtherAdapter.jsp</result>
+		</action>
+		<action name="manager" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="managerAdapter">
+			<result name="success">/adapter/managerAdapter.jsp</result> 	
+		</action>	
+		<action name="delContractAdapter" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="delContractAdapter">
+		</action>	
+		<action name="chooseVersion" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="chooseVersion">
+			<result name="success">/adapter/chooseVersion.jsp</result> 	
+		</action>	
+		<action name="operate" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="operate">
+			<result name="success">/adapter/operate.jsp</result> 	
+		</action>	
+		<action name="operateAssign" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="operateAssign">
+			<result name="success">/adapter/operateAssign.jsp</result> 	
+		</action>
+		<action name="addMetaData" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="addMetaData">
+			<result name="success">/adapter/addMetaData.jsp</result> 	
+		</action>	
+		<action name="saveNodeDescMap" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="saveNodeDescMap">
+			<result name="success">/adapter/showAdapter.jsp</result> 	
+		</action>
+		<action name="addNodeValAdapterRes" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="addNodeValAdapterRes">
+			<result name="success">/adapter/showAdapter.jsp</result> 	
+		</action>
+		<action name="queryVarNodeReq" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="queryVarNodeReq">
+			<result name="success">/adapter/showAdapter.jsp</result> 	
+		</action>
+		<action name="saveAdapterConfig" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="saveAdapterConfig">
+			<result name="success">/adapter/showAdapter.jsp</result> 	
+		</action>
+		<action name="addVarMapType" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="addVarMapType">
+			<result name="success">/</result> 	
+		</action>
+		<action name="saveOrUpdateVariableMap" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="saveOrUpdateVariableMap">
+			<result name="success">/adapter/operate.jsp</result> 	
+		</action>
+		<action name="delVariableMap" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="delVariableMap">
+		</action>
+		<!-- 获取协议对应的节点 -->
+		<action name="getNodeDesc" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="getNodeDesc">
+			<result name="success">/adapter/showAdapter.jsp</result> 
+		</action>	
+		<action name="delNodeDescMap" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="delNodeDescMap">
+			<result name="success"></result> 
+		</action>	
+		
+		<action name="uploadFile" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="uploadFile">
+			<result name="success">/adapter/showAdapter.jsp</result> 
+		</action>	
+		<action name="originalFileUpload" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="originalFileUpload">
+			<result name="success">/adapter/showAdapter.jsp</result> 
+		</action>
+		<action name="testUniversalAdapter" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="testUniversalAdapter">
+			<result name="success">/adapter/showAdapter.jsp</result> 
+		</action>
+		<action name="testScriptAdapter" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="testScriptAdapter">
+			<result name="success">/adapter/showAdapter.jsp</result> 
+		</action>
+		<action name="saveScriptAdapter" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="saveScriptAdapter">
+			<result name="success">/adapter/showAdapter.jsp</result> 
+		</action>	
+		
+		<action name="getLineDesc" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="getLineDesc">
+			<result name="success" type="httpheader"></result> 
+		</action>	
+		
+		<action name="saveUniversalAdapter" class="com.ailk.eaap.op2.conf.adapter.action.AdapterAction" method="saveUniversalAdapter">
+			<result name="success">/adapter/showAdapter.jsp</result> 
+		</action>	
+		
+    </package>
+</struts>

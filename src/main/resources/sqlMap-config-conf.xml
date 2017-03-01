@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN" "http://www.ibatis.com/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+	<!-- Ibstis 
+	<properties resource="jdbc.properties"/>
+	 -->
+  	<!--  
+  	<properties resource="eaap_common.properties"/>-->
+  	
+	<settings cacheModelsEnabled="false" enhancementEnabled="true" useStatementNamespaces="true" 
+				maxSessions="64" maxTransactions="15" maxRequests="128" />
+ 	<sqlMap resource="ibatis/o2pCommonsCache.xml" />
+  	<!--  -->
+  	<!--
+	<cacheModel id="userCache" type="LRU">
+	   <flushInterval hours="24"/>
+	   <flushOnExecute statement="updateUser"/>
+	   <property name="size" value="1000"/>
+	</cacheModel>
+	-->
+  	<!--  -->
+  	<!--
+	<cacheModel id="userCache" type="FIFO">
+	   <flushInterval hours="24"/>
+	   <flushOnExecute statement="updateUser"/>
+	   <property name="size" value="1000"/>
+	</cacheModel>
+	-->
+  	<!-- OSCache-->
+  	<!--
+	<cacheModel id="userCache" type="OSCACHE">
+	   <flushInterval hours="24"/>
+	   <flushOnExecute statement="updateUser"/>
+	   <property name="size" value="1000"/>
+	</cacheModel>
+	-->
+	<!-- 
+  	<transactionManager type="JDBC">
+    	<dataSource type="SIMPLE">
+    		<property name="JDBC.Driver" value="${driverClassName}"/>
+			<property name="JDBC.ConnectionURL" value="${conf_db_url}"/>
+    	    <property name="JDBC.Username" value="${conf_db_username}"/>
+			<property name="JDBC.Password" value="${conf_db_password}"/>
+    	</dataSource>
+  	</transactionManager>
+  	
+  	<sqlMap resource="ibatis/adapter/eaap-op2-conf-adapter-sqlmap.xml"/>
+  	
+  	<sqlMap resource="ibatis/eaap-op2-conf-auditing-prov-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/eaap-op2-conf-monitor-report-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/eaap-op2-conf-monitor-view-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/eaap-op2-conf-techimpl-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/eaap-op2-conf-auditing-pardSell-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/eaap-op2-conf-contract-prov-sqlmap.xml"/>
+  	
+  	<sqlMap resource="ibatis/model/eaap-op2-conf-auditingorgandapp-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/eaap-op2-conf-auditingcomp-sqlmap.xml"/>
+    <sqlMap resource="ibatis/model/eaap-op2-conf-auditingcontract-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/eaap-op2-conf-serviceManager-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/eaap-op2-conf-api-manager-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/eaap-op2-conf-directory-Manager-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/eaap-op2-conf-authenticate-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/eaap-op2-conf-flowcontrol-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/eaap-op2-conf-contractManager-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/eaap-op2-conf-workFlow-Manager-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/eaap-op2-conf-contractDoc-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/eaap-op2-conf-prodOffer-sqlmap.xml"/>
+  	
+  	
+  	<sqlMap resource="ibatis/model/fileShare-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/org-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/provide-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/component-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/app-sqlmap.xml"/>
+    <sqlMap resource="ibatis/model/mainData-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/mainDataType-sqlmap.xml"/>
+    <sqlMap resource="ibatis/model/orgRole-sqlmap.xml"/>
+    <sqlMap resource="ibatis/model/portalPanel-sqlmap.xml"/>
+    <sqlMap resource="ibatis/model/eaap-op2-conf-pardMix-sqlmap.xml"/>
+    <sqlMap resource="ibatis/model/eaap-op2-conf-mealRate-sqlmap.xml"/>
+    <sqlMap resource="ibatis/model/prodOffer-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/offerProdRel-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/valueAddedProdInfo-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/productAttr-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/attrSpec-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/eaap-op2-conf-pardPord-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/pricing-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/prodOfferChannelType-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/productAttrGroup-sqlmap.xml"/>
+	<sqlMap resource="ibatis/model/ctlCounterms2Tech-sqlmap.xml"/>  
+	<sqlMap resource="ibatis/model/serTechImpl-sqlmap.xml"/> 
+	<sqlMap resource="ibatis/model/techImpAtt-sqlmap.xml"/> 
+	<sqlMap resource="ibatis/model/techImpl-sqlmap.xml"/> 
+	<sqlMap resource="ibatis/model/commProtocal-sqlmap.xml"/> 	
+	<sqlMap resource="ibatis/model/controlCounterms-sqlmap.xml" />
+	<sqlMap resource="ibatis/model/service-sqlmap.xml" />
+  	<sqlMap resource="ibatis/model/proofEffect-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/proofValues-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/ctlCounterms2Comp-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/serInvokeIns-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/contactInfo-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/corporation-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/corporationLicense-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/orgContactInfo-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/partnerAccount-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/partnerPaymentPlan-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/sysCardType-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/sysPerson-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/orgPerson-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/partnerContract-sqlmap.xml"/>
+  	<sqlMap resource="ibatis/model/partnerContractAttach-sqlmap.xml"/>
+  	 -->
+</sqlMapConfig>

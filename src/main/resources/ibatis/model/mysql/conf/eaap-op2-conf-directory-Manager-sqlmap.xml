@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "http://ibatis.apache.org/dtd/sql-map-2.dtd" "-//ibatis.apache.org//DTD SQL Map 2.0//EN">
+
+<sqlMap namespace="eaap-op2-conf-directoryManager">
+
+	<insert id="insertDirectory" parameterClass="com.ailk.eaap.op2.bo.Directory">
+		<selectKey resultClass="java.lang.Integer" keyProperty="dirId">
+			SELECT nextval('SEQ_DIRECTORY') FROM DUAL
+       </selectKey>
+		insert into directory
+		( DIR_LASTEST_TIME ,DIR_CREATE_TIME,DIR_STATE,DIR_CODE,TENANT_ID
+		<dynamic>
+			<isNotNull prepend="," property="dirId">dir_id</isNotNull>
+			<isNotNull prepend="," property="faDirId">fa_dir_id</isNotNull>
+			<isNotNull prepend="," property="sFileId">s_file_id</isNotNull>
+			<isNotNull prepend="," property="dirName">dir_name</isNotNull>
+			<isNotNull prepend="," property="dirType">dir_type</isNotNull>
+		</dynamic>
+		)
+		values(utc_timestamp() ,utc_timestamp(),'A',uuid(),#tenantId#
+		<dynamic>
+			<isNotNull prepend="," property="dirId">#dirId#</isNotNull>
+			<isNotNull prepend="," property="faDirId">#faDirId#</isNotNull>
+			<isNotNull prepend="," property="sFileId">#sFileId#</isNotNull>
+			<isNotNull prepend="," property="dirName">#dirName#</isNotNull>
+			<isNotNull prepend="," property="dirType">#dirType#</isNotNull>
+		</dynamic>
+		)
+	</insert>
+
+	<update id="updateDirectory" parameterClass="com.ailk.eaap.op2.bo.Directory">
+		update directory set DIR_LASTEST_TIME = utc_timestamp()
+		<dynamic>
+			<isNotNull prepend="," property="faDirId"> fa_dir_id = #faDirId#</isNotNull>
+			<isNotNull prepend="," property="sFileId"> s_file_id = #sFileId# </isNotNull>
+			<isNotNull prepend="," property="dirName"> dir_name = #dirName# </isNotNull>
+			<isNotNull prepend="," property="dirType"> dir_type = #dirType# </isNotNull>
+		</dynamic>
+		where DIR_STATE = 'A' and dir_id = #dirId# and TENANT_ID=#tenantId#
+	</update>
+
+	<select id="queryDirById" parameterClass="com.ailk.eaap.op2.bo.Directory" resultClass="com.ailk.eaap.op2.bo.Directory">
+		select dir_id dirId,
+		      fa_dir_id faDirId,
+		      s_file_id sFileId,
+		      dir_name dirName,
+		      dir_state dirState,
+		      dir_type dirType 
+		      from directory 
+		      where dir_state ='A' 
+		      and TENANT_ID=#tenantId#
+		      <dynamic>
+		      	<isNotNull prepend="and" property="dirId"> dir_id=#dirId#</isNotNull>
+		      	
+		      </dynamic>
+	</select>
+	
+	<select id="queryOrgInfoByFaDirId" parameterClass="com.ailk.eaap.op2.bo.Directory"  resultClass="com.ailk.eaap.op2.bo.Directory">
+		select dir_id dirId,
+		      fa_dir_id faDirId,
+		      s_file_id sFileId,
+		      dir_name dirName,
+		      dir_create_time dirCreateTime,
+		      dir_state dirState,
+		      dir_type dirType,
+		      dir_lastest_time dirLastestTime
+		from   directory
+		where  dir_state ='A'
+	    <dynamic>
+	            <isEmpty prepend="and" property="faDirId"> fa_dir_id is null </isEmpty>
+	            <isNotEmpty prepend="and" property="faDirId"> fa_dir_id = #faDirId#</isNotEmpty>
+	            <isNotNull prepend="and" property="dirType"> dir_type = #dirType#</isNotNull>
+	            <isNotNull prepend="and" property="tenantId"> TENANT_ID=#tenantId#</isNotNull>
+	    </dynamic>	   	   
+	 </select>
+	 
+	 <delete id="deleDirNode" parameterClass="java.lang.String">
+	 delete from directory where FIND_IN_SET(dir_id,getDirChildLst(#nodeId#))
+	 </delete>
+
+	<select id="isExistDirName" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		select count(1) 
+		  from directory 
+		 where dir_name = #dirName# and dir_type = #dirType#
+		<dynamic>
+	            <isNotEmpty prepend="and" property="faDirId"> fa_dir_id = #faDirId#</isNotEmpty>
+	            <isEmpty prepend="and" property="faDirId"> (fa_dir_id is null or fa_dir_id = '')</isEmpty>
+	            <isNotEmpty prepend="and" property="dirId"> dir_id != #dirId#</isNotEmpty>
+	            <isNotNull prepend="and" property="tenantId"> TENANT_ID=#tenantId#</isNotNull>
+	    </dynamic>
+	</select>
+</sqlMap>

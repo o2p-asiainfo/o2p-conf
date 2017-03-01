@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+	
+<struts>
+	<package name="provAudit" extends="default" namespace="/provAudit">
+		<!-- 供应者中心入口 -->
+		<action name="provAuditIndex" class="com.ailk.eaap.op2.conf.prov.action.ProvAuditAction" method="provAuditIndex">
+			<result name="success">
+				/auditing/provAuditing.jsp
+			</result>
+		</action>
+		<action name="provAuditSubmit" class="com.ailk.eaap.op2.conf.prov.action.ProvAuditAction" method="provAuditSubmit">
+			<result name="success">
+				/auditing/provAuditing.jsp
+			</result>
+		</action>
+		<!-- 
+		<action name="provUpgrade" class="com.ailk.eaap.op2.conf.prov.action.ProvAuditAction" method="provUpgrade">
+			<result name="success">
+				/auditing/provUpgrade.jsp
+			</result>
+		</action>
+		<action name="provUpgradeSubmit" class="com.ailk.eaap.op2.conf.prov.action.ProvAuditAction" method="provUpgradeSubmit">
+			<result name="success">
+				/auditing/provAuditing.jsp
+			</result>
+		</action>
+		 -->
+		<action name="readImg" class="com.ailk.eaap.op2.conf.prov.action.ProvAuditAction" method="readImg">
+			<result name="success">
+				/auditing/provAuditing.jsp
+			</result> 		 
+		</action>
+	</package>
+</struts>

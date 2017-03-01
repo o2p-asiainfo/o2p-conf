@@ -1,0 +1,149 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="eaap-op2-conf-operatorlog-manage-sqlmap">
+
+	<select id="countOptLogList" parameterClass="java.util.HashMap"
+		resultClass="java.lang.Integer">
+		select count(*) from OPERATE_LOG
+		where 1=1 and <![CDATA[ opt_type <> 'A' ]]> and TENANT_ID=#tenantId#
+		<dynamic prepend="and">
+			<isNotEmpty prepend="and" property="username"> user_name like
+				CONCAT('%',#username#,'%')</isNotEmpty>
+			<isNotEmpty prepend="and" property="optTable"> table_name like
+				CONCAT('%',#optTable#,'%')</isNotEmpty>
+			<isNotEmpty prepend="and" property="optType"> opt_type=#optType#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="startTime"><![CDATA[ create_date >= #startTime# ]]>
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="endTime"><![CDATA[ create_date <= #endTime# ]]>
+			</isNotEmpty>
+		</dynamic>
+		order by log_id desc
+	</select>
+	<select id="queryOptLogList" parameterClass="java.util.Map"
+		resultClass="java.util.HashMap">
+		SELECT
+		*
+		FROM(
+		select log_id,user_name,create_date,opt_type,table_name from OPERATE_LOG
+		where
+		1 = 1 and <![CDATA[ opt_type <> 'A' ]]> and TENANT_ID=#tenantId#
+		<dynamic prepend="and">
+			<isNotEmpty prepend="and" property="username"> user_name like
+				CONCAT('%',#username#,'%')</isNotEmpty>
+			<isNotEmpty prepend="and" property="optTable"> table_name like
+				CONCAT('%',#optTable#,'%')</isNotEmpty>
+			<isNotEmpty prepend="and" property="optType"> opt_type=#optType#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="startTime"><![CDATA[ create_date >= #startTime# ]]>
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="endTime"><![CDATA[ create_date <= #endTime# ]]>
+			</isNotEmpty>
+		</dynamic>
+		order by log_id desc
+		) x
+		LIMIT
+		#startPage_mysql#,#endPage_mysql#
+	</select>
+	<select id="getOptLogById" parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+		select
+		ol.log_id,user_ip,user_name,ol.create_date,exec_class,exec_method,opt_type,table_name,sql_log
+		,old.data_log,old.DATA_KEY
+
+		from OPERATE_LOG ol
+		left join OPERATE_LOG_DATA old on old.log_id = ol.log_id
+		where ol.log_id = #logId#  and ol.TENANT_ID=#tenantId# and old.TENANT_ID=#tenantId#   and <![CDATA[ opt_type <> 'A' ]]>
+	</select>
+	<select id="getDataLogByMap" parameterClass="java.util.Map"
+		resultClass="java.util.HashMap">
+		select old.data_log
+		from OPERATE_LOG ol
+		left join OPERATE_LOG_DATA old on old.log_id = ol.log_id
+		where <![CDATA[ ol.log_id <>#logId# ]]> 
+		and ol.table_name = #tableName# 
+		and old.DATA_KEY = #dataKey#
+		and old.TENANT_ID=#tenantId# 
+		and ol.TENANT_ID=#tenantId# 
+		order by ol.create_date desc
+	</select>
+	<select id="getAllTableColByName" parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+        select column_name from BAK_TABLE_INFO where table_name=#tableName# and TENANT_ID=#tenantId# 
+	</select>
+	<select id="countFuzzyList" parameterClass="java.util.HashMap"
+		resultClass="java.lang.Integer">
+		select count(*) from FUZZY_ENCRYPTION
+		where state = 'A' and TENANT_ID=#tenantId# 
+		<dynamic prepend="and">
+			<isNotEmpty prepend="and" property="fuzzySymbols"> FUZZY_ALTERNATIVE like
+				CONCAT('%',#fuzzySymbols#,'%')</isNotEmpty>
+			<isNotEmpty prepend="and" property="fuzzyType"> FUZZY_ENCRYPTION_TYPE=#fuzzyType#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="fuzzyStart">FUZZY_START = #fuzzyStart#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="fuzzyEnd">FUZZY_END = #fuzzyEnd#
+			</isNotEmpty>
+		</dynamic>
+		order by FUZZY_ENCRYPTION_ID desc
+	</select>
+	<select id="queryFuzzyList" parameterClass="java.util.Map"
+		resultClass="java.util.HashMap">
+		SELECT
+		*
+		FROM(
+		select FUZZY_ENCRYPTION_ID,FUZZY_ENCRYPTION_TYPE,FUZZY_ALTERNATIVE,FUZZY_START,FUZZY_END,date_format(create_date,'%Y-%m-%d %H:%i') create_date
+		 from FUZZY_ENCRYPTION where state = 'A' and TENANT_ID=#tenantId# 
+		<dynamic prepend="and">
+			<isNotEmpty prepend="and" property="fuzzySymbols"> FUZZY_ALTERNATIVE like
+				CONCAT('%',#fuzzySymbols#,'%')</isNotEmpty>
+			<isNotEmpty prepend="and" property="fuzzyType"> FUZZY_ENCRYPTION_TYPE=#fuzzyType#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="fuzzyStart">FUZZY_START = #fuzzyStart#
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="fuzzyEnd">FUZZY_END = #fuzzyEnd#
+			</isNotEmpty>
+		</dynamic>
+		order by FUZZY_ENCRYPTION_ID desc
+		) x
+		LIMIT
+		#startPage_mysql#,#endPage_mysql#
+	</select>
+	<select id="queryNextPriId" resultClass="java.lang.String">
+		SELECT nextval('SEQ_FUZZY_ENCRYPTION');
+	</select>
+	<insert id="addHideRrocess" parameterClass="com.ailk.eaap.op2.conf.operatorlog.action.FuzzyModel">
+		insert into FUZZY_ENCRYPTION (FUZZY_ENCRYPTION_ID,FUZZY_ENCRYPTION_TYPE,FUZZY_ALTERNATIVE,FUZZY_START,FUZZY_END,state,create_date,TENANT_ID)
+        values(#fuzzyId#,#fuzzyType#,#fuzzySymbols#,#fuzzyStart#,#fuzzyEnd#,'A',utc_timestamp(),#tenantId#)
+	</insert>
+	<delete id="delHideProcess" parameterClass="java.util.HashMap">
+		delete from
+		FUZZY_ENCRYPTION where FUZZY_ENCRYPTION_ID =#fuzzyId# and TENANT_ID=#tenantId# 
+	</delete>
+	<update id="updateSubmitProcess" parameterClass="com.ailk.eaap.op2.conf.operatorlog.action.FuzzyModel">
+	    update FUZZY_ENCRYPTION set FUZZY_ALTERNATIVE=#fuzzySymbols#,
+	    FUZZY_START=#fuzzyStart#,
+	    FUZZY_END=#fuzzyEnd# where FUZZY_ENCRYPTION_ID = #fuzzyId# and  TENANT_ID=#tenantId# 
+	</update>
+	<select id="getNextContractFuzzyId" resultClass="java.lang.String">
+		SELECT nextval('SEQ_CONTRACT_NODE_FUZZY');
+	</select>
+	<insert id="insertContractFuzzy" parameterClass="com.ailk.eaap.op2.conf.operatorlog.action.ContractNodeFuzzy">
+        insert into CONTRACT_NODE_FUZZY(CONTRACT_NODE_FUZZY_ID,TCP_CTR_F_ID,NODE_DESC_ID,FUZZY_ENCRYPTION_ID,STATE,CREATE_DATE
+        <isNotNull prepend="," property="tenantId">TENANT_ID</isNotNull>
+        )
+        values(#contractFuzzyId#,#tcpCtrFId#,#nodeDescId#,#fuzzyId#,'A',utc_timestamp()
+        <isNotNull prepend="," property="tenantId">#tenantId#</isNotNull>
+        )
+	</insert>
+	<update id="updateContractFuzzy" parameterClass="com.ailk.eaap.op2.conf.operatorlog.action.ContractNodeFuzzy">
+	    update CONTRACT_NODE_FUZZY set FUZZY_ENCRYPTION_ID=#fuzzyId# where CONTRACT_NODE_FUZZY_ID = #contractFuzzyId# and  TENANT_ID=#tenantId# 
+	</update>
+	<delete id="deleteContractFuzzy" parameterClass="com.ailk.eaap.op2.conf.operatorlog.action.ContractNodeFuzzy">
+		delete from
+		CONTRACT_NODE_FUZZY where CONTRACT_NODE_FUZZY_ID = #contractFuzzyId# and  TENANT_ID=#tenantId# 
+	</delete>
+</sqlMap> 
+

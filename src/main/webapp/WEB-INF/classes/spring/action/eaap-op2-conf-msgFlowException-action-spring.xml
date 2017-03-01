@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+						http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+       					http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+       					
+	<bean id="eaap-op2-conf-msgFlowException-MsgFlowExceptionAction" class="com.ailk.eaap.op2.conf.msgFlowException.action.MsgFlowExceptionAction">
+		<property name="msgFlowExceptionService" ref="eaap-op2-conf-msgFlowExceptionServices"/>
+	</bean>
+	
+	
+	
+	
+	
+	<bean id="eaap-op2-conf-msgFlowException-action-msgFlowExceptionAction" class="com.ailk.eaap.op2.conf.msgFlowException.action.MsgFlowExceptionAction" scope="prototype">
+           <property name="exceptionDealInfoService" ref="eaap-op2-conf-IExceptionDealInfoService"></property>
+           <property name="triggerExceptionService" ref="eaap-op2-conf-ITriggerExceptionService"></property>
+   </bean> 
+   <bean id="eaap-op2-conf-IExceptionDealInfoService" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean" scope="prototype">
+           <property name="serviceUrl">
+                   <value>${exceptionDealServiceUrl}</value>
+           </property>
+           <property name="serviceInterface" value="com.ailk.eaap.o2p.common.service.IExceptionDealInfoService" />
+   </bean>    
+   <bean id="eaap-op2-conf-ITriggerExceptionService" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean" scope="prototype">
+           <property name="serviceUrl">
+                   <value>${triggerExceptionUrl}</value>
+           </property>
+           <property name="serviceInterface" value="com.ailk.eaap.o2p.common.service.ITriggerExceptionService" />
+   </bean>    
+ 
+</beans>

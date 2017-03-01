@@ -1,0 +1,210 @@
+<!--
+  入参：
+  rtiRuleId,
+  activity_Id,
+  content_Id,
+  process_Id
+  App.modal({width:'w700',remote:App.urls.approval,data:{rtiRuleId:100000072,activity_Id:a6a97af9-6b96-11e6-8ddb-525400587d1d,content_Id:100000072,process_Id:a686b09f-6b96-11e6-8ddb-525400587d1d}})
+-->
+<div id="component-approval">
+</div>
+<script type="text/html" id="art-approval">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Approval</h4>
+  </div>
+  <div class="modal-body">
+    <div class="form-body">
+      <h3 class="form-section mt5"> RTI Rule Information </h3>
+      <table class="table table-bordered">
+        <colgroup style="background:#f9f9f9; width:25%"></colgroup>
+        <colgroup></colgroup>
+        <tbody>
+          <tr>
+            <td> RTI Rule Name: </td>
+            <td> {{rtiRuleName}}</td>
+          </tr>
+          <tr>
+            <td> Operator Name:</td>
+            <td> {{operatorName}}</td>
+          </tr>
+          <tr>
+            <td> Partner Name: </td>
+            <td> {{partnerName}}</td>
+          </tr>
+          <tr>
+            <td> Settlement Rule ID:</td>
+            <td> <a href="javascript:;" onclick="Approval.viewSettlementRule({{settlementRuleId}})">{{settlementRuleId}}</a>
+            </td>
+          </tr>
+          <tr>
+            <td> RTI Rule Content: </td>
+            <td> <a href="javascript:;" onclick="App.modal({width:'container',remote:App.urls.viewRtiRuleContent,data:'rtiRuleId={{rtiRuleId}}'})">{{rtiRuleContent}}</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 class="form-section">Approval</h3>
+      <form>
+        <table class="table table-bordered">
+          <colgroup style="background:#f9f9f9; width:25%"></colgroup>
+          <colgroup></colgroup>
+          <tbody>
+            <tr>
+              <td> Approval Result: </td>
+              <td>
+                <select class="form-control input-small" name="approvalResult" data-select="{{approvalResult}}">
+                  {{each approvalResultList}}
+                  <option value="{{$value.code}}">{{$value.name}}</option>
+                  {{/each}}
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td> Push Message Type:</td>
+              <td>
+                <div class="checkbox-list">
+                  <label class="checkbox-inline">
+                    <input type="checkbox" value="1" name="pushMessageType"> Email</label>
+                  <label class="checkbox-inline">
+                    <input type="checkbox" value="2" name="pushMessageType"> SMS</label>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td> Comment: </td>
+              <td>
+                <textarea name="comment" rows="3" class="form-control">{{comment}}</textarea>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </form>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <button type="button" class="btn theme-btn" onclick="Approval.doSave()" id="saveapprovalBtn">Submit</button>
+  </div>
+</script>
+<script>
+  var Approval = function() {
+    var myData = {};
+    var $modal;
+    var btnSave;
+    var settlementRuleId; //当前settlementRule的ID
+    var selector;
+    //判断body
+    if ($('body').data('approval') == undefined || $('body').data('approval').isFirst == undefined) {
+      $('body').data('approval', {});
+      $('body').data('approval').isFirst = true;
+    }
+    return {
+      init: function() {
+        var selector = '#component-approval';
+        $modal = $(selector).closest('.modal'); //获取当前modal对象
+        myData = $modal.data('myData');
+        myData.isFirst = $('body').data('approval').isFirst;
+        App.template(App.urls.approvalData, 'art-approval', 'component-approval', myData, function(data) {
+          $modal.modal();
+          //fix long modal no scrollbar
+          $('body').addClass('page-overflow2');
+          $('body').one('hide.bs.modal', '#' + $modal.attr('id'), function() {
+            $('body').removeClass("page-overflow2");
+          });
+          //更新BODY上的approval
+          $('body').data('approval', {
+            isFirst: false,
+            tpl: data
+          });
+          settlementRuleId = data.settlementRuleId;
+          App.transferI18nRes();
+          //编译template时设置select选中的辅助方法
+          $('select[data-select]').each(function() {
+            var val = eval($(this).attr('data-select'));
+            var $this = $(this);
+            if ($.isArray(val)) {
+              console.log(val)
+              $.each(val, function(index, value) {
+                $this.children('option[value="' + value + '"]').prop('selected', 'selected')
+              })
+            } else {
+              $opt = $this.children('option[value="' + val + '"]').prop('selected', 'selected');
+            }
+          });
+
+          $('input:radio[value=' + data.pushMessageType + ']').prop("checked", true);
+          App.initUniform();
+        })
+      },
+      viewSettlementRule: function(id) {
+        App.modal({
+          width: 'container',
+          remote: App.urls.settlementRule,
+          data: {
+            settlementRuleId: id,
+            actionType: 'update',
+            editable: false
+          }
+        })
+      },
+      doSave: function() {
+        btnSave = $('#saveapprovalBtn').button('loading');
+
+        //拼装发送给后台的form数据
+        var oData;
+        oData = App.serialize($("#component-approval form").find(':input').serialize());
+        oData.rtiRuleId = myData.rtiRuleId;
+        oData.activity_Id = myData.activity_Id;
+        oData.content_Id = myData.content_Id;
+        oData.process_Id = myData.process_Id;
+        var pushMessageType = "";
+        $("input[name='pushMessageType']:checkbox").each(function() {
+          if ($(this).prop("checked")) {
+            pushMessageType += $(this).val() + ",";
+          }
+        })
+        oData.pushMessageType = pushMessageType;
+        console.log(oData);
+          //END
+        $.ajax({
+            url: App.urls.saveApproval,
+            type: 'post',
+            dataType: 'json',
+            data: oData,
+          })
+          .done(function(data) {
+            if (!App.checker(data.health)) {
+              return
+            }
+            if ((+data.status) == 1) {
+              toastr.success(App.i18n('CNF00000008'));
+              $modal.find('[data-dismiss="modal"]').click();
+              $('#reloadDataTable').click();
+			  console.log(settlementRuleId);
+              setTimeout(function() {
+                bootbox.confirm('Whether configuration price list immediately', function(flag) {
+                  if (flag == true) {
+                    App.modal({
+                      width: 'container',
+                      remote: App.urls.raiseThePrice,
+                      data: {
+                        settlementRuleId: settlementRuleId
+                      }
+                    })
+                  }
+                })
+              }, 500)
+            } else {
+              toastr.error(data.message);
+            }
+          })
+          .complete(function() {
+            btnSave.button('reset');
+          });
+      }
+    }
+  }()
+  Approval.init();
+</script>

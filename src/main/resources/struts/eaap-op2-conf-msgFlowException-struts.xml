@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="msgFlowException" extends="default" namespace="/msgFlowException">
+		<action name="showException" class="com.ailk.eaap.op2.conf.msgFlowException.action.MsgFlowExceptionAction" method="showException">
+			<result name="success">/msgFlowException/exceptionList.jsp</result>
+		</action>
+		<action name="toTrying" class="com.ailk.eaap.op2.conf.msgFlowException.action.MsgFlowExceptionAction" method="toTrying">
+		</action>
+		<action name="toCancel" class="com.ailk.eaap.op2.conf.msgFlowException.action.MsgFlowExceptionAction" method="toCancel">
+		</action>
+		<action name="tryStatusUpdate" class="com.ailk.eaap.op2.conf.msgFlowException.action.MsgFlowExceptionAction" method="tryStatusUpdate">
+		</action>
+		
+		
+		
+		
+		<action name="showDetail" class="com.ailk.eaap.op2.conf.msgFlowException.action.MsgFlowExceptionAction" method="showDetail">
+			<result name="success">/msgFlowException/exceptionDetail.jsp</result>
+		</action>
+		<action name="tryExecution" class="com.ailk.eaap.op2.conf.msgFlowException.action.MsgFlowExceptionAction" method="tryExecution">
+		</action>
+	</package>
+</struts>

@@ -1,0 +1,314 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="eaap-op2-conf-techimpl">
+	<!-- 技术实现配置列表 -->
+	 <select id="queryTechImplList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	  SELECT * FROM (SELECT ROW_NUMBER() OVER( ORDER BY COMPONENT_ID ) rn , newtab.* FROM (
+	 	SELECT D.COMPONENT_ID COMPONENT_ID,D.NAME COMPONENT_NAME, C.SERVICE_ID SERVICE_ID,C.SERVICE_CN_NAME SERVICE_CN_NAME,A.TECH_IMPL_NAME TECH_IMPL_NAME, B.STATE STATE,
+     		   G.COMM_PRO_CD COMM_PRO_CD,G.COMM_PRO_NAME COMM_PRO_NAME,B.CREATE_TIME CREATE_TIME,B.SER_TECH_IMPL_ID SER_TECH_IMPL_ID,A.TECH_IMPL_ID TECH_IMPL_ID, O.ORG_ID ORG_ID,O.NAME ORG_NAME,
+              (SELECT ATTR_SPEC_VALUE FROM TECH_IMP_ATT T WHERE T.TECH_IMPL_ID = A.TECH_IMPL_ID AND T.ATTR_SPEC_ID = 2 and T.TENANT_ID=#tenantId#) OVERTIME,
+              (SELECT ATTR_SPEC_VALUE FROM TECH_IMP_ATT T WHERE T.TECH_IMPL_ID = A.TECH_IMPL_ID AND T.ATTR_SPEC_ID = 1 and T.TENANT_ID=#tenantId#) CALL_URL
+    	FROM TECH_IMPL A,
+       		 SER_TECH_IMPL B,
+             SERVICE C,
+       		 COMPONENT D,
+       		 COMM_PROTOCAL G,
+       		 ORG O
+	    WHERE  A.TECH_IMPL_ID = B.TECH_IMPL_ID
+		    AND  B.SERVICE_ID = C.SERVICE_ID
+		    AND  A.COMPONENT_ID = D.COMPONENT_ID
+		    AND  A.COMM_PRO_CD = G.COMM_PRO_CD
+		    AND D.ORG_ID = O.ORG_ID
+		    AND B.STATE = 'A'
+		    AND A.TENANT_ID=#tenantId#
+		    AND B.TENANT_ID=#tenantId#
+		    AND C.TENANT_ID=#tenantId#
+		    AND D.TENANT_ID=#tenantId#
+		    
+		    AND O.TENANT_ID=#tenantId#
+		<dynamic>
+		    <isNotNull prepend="and" property="arrayComponentId">
+		     A.COMPONENT_ID IN 
+		     <iterate property="arrayComponentId" conjunction="," close=")" open="(">
+                  #arrayComponentId[]#
+             </iterate>
+		     </isNotNull>
+		    <isNotNull prepend="and" property="arrayServiceId"> 
+		    B.SERVICE_ID IN 
+		    <iterate property="arrayServiceId" conjunction="," close=")" open="(">
+                  #arrayServiceId[]#
+             </iterate>
+		    </isNotNull>
+		    <isNotNull prepend="and" property="techImplName"> A.TECH_IMPL_NAME LIKE CONCAT('%',#techImplName#,'%')</isNotNull>
+		</dynamic>
+   ) newtab ) WHERE rn BETWEEN #pro# AND #end# 
+	</select>
+	
+	<!-- 总记录数 -->
+	<select id="queryTechImplCount" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+	  SELECT  COUNT(1) ALLNUM FROM TECH_IMPL A,SER_TECH_IMPL B,SERVICE C,COMPONENT D, COMM_PROTOCAL G,ORG O
+		WHERE A.TECH_IMPL_ID = B.TECH_IMPL_ID
+	    AND  B.SERVICE_ID = C.SERVICE_ID
+	    AND  A.COMPONENT_ID = D.COMPONENT_ID
+	    AND  A.COMM_PRO_CD = G.COMM_PRO_CD
+	    AND D.ORG_ID = O.ORG_ID
+	    AND  B.STATE = 'A'
+	    AND A.TENANT_ID=#tenantId#
+	    AND B.TENANT_ID=#tenantId#
+	    AND C.TENANT_ID=#tenantId#
+	    AND D.TENANT_ID=#tenantId#
+	    
+	    AND O.TENANT_ID=#tenantId#
+	<dynamic>
+		  <isNotNull prepend="and" property="arrayComponentId"> 
+		  A.COMPONENT_ID IN 
+		  <iterate property="arrayComponentId" conjunction="," close=")" open="(">
+                  #arrayComponentId[]#
+             </iterate>
+		  </isNotNull>
+		  <isNotNull prepend="and" property="arrayServiceId"> 
+		  B.SERVICE_ID IN 
+		  <iterate property="arrayServiceId" conjunction="," close=")" open="(">
+                  #arrayServiceId[]#
+             </iterate>
+		  </isNotNull>
+		  <isNotNull prepend="and" property="techImplName"> A.TECH_IMPL_NAME LIKE CONCAT('%',#techImplName#,'%')</isNotNull>
+	</dynamic>
+ 	</select>
+ 	
+ 	<!-- 根据通信协议类别加载技术实现配置属性 -->
+ 	<select id="loadTechImplAttrList" parameterClass="java.util.HashMap"  resultClass="com.ailk.eaap.op2.bo.AttrSpec">
+ 		SELECT B.ATTR_SPEC_ID attrSpecId,B.ATTR_SPEC_NAME attrSpecName,NULLABLE nullable FROM TECH_IMP_ATTR_SPEC A,ATTR_SPEC B 
+ 		WHERE A.ATTR_SPEC_ID = B.ATTR_SPEC_ID
+		    
+		    AND B.TENANT_ID=#tenantId#
+ 		<dynamic>
+		  <isNotNull prepend="and" property="commProCd"> A.COMM_PRO_CD = #commProCd#</isNotNull>
+		</dynamic>
+		ORDER BY attrSpecId
+ 	</select>
+ 	
+ 	<!-- 根据服务技术实现id加载已配置的属性 -->
+ 	<select id="selectCfgedTechImplAtt" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	 SELECT A.TECH_IMP_ATT_ID TECH_IMP_ATT_ID,A.ATTR_SPEC_ID ATTR_SPEC_ID,A.TECH_IMPL_ID TECH_IMPL_ID,A.ATTR_SPEC_VALUE ATTR_SPEC_VALUE,B.ATTR_SPEC_NAME ATTR_SPEC_NAME
+	 FROM TECH_IMP_ATT A,ATTR_SPEC B
+	 WHERE A.ATTR_SPEC_ID = B.ATTR_SPEC_ID
+	    AND A.TENANT_ID=#tenantId#
+	    AND B.TENANT_ID=#tenantId#
+	  <dynamic>
+	    <isNotNull prepend="and" property="techImplId"> A.TECH_IMPL_ID=#techImplId#</isNotNull>
+	  </dynamic>
+	   ORDER BY ATTR_SPEC_ID
+	</select>
+	
+	<select id="queryCfgedTechImplCount" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+	  SELECT  COUNT(1) ALLNUM FROM TECH_IMPL A,
+            COMPONENT D,
+            COMM_PROTOCAL E,
+            CTL_COUNTERMS_2_TECH G
+      WHERE  A.COMPONENT_ID = D.COMPONENT_ID
+	      AND  A.COMM_PRO_CD = E.COMM_PRO_CD
+	      AND  A.TECH_IMPL_ID = G.TECH_IMPL_ID
+		    AND A.TENANT_ID=#tenantId#
+		    AND D.TENANT_ID=#tenantId#
+		    
+		    AND G.TENANT_ID=#tenantId#
+		<dynamic>
+			  <isNotNull prepend="and" property="arrayComponentId">
+			   A.COMPONENT_ID IN 
+			   <iterate property="arrayComponentId" conjunction="," close=")" open="(">
+                  #arrayComponentId[]#
+             </iterate>
+			   </isNotNull>
+			  <isNotNull prepend="and" property="arrayServiceId"> 
+			  B.SERVICE_ID IN 
+			  <iterate property="arrayServiceId" conjunction="," close=")" open="(">
+                  #arrayServiceId[]#
+             </iterate>
+			  </isNotNull>
+		</dynamic>
+ 	</select>
+ 	
+	<!-- 服务技术实现配置新增时 选择按钮 加载已配置信息 -->
+	 <select id="queryCfgedTechImplList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	  SELECT * FROM (SELECT ROW_NUMBER() OVER( ORDER BY TECH_IMPL_ID DESC ) rn , newtab.* FROM (
+	 	SELECT D.COMPONENT_ID COMPONENT_ID,D.NAME COMPONENT_NAME, A.TECH_IMPL_NAME TECH_IMPL_NAME, E.COMM_PRO_CD COMM_PRO_CD,E.COMM_PRO_NAME COMM_PRO_NAME,
+       		A.TECH_IMPL_ID TECH_IMPL_ID,G.CUTMS_VALUE CUTMS_VALUE,G.CYCLE_TYPE CYCLE_TYPE,G.CYCLE_VALUE CYCLE_VALUE,G.CC_CD CC_CD,F.NAME CC_NAME
+     	 FROM TECH_IMPL A,
+            COMPONENT D,
+            COMM_PROTOCAL E,
+            CTL_COUNTERMS_2_TECH G,
+            CONTROL_COUNTERMS F
+      WHERE  A.COMPONENT_ID = D.COMPONENT_ID
+      AND  A.COMM_PRO_CD = E.COMM_PRO_CD
+      AND  A.TECH_IMPL_ID = G.TECH_IMPL_ID
+      AND G.CC_CD = F.CC_CD
+		    AND A.TENANT_ID=#tenantId#
+		    AND D.TENANT_ID=#tenantId#
+		    
+		    AND G.TENANT_ID=#tenantId#
+		    AND F.TENANT_ID=#tenantId#
+		<dynamic>
+		    <isNotNull prepend="and" property="arrayComponentId"> 
+		    A.COMPONENT_ID IN 
+		    <iterate property="arrayComponentId" conjunction="," close=")" open="(">
+                  #arrayComponentId[]#
+             </iterate>
+		    </isNotNull>
+		    <isNotNull prepend="and" property="arrayServiceId"> 
+		    B.SERVICE_ID IN 
+		    <iterate property="arrayServiceId" conjunction="," close=")" open="(">
+                  #arrayServiceId[]#
+             </iterate>
+		    </isNotNull>
+		</dynamic>
+   ) newtab ) WHERE rn BETWEEN #pro# AND #end# 
+	</select>
+	
+	<!-- 根据组件查询对应的服务 -->
+	<select id="querySvcInfoByCompId" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		 SELECT   C.SERVICE_ID , C.SERVICE_CN_NAME 
+		 FROM COMPONENT A ,SER_INVOKE_INS B ,SERVICE C    
+		 WHERE  A.COMPONENT_ID = B.COMPONENT_ID AND B.SERVICE_ID = C.SERVICE_ID AND B.STATE = 'A'  AND A.COMPONENT_ID = #componentId#
+		    AND A.TENANT_ID=#tenantId#
+		    AND B.TENANT_ID=#tenantId#
+		    AND C.TENANT_ID=#tenantId#
+	</select>
+	<!--查询技术实现的表数据-->
+	<select id="queryTechimplGrid" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+    SELECT c.ORG_ID,c.NAME ORGNAME,a.TECH_IMPL_ID,a.TECH_IMPL_NAME,a.COMPONENT_ID,b.NAME,b.CODE,a.COMM_PRO_CD,d.COMM_PRO_NAME,a.USEALBE_STATE,Date_format(a.LAEST_TIME,'%Y-%m-%d %H:%i') LAEST_TIME
+      FROM TECH_IMPL a,COMPONENT b ,ORG c,COMM_PROTOCAL d 
+     WHERE a.component_id=b.component_id
+       AND b.ORG_ID=c.ORG_ID
+       AND a.COMM_PRO_CD = d.COMM_PRO_CD
+       AND a.TENANT_ID = #tenantId#
+       AND b.TENANT_ID = #tenantId#
+       AND c.TENANT_ID = #tenantId#
+      
+		<dynamic>
+			<isNotNull prepend="and" property="componentCode"> b.CODE=#componentCode#</isNotNull>
+	    	<isNotNull prepend="and" property="componentName"> b.NAME like CONCAT('%',#componentName#,'%')</isNotNull>
+		    <isNotNull prepend="and" property="orgId"> b.org_id=#orgId#</isNotNull>
+		    <isNotNull prepend="and" property="commProCd">  a.comm_pro_cd=#commProCd#</isNotNull>
+	    	<isNotNull prepend="and" property="techImplName"> a.tech_impl_name like CONCAT('%',#techImplName#,'%')</isNotNull>
+		    <isNotNull prepend="and" property="usealbeState"> a.USEALBE_STATE=#usealbeState#</isNotNull>
+		</dynamic>
+    ORDER BY TECH_IMPL_ID DESC
+    Limit #pro_mysql#,#page_record#
+	</select>
+	<!--查询技术实现的表数据-->
+	<select id="queryTechimplGridCount" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+    SELECT Count(*) 
+      FROM TECH_IMPL a,COMPONENT b ,ORG c,COMM_PROTOCAL d 
+     WHERE a.component_id=b.component_id
+       AND b.ORG_ID=c.ORG_ID
+       AND a.COMM_PRO_CD = d.COMM_PRO_CD
+       AND a.TENANT_ID = #tenantId#
+       AND b.TENANT_ID = #tenantId#
+       AND c.TENANT_ID = #tenantId#
+       
+		<dynamic>
+			<isNotNull prepend="and" property="componentCode"> b.CODE=#componentCode#</isNotNull>
+	    	<isNotNull prepend="and" property="componentName"> b.NAME like CONCAT('%',#componentName#,'%')</isNotNull>
+		    <isNotNull prepend="and" property="orgId"> b.org_id=#orgId#</isNotNull>
+		    <isNotNull prepend="and" property="commProCd">  a.comm_pro_cd=#commProCd#</isNotNull>
+	    	<isNotNull prepend="and" property="techImplName"> a.tech_impl_name like CONCAT('%',#techImplName#,'%')</isNotNull>
+		    <isNotNull prepend="and" property="usealbeState"> a.USEALBE_STATE=#usealbeState#</isNotNull>
+		</dynamic>
+	</select>
+	
+	<insert id="insertTechImplById" parameterClass="com.ailk.eaap.op2.bo.TechImpl">
+ INSERT INTO TECH_IMPL
+ (REG_TIME,LAEST_TIME,TECH_IMPL_CODE,TENANT_ID
+ <dynamic>
+	 <isNotNull prepend="," property="techImplName">TECH_IMPL_NAME</isNotNull>
+	 <isNotNull prepend="," property="techImpConPoId">TECH_IMP_CON_PO_ID</isNotNull>
+	 <isNotNull prepend="," property="componentId">COMPONENT_ID</isNotNull>
+	 <isNotNull prepend="," property="commProCd">COMM_PRO_CD</isNotNull>
+	 <isNotNull prepend="," property="usealbeState">USEALBE_STATE</isNotNull>
+ </dynamic>
+  )
+  VALUES
+  (utc_timestamp(),utc_timestamp(),uuid(),#tenantId#
+  <dynamic>
+	  <isNotNull prepend="," property="techImplName">#techImplName#</isNotNull>
+	  <isNotNull prepend="," property="techImpConPoId">#techImpConPoId#</isNotNull>
+	  <isNotNull prepend="," property="componentId">#componentId#</isNotNull>
+	  <isNotNull prepend="," property="commProCd">#commProCd#</isNotNull>
+	  <isNotNull prepend="," property="usealbeState">#usealbeState#</isNotNull>
+  </dynamic>
+   )
+   where TECH_IMPL.TECH_IMPL_ID=#techImplId#
+</insert>
+<select id="queryTechAttrSpecById" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+   select * from TECH_IMP_ATT a,ATTR_SPEC b 
+   where a.attr_spec_id=b.attr_spec_id and a.tech_impl_id=#TECH_IMPL_ID#
+   AND a.TENANT_ID=#tenantId#
+   AND b.TENANT_ID=#tenantId#
+</select>
+<delete id="delTechImpAtt" parameterClass="com.ailk.eaap.op2.bo.TechImpl">
+   delete from TECH_IMP_ATT where TECH_IMP_ATT.TECH_IMPL_ID=#techImplId# AND TENANT_ID=#tenantId#
+</delete>
+<delete id="deleteCtlCounterms2Tech" parameterClass="java.util.HashMap">
+   delete a from CTL_COUNTERMS_2_TECH  a where a.TECH_IMPL_ID=#techImplId# and a.cc_cd=#cc_cd# AND a.TENANT_ID=#tenantId#
+</delete>
+<select id="queryTechImplAttrSpec" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+    select * from TECH_IMP_ATTR_SPEC a ,ATTR_SPEC b
+     where a.attr_spec_id=b.attr_spec_id 
+	     and (a.comm_pro_type =2 or  a.comm_pro_type is null) 
+	     and a.comm_pro_cd=#commProCd#
+	     
+	     and  b.TENANT_ID=#tenantId# 
+    order by TECH_IMP_ATTR_SPEC_ID desc
+</select>
+<select id="queryTechImplAttrSpecUpdate" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+       select c.attr_spec_value,t.attr_spec_name,t.attr_spec_code,t.comm_pro_type,t.attr_spec_id,t.CHOOSE_URL
+	     from (select a.attr_spec_id,a.comm_pro_type,b.attr_spec_name,b.attr_spec_code,b.CHOOSE_URL
+	             from TECH_IMP_ATTR_SPEC a ,ATTR_SPEC b 
+	            where a.attr_spec_id=b.attr_spec_id
+	            
+	            and b.TENANT_ID=#tenantId#
+	            and (a.comm_pro_type=2 or a.comm_pro_type is null)
+	              and a.comm_pro_cd=#commProCd# order by TECH_IMP_ATTR_SPEC_ID desc ) t
+	left join TECH_IMP_ATT c
+	       on t.attr_spec_id = c.attr_spec_id 
+	      and c.tech_impl_id=#techImplId#
+	     and  c.TENANT_ID=#tenantId# 
+</select>
+
+<select id="queryTechImplAttrSpecAll" resultClass="java.util.HashMap">
+    select distinct attr_spec_code from TECH_IMP_ATTR_SPEC a ,ATTR_SPEC b where a.attr_spec_id=b.attr_spec_id  and b.TENANT_ID=#tenantId#
+</select>
+
+<select id="queryTechImplUpdate" parameterClass="com.ailk.eaap.op2.bo.TechImpl" resultClass="java.util.HashMap">
+           select ti.*,
+                  com.name comp_name,
+                  com.org_id,
+                  o.name org_name
+             from tech_impl ti
+       inner join component com on com.component_id = ti.component_id and com.TENANT_ID=#tenantId# 
+       inner join org o on o.org_id = com.org_id and o.TENANT_ID=#tenantId# 
+            where ti.tech_impl_id = #techImplId#
+            	and ti.TENANT_ID=#tenantId# 
+</select>
+
+
+
+	<select id="queryTechNodeByTechImplId" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	  	select * from tech_impl_node t where t.tech_impl_id=#techImplId# and t.tenant_id=#tenantId# 
+	</select>
+	
+	
+	<insert id="addRouteNode" parameterClass="java.util.HashMap">
+	 INSERT INTO tech_impl_node
+	 (tech_impl_id,node_host,node_ip,node_port,node_rge_time,node_state,node_lasetest_time,node_sync_add,node_heart_add,TECH_ROUTE_EXPR,node_code,tenant_id)
+	  VALUES
+	  (#techImplId#,#HOST#,#IP#,#PORT#,utc_timestamp(),'A',utc_timestamp(),NULL,NULL,#TECH_ROUTE_EXPR#,uuid(),#tenantId#)
+	</insert>
+	
+	<insert id="delRouteNodeByTechImplId" parameterClass="java.util.HashMap">
+	 	delete from tech_impl_node where tech_impl_id=#techImplId# and tenant_id=#tenantId#
+	</insert>
+</sqlMap> 

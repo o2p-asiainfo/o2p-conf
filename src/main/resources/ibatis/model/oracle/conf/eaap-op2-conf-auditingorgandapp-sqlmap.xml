@@ -1,0 +1,962 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "http://ibatis.apache.org/dtd/sql-map-2.dtd" "-//ibatis.apache.org//DTD SQL Map 2.0//EN">
+
+<sqlMap namespace="eaap-op2-conf-autitingorgandapp">
+  
+<select id="queryOrgInfo" parameterClass="com.ailk.eaap.op2.bo.Org"  resultClass="java.util.HashMap">
+   		select b.role_code ROLE_CODE,
+				 b.role_code roleName, 
+				 a.org_type_code ORGTYPENAME, 
+				 a.cert_type_code CERTTYPENAME,   
+				 a.partner_type  partnerType,
+				 c.ZONE_NAME, 
+				 case when c.up_area_id is null then c.area_id else c.up_area_id end UP_AREA_ID,
+				 a.*
+			from org a 
+	  left join org_role b
+		      on b.org_id = a.org_id
+	   left join area c
+		      on a.area_id = c.area_id
+    where a.org_id = #orgId#
+ </select>
+ 
+ 
+ 
+ <select id="queryRoleNum" parameterClass="com.ailk.eaap.op2.bo.Org"  resultClass="java.util.HashMap">
+    select *  from org_role where 1=1    
+    <dynamic>
+            <isNotNull prepend="and" property="orgId">  org_id = #orgId#</isNotNull>
+    </dynamic>
+     order by org_id desc
+ </select>
+ 
+ 
+ 
+ <select id="selectMessgeFlowList" parameterClass="com.ailk.eaap.op2.bo.MessageFlow"  resultClass="java.util.HashMap">
+    select  *  from message_flow
+     where 1=1
+    <dynamic>
+            <isNotNull prepend="and" property="messageFlowId"> MESSAGE_FLOW_ID = #messageFlowId#</isNotNull>
+    </dynamic>
+ </select>
+ 
+  <select id="getOrgIdByAppId" parameterClass="java.lang.String"  resultClass="java.lang.String">
+    select org_id orgId from component where component_id = (select component_id from app where app_id = #appId#);
+ </select>
+ <select id="queryOrgInfoList" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+ select * from (select row_number() over( order by org_id desc ) rn , newtab.* from (
+    select roletab.ALLNUM,
+    org.org_type_code orgTypeName, 
+    org.cert_type_code certTypeName, 
+    area.zone_name, 
+   	org.org_id ,org.name ,
+	org.org_code,org.org_type_code,org.org_username,
+	org.org_pwd,org.cert_type_code,org.s_file_id,org.fil_s_file_id,
+	org.area_id,org.cert_number,org.telephone,org.email,org.audit_flow_id,
+	org.simple_spell,org.state,org.descriptor,org.customer_id,org.account_id,
+	to_char(org.state_time,'yyyy-mm-dd hh24:mi') state_time,
+	to_char(org.create_time,'yyyy-mm-dd hh24:mi') create_time,
+	(SELECT  COUNT(1) FROM component WHERE state != 'X' AND org_id = org.org_id) delFlag,
+	roletab.role_code 
+    from (select * from org org where org.tenant_id=#tenantId# 
+	    	<dynamic>
+	            <isNotNull prepend="and" property="orgUsername">  org.org_username like '%'||#orgUsername#||'%'</isNotNull>
+	            <isNotNull prepend="and" property="email">  org.email=#email#</isNotNull>
+	            <isNotNull prepend="and" property="name">  org.name like '%'||#name#||'%'</isNotNull>
+	            <isNotNull prepend="and" property="telephone">  org.telephone=#telephone#</isNotNull>
+	            <isNotNull prepend="and" property="arrayState"> 
+	             org.state in 
+	             <iterate property="arrayState" conjunction="," close=")" open="(">
+                  #arrayState[]#
+                 </iterate>
+	              </isNotNull>
+	            <isNotNull prepend="and" property="arrayOrgTypeCode">  
+	             org.ORG_TYPE_CODE in 
+	             <iterate property="arrayOrgTypeCode" conjunction="," close=")" open="(">
+                  #arrayOrgTypeCode[]#
+                 </iterate>
+	             </isNotNull>
+	            <isNotNull prepend="and" property="orgCode">  org.ORG_CODE=#orgCode#</isNotNull>
+	            <isNotNull prepend="and" property="certNumber">  org.CERT_NUMBER=#certNumber#</isNotNull>
+	    	</dynamic>
+	    	) org left join 
+	    	area on org.area_id = area.area_id and area.tenant_id=#tenantId# left join
+	       (select count(1) ALLNUM,max(role_code) as role_code,org_id from org_role  where 1=1 
+	         group by org_id) roletab
+	        on org.org_id = roletab.org_id) newtab where 1 = 1 
+	         <dynamic>
+		          <isNotNull prepend="and" property="roleCode"> newtab.role_code = #roleCode#</isNotNull>
+		    </dynamic>
+	        ) where rn between #pro# and #end# 
+</select>
+
+
+ <select id="queryOrgInfoListCount" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+ select count(*) ALLNUM  from (
+    select roletab.ALLNUM,
+    org.org_type_code orgTypeName, 
+    org.cert_type_code certTypeName, 
+    area.zone_name, 
+    org.*, 
+    roletab.role_code 
+    from (select * from org org where org.tenant_id=#tenantId# 
+	   <dynamic>
+	       <isNotNull prepend="and" property="orgUsername">  org.org_username like '%'||#orgUsername#||'%'</isNotNull>
+	       <isNotNull prepend="and" property="email">  org.email=#email#</isNotNull>
+	       <isNotNull prepend="and" property="name">  org.name like '%'||#name#||'%'</isNotNull>
+	       <isNotNull prepend="and" property="telephone">  org.telephone=#telephone#</isNotNull>
+	       <isNotNull prepend="and" property="arrayState"> 
+	             org.state in 
+	             <iterate property="arrayState" conjunction="," close=")" open="(">
+                  #arrayState[]#
+                 </iterate>
+	              </isNotNull>
+	            <isNotNull prepend="and" property="arrayOrgTypeCode">  
+	             org.ORG_TYPE_CODE in 
+	             <iterate property="arrayOrgTypeCode" conjunction="," close=")" open="(">
+                  #arrayOrgTypeCode[]#
+                 </iterate>
+	             </isNotNull>
+	       <isNotNull prepend="and" property="orgCode">  org.ORG_CODE=#orgCode#</isNotNull>
+	       <isNotNull prepend="and" property="certNumber">  org.CERT_NUMBER=#certNumber#</isNotNull>
+	   </dynamic>
+	   ) org left join 
+	    area on org.area_id = area.area_id and area.tenant_id=#tenantId# left join
+	    (select count(1) ALLNUM,role_code,org_id from org_role  where 1=1 
+	       group by org_id,role_code) roletab
+	       on org.org_id = roletab.org_id) newtab where 1 = 1 
+	    <dynamic>
+		   <isNotNull prepend="and" property="roleCode"> newtab.role_code = #roleCode#</isNotNull>
+	   </dynamic>
+</select>
+
+ <select id="isDeleteByProduct" parameterClass="java.lang.String"  resultClass="java.lang.String">
+ select count(1) from product where status_cd != '1300' and product_provider_id = #orgId#;
+ </select>
+ 
+ <select id="isDeleteByOffer" parameterClass="java.lang.String"  resultClass="java.lang.String">
+ select count(1) from prod_offer where status_cd != '1300' and offer_provider_id = #orgId#;
+ </select>
+ 
+ <select id="queryAppApiInfo" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+ select * from (select row_number() over( order by app_api_list_id desc ) rn , newtab.* from (
+    select dir.dir_name , api.api_id, appapi.app_id, api.api_name,api.api_desc, api.api_state,appapi.app_api_list_id,appapi.state
+    from API api,  DIR_SER_LIST dirs, DIRECTORY dir ,APP_API_LIST appapi
+    where api.service_id = dirs.service_id
+    and dir.dir_id = dirs.dir_id
+    and appapi.api_id  = api.api_id
+    and appapi.app_id =#appId#
+    and (appapi.state ='B' or appapi.state ='A')
+    and  api.api_state = 'D'
+      ) newtab ) where rn between #pro# and #end# 
+ </select>
+ 
+ 
+  <select id="queryAppApiInfoCount" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+  select count(*) ALLNUM  from (
+    select dir.dir_name , api.api_id, appapi.app_id, api.api_name,api.api_desc, api.api_state,appapi.app_api_list_id,appapi.state
+    from API api,  DIR_SER_LIST dirs, DIRECTORY dir ,APP_API_LIST appapi
+    where api.service_id = dirs.service_id
+    and dir.dir_id = dirs.dir_id
+    and appapi.api_id  = api.api_id
+    and appapi.app_id =#appId#
+    and (appapi.state ='B' or appapi.state ='A')
+    and  api.api_state = 'D'
+    )
+ </select>
+ 
+ 
+ 
+ 
+  <select id="selectSerInvokeInsList" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+ select * from (select row_number() over( order by ser_invoke_ins_id desc ) rn , newtab.* from (
+   select  serii.ser_invoke_ins_id ser_invoke_ins_id,
+       ser.service_code service_code,
+       ser.service_cn_name service_cn_name,
+       com.code compcode,
+       com.name compname,
+       serii.ser_invoke_ins_name ser_invoke_ins_name,
+       serii.state state,
+       to_char(serii.create_date,'yyyy-mm-dd hh24:mi') create_date,
+       to_char(serii.LASTEST_DATE,'yyyy-mm-dd hh24:mi') LASTEST_DATE,
+       mf.message_flow_id message_flow_id,
+       mf.message_flow_name message_flow_name,
+       ser.state ser_state
+  from SER_INVOKE_INS serii, service ser, component com  , message_flow mf
+ where serii.service_id = ser.service_id
+   and serii.component_id = com.component_id
+   and serii.message_flow_id = mf.message_flow_id(+)
+    <dynamic>
+            <isNotNull prepend="and" property="serviceCode">  ser.service_code =#serviceCode#</isNotNull>
+            <isNotNull prepend="and" property="state">  serii.state =#state#</isNotNull>
+            <isNotNull prepend="and" property="serInvokeInsName">  lower(serii.ser_invoke_ins_name) like '%'||#serInvokeInsName#||'%'</isNotNull>
+            <isNotNull prepend="and" property="componentId">  com.component_id=#componentId#</isNotNull>
+            <isNotNull prepend="and" property="orgId">  com.component_id in
+          (select component_id from component where org_id = #orgId#)
+           </isNotNull>
+     </dynamic>
+    ) newtab ) where rn between #pro# and #end# 
+ </select>
+ 
+ 
+  <select id="selectSerInvokeInsListCount" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+  select count(*) ALLNUM  from (
+   select  serii.ser_invoke_ins_id ser_invoke_ins_id,
+       ser.service_code service_code,
+       ser.service_cn_name service_cn_name,
+       com.code compcode,
+       com.name compname,
+       serii.ser_invoke_ins_name ser_invoke_ins_name,
+       to_char(serii.create_date,'yyyy-mm-dd hh24:mi') create_date,
+       to_char(serii.LASTEST_DATE,'yyyy-mm-dd hh24:mi') LASTEST_DATE
+  from SER_INVOKE_INS serii, service ser, component com
+ where serii.service_id = ser.service_id
+   and serii.component_id = com.component_id
+    <dynamic>
+            <isNotNull prepend="and" property="serviceCode">  ser.service_code =#serviceCode#</isNotNull>
+            <isNotNull prepend="and" property="state">  serii.state =#state#</isNotNull>
+            <isNotNull prepend="and" property="serInvokeInsName">  lower(serii.ser_invoke_ins_name) like '%'||#serInvokeInsName#||'%'</isNotNull>
+            <isNotNull prepend="and" property="componentId">  com.component_id=#componentId#</isNotNull>
+            <isNotNull prepend="and" property="orgId">  com.component_id in
+          (select component_id from component where org_id = #orgId#)
+           </isNotNull>
+     </dynamic>
+    )
+ </select>
+ 
+  <select id="selectSerInvokeIns" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+	  select serii.* ,
+	 ser.service_cn_name sername,
+	 comp.name compname,
+	 org.name orgname,
+	 org.org_id orgId,
+	 mf.message_flow_name mfname,
+	 cv.VERSION,
+     cv.CONTRACT_ID
+	from ser_invoke_ins serii,
+	   service ser,
+	   component comp,
+	   org  org,
+	   message_flow mf,
+	   CONTRACT_VERSION cv
+	   where serii.service_id = ser.service_id
+	   and serii.component_id = comp.component_id
+	   and comp.org_id = org.org_id
+	   and serii.message_flow_id = mf.message_flow_id
+	   and cv.CONTRACT_VERSION_ID = ser.CONTRACT_VERSION_ID
+	   and serii.ser_invoke_ins_id =#serInvokeInsId#
+ </select>
+ 
+ 
+ <select id="queryProofInfoById" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+  select tab1.pt_cd           pt_cd,
+       tab1.pt_name           pt_name,
+       tab1.pr_atr_spec_name  pr_atr_spec_name,
+       tab1.pr_atr_spec_cd    pr_atr_spec_cd,
+       tab2.ser_invoke_ins_id ser_invoke_ins_id,
+       tab2.attr_value        attr_value,
+       tab1.display_type      display_type,
+       tab1.attr_Spec_Id      attr_Spec_Id
+  from (select pt.pt_cd,
+               pt.pt_name,
+               ptas.pr_atr_spec_name,
+               ptas.pr_atr_spec_cd,
+               ptas.display_type,
+               ptas.attr_Spec_Id 
+          from proof_type_atr_spec ptas, proof_type pt
+         where pt.pt_cd = ptas.pt_cd) tab1,
+       (select pe.ser_invoke_ins_id, pe.pt_cd, pv.attr_value,pv.pr_atr_spec_cd
+          from proof_values pv, proof_effect pe
+         where pv.proofe_id(+) = pe.proofe_id
+           and pe.status='A'
+           and pv.state='A'
+           and pe.ser_invoke_ins_id =#serInvokeInsId#) tab2
+ where tab1.pr_atr_spec_cd = tab2.pr_atr_spec_cd(+)
+ order by tab1.pt_cd
+ </select>
+ 
+  <select id="quertAttrValuesByProof" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+  select *
+   from attr_value
+  where attr_spec_id in (select attr_spec_id from proof_type_atr_spec)
+ </select>
+  <update id="deleteProofValues" parameterClass="com.ailk.eaap.op2.bo.SerInvokeIns">
+	UPDATE PROOF_VALUES
+      set STATE = 'R', LASTEST_TIME = SYS_EXTRACT_UTC(current_timestamp)+0
+    where PROOFE_ID in
+        (select PROOFE_ID from proof_effect where ser_invoke_ins_id =#serInvokeInsId#)
+	</update>
+  <update id="deleteProofEffect" parameterClass="com.ailk.eaap.op2.bo.SerInvokeIns">
+	   UPDATE proof_effect  set status = 'R', datetime = SYS_EXTRACT_UTC(current_timestamp)+0 where ser_invoke_ins_id =#serInvokeInsId#
+  </update>
+	
+   <insert id="insertProofEffect" parameterClass="com.ailk.eaap.op2.bo.ProofEffect">
+    <selectKey resultClass="int" keyProperty="proofeId">
+		 SELECT  SEQ_PROOF_EFFECT.NEXTVAL  FROM DUAL
+    </selectKey>	
+	  INSERT INTO PROOF_EFFECT
+	  (CREATE_TIME,DATETIME,PROOF_EFFECT_CODE
+	  <dynamic>
+	 	<isNotNull prepend="," property="proofeId">PROOFE_ID</isNotNull>
+	    <isNotNull prepend="," property="ptCd">PT_CD</isNotNull>
+	    <isNotNull prepend="," property="serInvokeInsId">SER_INVOKE_INS_ID</isNotNull>
+	    <isNotNull prepend="," property="status">STATUS</isNotNull>
+	  </dynamic>
+	  )
+	  VALUES
+	  (SYS_EXTRACT_UTC(current_timestamp)+0,SYS_EXTRACT_UTC(current_timestamp)+0,sys_guid()
+	  <dynamic>
+	  	<isNotNull prepend="," property="proofeId">#proofeId#</isNotNull>
+	    <isNotNull prepend="," property="ptCd">#ptCd#</isNotNull>
+	    <isNotNull prepend="," property="serInvokeInsId">#serInvokeInsId#</isNotNull>
+	    <isNotNull prepend="," property="status">#status#</isNotNull>
+	  </dynamic>
+	  )
+	</insert>
+	
+	
+ <insert id="insertProofValues" parameterClass="com.ailk.eaap.op2.bo.ProofValues">
+    <selectKey resultClass="int" keyProperty="pvId">
+		 SELECT  SEQ_PROOF_VALUES.NEXTVAL  FROM DUAL
+    </selectKey>	
+	  INSERT INTO PROOF_VALUES
+	  (CREATE_TIME,LASTEST_TIME
+	  <dynamic>
+	 	<isNotNull prepend="," property="pvId">PV_ID</isNotNull>
+	    <isNotNull prepend="," property="proofeId">PROOFE_ID</isNotNull>
+	    <isNotNull prepend="," property="prAtrSpecCd">PR_ATR_SPEC_CD</isNotNull>
+	    <isNotNull prepend="," property="attrValue">ATTR_VALUE</isNotNull>
+	    <isNotNull prepend="," property="state">STATE</isNotNull>
+	  </dynamic>
+	  )
+	  VALUES
+	  (SYS_EXTRACT_UTC(current_timestamp)+0,SYS_EXTRACT_UTC(current_timestamp)+0
+	  <dynamic>
+	  	<isNotNull prepend="," property="pvId">#pvId#</isNotNull>
+	    <isNotNull prepend="," property="proofeId">#proofeId#</isNotNull>
+	    <isNotNull prepend="," property="prAtrSpecCd">#prAtrSpecCd#</isNotNull>
+	    <isNotNull prepend="," property="attrValue">#attrValue#</isNotNull>
+	    <isNotNull prepend="," property="state">#state#</isNotNull>
+	  </dynamic>
+	  )
+	</insert>
+	
+	
+	
+	<select id="queryCC2cInfoListById" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+     select * from (select row_number() over( order by  ctl_c_2_comp_id desc ) rn , newtab.* from (
+     select cc.name,
+            cc2c.cycle_value cycletypename,
+	        cc2c.effect_state statename,
+	        cc2c.cutms_value valuename,
+	        cc2c.ctl_c_2_comp_id ctl_c_2_comp_id,
+	        cc2c.cc_cd cc_cd,
+	        cc2c.ser_invoke_ins_id ser_invoke_ins_id,
+	        cc2c.cutms_value cutms_value,
+	        cc2c.effect_state effect_state,
+	        cc2c.cycle_type cycle_type,
+	        cc2c.cycle_value cycle_value,
+	        to_char(cc2c.config_time,'yyyy-mm-dd hh24:mi') config_time ,
+	        to_char(cc2c.lastest_time,'yyyy-mm-dd hh24:mi') lastest_time ,
+	        cc2c.cc_seq
+	  from ctl_counterms_2_comp cc2c, CONTROL_COUNTERMS cc
+	 where cc2c.cc_cd = cc.cc_cd
+	   
+	   and cc2c.ser_invoke_ins_id =#serInvokeInsId#
+	 ) newtab ) where rn between #pro# and #end# 
+	   </select>
+ 
+ 	<select id="queryCC2cInfoListByIdCount" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+    select count(*) ALLNUM  from (
+     select cc.name,
+            cc2c.cycle_value cycletypename,
+	        cc2c.effect_state statename,
+	        cc2c.cutms_value valuename,
+            cc2c.*
+  from ctl_counterms_2_comp cc2c, CONTROL_COUNTERMS cc
+ where cc2c.cc_cd = cc.cc_cd
+   
+   and cc2c.ser_invoke_ins_id =#serInvokeInsId#
+ )
+   </select>
+   
+   
+  <insert id="insertCtlCounterms2Comp" parameterClass="com.ailk.eaap.op2.bo.CtlCounterms2Comp">
+	   <selectKey resultClass="int" keyProperty="ctlC2CompId">
+			  SELECT  SEQ_CTL_COUNTERMS_2_C.NEXTVAL  FROM DUAL
+	    </selectKey>	
+	  INSERT INTO CTL_COUNTERMS_2_COMP
+	  (CONFIG_TIME,LASTEST_TIME,CTL_COUNTERMS_2_COMP_CODE
+	  <dynamic>
+	 	<isNotNull prepend="," property="ctlC2CompId">CTL_C_2_COMP_ID</isNotNull>
+	    <isNotNull prepend="," property="ccCd">CC_CD</isNotNull>
+	    <isNotNull prepend="," property="serInvokeInsId">SER_INVOKE_INS_ID</isNotNull>
+	    <isNotNull prepend="," property="cutmsValue">CUTMS_VALUE</isNotNull>
+	    <isNotNull prepend="," property="effectState">EFFECT_STATE</isNotNull>
+	    <isNotNull prepend="," property="cycleType">CYCLE_TYPE</isNotNull>
+	    <isNotNull prepend="," property="cycleValue">CYCLE_VALUE</isNotNull>
+	  </dynamic>
+	  )
+	  VALUES
+	  (SYS_EXTRACT_UTC(current_timestamp)+0,SYS_EXTRACT_UTC(current_timestamp)+0,sys_guid()
+	  <dynamic>
+	  	<isNotNull prepend="," property="ctlC2CompId">#ctlC2CompId#</isNotNull>
+	    <isNotNull prepend="," property="ccCd">#ccCd#</isNotNull>
+	    <isNotNull prepend="," property="serInvokeInsId">#serInvokeInsId#</isNotNull>
+	    <isNotNull prepend="," property="cutmsValue">#cutmsValue#</isNotNull>
+	    <isNotNull prepend="," property="effectState">#effectState#</isNotNull>
+	    <isNotNull prepend="," property="cycleType">#cycleType#</isNotNull>
+	    <isNotNull prepend="," property="cycleValue">#cycleValue#</isNotNull>
+	  </dynamic>
+	  )
+	</insert>
+
+	<update id="updateCtlCounterms2Comp" parameterClass="com.ailk.eaap.op2.bo.CtlCounterms2Comp">
+	 update CTL_COUNTERMS_2_COMP
+	  <dynamic prepend="set">
+	    <isNotNull prepend="," property="ccCd">CC_CD=#ccCd#</isNotNull>
+	    <isNotNull prepend="," property="serInvokeInsId">SER_INVOKE_INS_ID=#serInvokeInsId#</isNotNull>
+	    <isNotNull prepend="," property="cutmsValue">CUTMS_VALUE=#cutmsValue#</isNotNull>
+	    <isNotNull prepend="," property="effectState">EFFECT_STATE=#effectState#</isNotNull>
+	    <isNotNull prepend="," property="cycleType">CYCLE_TYPE=#cycleType#</isNotNull>
+	    <isNotNull prepend="," property="cycleValue">CYCLE_VALUE=#cycleValue#</isNotNull>
+	  </dynamic>
+	 , LASTEST_TIME = SYS_EXTRACT_UTC(current_timestamp)+0  
+	  <dynamic prepend="where">
+	    <isNotNull prepend="and" property="ctlC2CompId"> CTL_C_2_COMP_ID=#ctlC2CompId#</isNotNull>
+	  </dynamic>
+	  
+	 
+	</update>
+	
+	
+	
+	
+	
+	<select id="queryAuthListById" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+     select * from (select row_number() over( order by  auth_base_id desc ) rn , newtab.* from (
+     select ab.auth_base_id auth_base_id,
+        ab.ser_invoke_ins_id ser_invoke_ins_id,
+        auth.auth_id auth_id,
+        ao.auth_obj_id auth_obj_id,
+        auth.req_or_rsp reqrspname,
+        auth.req_or_rsp req_or_rsp,
+        auth.auth_obj_op authopname,
+        auth.auth_obj_op auth_obj_op,
+        ao.auth_path auth_path,
+        auth.auth_formula auth_formula,
+        auth.state state,
+        auth.state statename,
+        auth.auth_obj_type authobjtypename,
+        auth.auth_obj_type authobjtype
+        
+   from auth_base ab, auth, auth_obj ao 
+  where auth.auth_id = ab.auth_id
+    and ao.auth_obj_id = auth.auth_obj_id
+    and ser_invoke_ins_id=#serInvokeInsId#
+	 ) newtab ) where rn between #pro# and #end# 
+	   </select>
+ 
+ 	<select id="queryAuthListByIdCount" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+    select count(*) ALLNUM  from (
+      select ab.auth_base_id auth_base_id,
+        ab.ser_invoke_ins_id ser_invoke_ins_id,
+        auth.req_or_rsp reqrspname,
+        auth.req_or_rsp req_or_rsp,
+        auth.auth_obj_op authopname,
+        auth.auth_obj_op auth_obj_op,
+        ao.auth_path auth_path,
+        auth.auth_formula auth_formula,
+        auth.state state
+   from auth_base ab, auth, auth_obj ao 
+  where auth.auth_id = ab.auth_id
+    and ao.auth_obj_id = auth.auth_obj_id
+    and ser_invoke_ins_id=#serInvokeInsId#
+  )
+   </select>
+   
+   
+   <select id="queryAuthObjAttrListById" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+         select tab2.*, tab1.attr_spec_name, tab1.attr_spec_code
+          from (select *
+                  from attr_spec aspec
+                 where aspec.attr_spec_code in
+                       ('sublength', 'character', 'range')) tab1,
+               (select aoa.*
+                  from auth_obj_attr aoa
+                 where aoa.auth_id in
+                       (select auth_id
+                          from auth_base
+                         where ser_invoke_ins_id =#serInvokeInsId#)) tab2
+         where tab2.attr_spec_id(+) = tab1.attr_spec_id
+   </select>
+   
+   
+   <select id="selectAtrrSpecListBySpecCode" parameterClass="java.util.HashMap" resultClass="com.ailk.eaap.op2.bo.AttrSpec">
+		SELECT ATTR_SPEC_ID attrSpecId, ATTR_SPEC_NAME attrSpecName ,ATTR_SPEC_CODE attrSpecCode,DEFAULT_VALUE defaultValue,
+		NULLABLE nullable,UP_ATTR_SPEC_ID upAttrSpecId,STATE state,CREATE_DATE createDate,ATTR_SPEC_DESC attrSpecDesc from ATTR_SPEC
+		 <dynamic prepend="WHERE">
+		    <isNotNull prepend="and" property="arrayAttrSpecCode"> 
+		      ATTR_SPEC_CODE in 
+		      <iterate property="arrayAttrSpecCode" conjunction="," close=")" open="(">
+                  #arrayAttrSpecCode[]#
+                 </iterate>
+		      </isNotNull>
+		 </dynamic>
+	</select>
+	
+	
+	
+ <update id="updateAuthInfo" parameterClass="com.ailk.eaap.op2.bo.Auth">
+  update auth
+  <dynamic prepend="set">
+    <isNotNull prepend="," property="authObjId"> AUTH_OBJ_ID=#authObjId#</isNotNull>
+    <isNotNull prepend="," property="state"> STATE=#state#</isNotNull>
+    <isNotNull prepend="," property="reqOrRsp"> REQ_OR_RSP=#reqOrRsp#</isNotNull>
+    <isNotNull prepend="," property="authObjType"> AUTH_OBJ_TYPE=#authObjType#</isNotNull>
+    <isNotNull prepend="," property="authFormula"> AUTH_FORMULA=#authFormula#</isNotNull>
+    <isNotNull prepend="," property="authObjOp"> AUTH_OBJ_OP=#authObjOp#</isNotNull>
+  </dynamic>
+   , STATE_TIME = SYS_EXTRACT_UTC(current_timestamp)+0   
+  <dynamic prepend="where">
+    <isNotNull prepend="and" property="authId"> AUTH_ID=#authId#</isNotNull>
+  </dynamic>
+  </update>
+  
+  <update id="updateAuthObjInfo" parameterClass="com.ailk.eaap.op2.bo.AuthObj">
+  update auth_obj
+  <dynamic prepend="set">
+    <isNotNull prepend="," property="authPath"> AUTH_PATH=#authPath#</isNotNull>
+    <isNotNull prepend="," property="remark"> REMARK=#remark#</isNotNull> 
+  </dynamic> 
+  <dynamic prepend="where">
+    <isNotNull prepend="and" property="authObjId"> AUTH_OBJ_ID=#authObjId#</isNotNull>
+  </dynamic>
+  </update>
+  
+  
+  <insert id="insertAuthInfo" parameterClass="com.ailk.eaap.op2.bo.Auth">
+   <selectKey resultClass="int" keyProperty="authId">
+			SELECT SEQ_AUTH.NEXTVAL FROM DUAL
+   </selectKey>	
+  insert into auth
+  (CREATE_TIME,STATE_TIME
+  <dynamic>
+    <isNotNull prepend="," property="authId">AUTH_ID</isNotNull>
+    <isNotNull prepend="," property="authObjId">AUTH_OBJ_ID</isNotNull>
+    <isNotNull prepend="," property="state">STATE</isNotNull>
+    <isNotNull prepend="," property="reqOrRsp">REQ_OR_RSP</isNotNull>
+    <isNotNull prepend="," property="authObjType">AUTH_OBJ_TYPE</isNotNull>
+    <isNotNull prepend="," property="authFormula">AUTH_FORMULA</isNotNull>
+    <isNotNull prepend="," property="authObjOp">AUTH_OBJ_OP</isNotNull>
+  </dynamic>
+  )
+  values
+  (SYS_EXTRACT_UTC(current_timestamp)+0,SYS_EXTRACT_UTC(current_timestamp)+0
+  <dynamic>
+    <isNotNull prepend="," property="authId">#authId#</isNotNull>
+    <isNotNull prepend="," property="authObjId">#authObjId#</isNotNull>
+    <isNotNull prepend="," property="state">#state#</isNotNull>
+    <isNotNull prepend="," property="reqOrRsp">#reqOrRsp#</isNotNull>
+    <isNotNull prepend="," property="authObjType">#authObjType#</isNotNull>
+    <isNotNull prepend="," property="authFormula">#authFormula#</isNotNull>
+    <isNotNull prepend="," property="authObjOp">#authObjOp#</isNotNull>
+  </dynamic>
+  )
+</insert>
+	
+   <insert id="insertAuthBaseInfo" parameterClass="com.ailk.eaap.op2.bo.AuthBase">
+   <selectKey resultClass="int" keyProperty="authBaseId">
+			SELECT SEQ_AUTH_BASE.NEXTVAL FROM DUAL
+   </selectKey>	
+  insert into AUTH_BASE
+  (AUTH_BASE_ID 
+  <dynamic> 
+    <isNotNull prepend="," property="serInvokeInsId">SER_INVOKE_INS_ID</isNotNull>
+    <isNotNull prepend="," property="authId">AUTH_ID</isNotNull>
+  </dynamic>
+  )
+  values
+  (#authBaseId# 
+  <dynamic> 
+    <isNotNull prepend="," property="serInvokeInsId">#serInvokeInsId#</isNotNull>
+    <isNotNull prepend="," property="authId">#authId#</isNotNull>
+  </dynamic>
+  )
+</insert>  
+
+<insert id="insertAuthObjInfo" parameterClass="com.ailk.eaap.op2.bo.AuthObj">
+   <selectKey resultClass="int" keyProperty="authObjId">
+			SELECT SEQ_AUTH_OBJ.NEXTVAL FROM DUAL
+   </selectKey>	
+  insert into AUTH_OBJ
+  (AUTH_OBJ_ID
+  <dynamic>
+    <isNotNull prepend="," property="authPath">AUTH_PATH</isNotNull>
+    <isNotNull prepend="," property="remark">REMARK</isNotNull> 
+  </dynamic>
+  )
+  values
+  (#authObjId#
+  <dynamic>
+     <isNotNull prepend="," property="authPath">#authPath#</isNotNull>
+    <isNotNull prepend="," property="remark">#remark#</isNotNull> 
+  </dynamic>
+  )
+</insert>  
+   
+   
+  <insert id="insertAuthObjAttr" parameterClass="com.ailk.eaap.op2.bo.AuthObjAttr">
+   <selectKey resultClass="int" keyProperty="authObjAttrId">
+		 SELECT SEQ_AUTH_OBJ_ATTR.NEXTVAL FROM DUAL
+   </selectKey>	
+  insert into AUTH_OBJ_ATTR
+  (AUTH_OBJ_ATTR_ID 
+  <dynamic> 
+    <isNotNull prepend="," property="attrSpecId">ATTR_SPEC_ID</isNotNull>
+    <isNotNull prepend="," property="authId">AUTH_ID</isNotNull>
+    <isNotNull prepend="," property="attrValue">ATTR_VALUE</isNotNull>
+  </dynamic>
+  )
+  values
+  (#authObjAttrId# 
+  <dynamic> 
+    <isNotNull prepend="," property="attrSpecId">#attrSpecId#</isNotNull>
+    <isNotNull prepend="," property="authId">#authId#</isNotNull>
+    <isNotNull prepend="," property="attrValue">#attrValue#</isNotNull>
+  </dynamic>
+  )
+</insert>  
+
+  <update id="updateAuthObjAttr" parameterClass="com.ailk.eaap.op2.bo.AuthObjAttr">
+   update AUTH_OBJ_ATTR
+  <dynamic prepend="set">
+    <isNotNull prepend="," property="attrValue"> ATTR_VALUE=#attrValue#</isNotNull>
+  </dynamic> 
+  <dynamic prepend="where">
+    <isNotNull prepend="and" property="attrSpecId"> ATTR_SPEC_ID=#attrSpecId#</isNotNull>
+    <isNotNull prepend="and" property="authId"> AUTH_ID=#authId#</isNotNull>
+  </dynamic>
+  </update>
+  
+ <select id="queryAppInfo" parameterClass="com.ailk.eaap.op2.bo.App"  resultClass="java.util.HashMap">
+    select app.* , app_type.app_type_name from app,app_type
+    where app.app_type = app_type.app_type_cd and app.app_id =#appId# and app.TENANT_ID=#tenantId#
+ </select>
+ 
+ <update id="updateOrg" parameterClass="com.ailk.eaap.op2.bo.Org">
+  update ORG
+  <dynamic prepend="set">
+    <isNotNull prepend="," property="orgTypeCode">ORG_TYPE_CODE=#orgTypeCode#</isNotNull>
+    <isNotNull prepend="," property="name">NAME=#name#</isNotNull>
+    <isNotNull prepend="," property="orgCode">ORG_CODE=#orgCode#</isNotNull>
+    <isNotNull prepend="," property="orgUsername">ORG_USERNAME=#orgUsername#</isNotNull>
+    <isNotNull prepend="," property="orgPwd">ORG_PWD=#orgPwd#</isNotNull>
+    <isNotNull prepend="," property="certTypeCode">CERT_TYPE_CODE=#certTypeCode#</isNotNull>
+    <isNotNull prepend="," property="certNumber">CERT_NUMBER=#certNumber#</isNotNull>
+    <isNotNull prepend="," property="auditFlowId">AUDIT_FLOW_ID=#auditFlowId#</isNotNull>
+    <isNotNull prepend="," property="simpleSpell">SIMPLE_SPELL=#simpleSpell#</isNotNull>
+    <isNotNull prepend="," property="state">STATE=#state#</isNotNull>
+ 
+    <isNotNull prepend="," property="createTime">CREATE_TIME=#createTime#</isNotNull>
+    <isNotNull prepend="," property="descriptor">DESCRIPTOR=#descriptor#</isNotNull>
+    <isNotNull prepend="," property="customerId">CUSTOMER_ID=#customerId#</isNotNull>
+    <isNotNull prepend="," property="accountId">ACCOUNT_ID=#accountId#</isNotNull>
+    <isNotNull prepend="," property="areaId">AREA_ID=#areaId#</isNotNull>
+    <isNotNull prepend="," property="address">ADDRESS=#address#</isNotNull>
+    <isNotNull prepend="," property="filSFileId">FIL_S_FILE_ID=#filSFileId#</isNotNull>
+    <isNotNull prepend="," property="sFileId">S_FILE_ID=#sFileId#</isNotNull>
+    <isNotNull prepend="," property="email">EMAIL=#email#</isNotNull>
+    <isNotNull prepend="," property="telephone">TELEPHONE=#telephone#</isNotNull>
+  </dynamic>
+     , STATE_TIME = SYS_EXTRACT_UTC(current_timestamp)+0   
+  <dynamic prepend="where">
+    <isNotNull prepend="and" property="orgId"> ORG_ID=#orgId#</isNotNull>
+  </dynamic>
+</update>
+
+
+
+<update id="updateApp" parameterClass="com.ailk.eaap.op2.bo.App">
+	  update APP
+	  <dynamic prepend="set">
+	    <isNotNull prepend="," property="appName">APP_NAME=#appName#</isNotNull>
+	    <isNotNull prepend="," property="appDeve">APP_DEVE=#appDeve#</isNotNull>
+	    <isNotNull prepend="," property="componentId">COMPONENT_ID=#componentId#</isNotNull>
+	    <isNotNull prepend="," property="appType">APP_TYPE=#appType#</isNotNull>
+	    <isNotNull prepend="," property="appOauthType">APP_OAUTH_TYPE=#appOauthType#</isNotNull>
+	    <isNotNull prepend="," property="appkey">APPKEY=#appkey#</isNotNull>
+	    <isNotNull prepend="," property="appsecure">APPSECURE=#appsecure#</isNotNull>
+	    <isNotNull prepend="," property="appCreateTime">APP_CREATE_TIME=#appCreateTime#</isNotNull>
+	    <isNotNull prepend="," property="sfileId">S_FILE_ID=#sfileId#</isNotNull>
+	    <isNotNull prepend="," property="audutFlowId">AUDIT_FLOW_ID=#audutFlowId#</isNotNull>
+	    <isNotNull prepend="," property="appState">APP_STATE=#appState#</isNotNull>
+	 </dynamic>
+	  <dynamic prepend="where">
+	    <isNotNull prepend="and" property="appId">APP_ID=#appId#</isNotNull>
+	  </dynamic>
+	</update>
+	 
+	 
+	 <update id="updateAppApiList" parameterClass="com.ailk.eaap.op2.bo.AppApiList">
+		  update APP_API_LIST set STATE=#state# where  APP_ID=#appId# and (STATE ='B' or STATE ='A')
+	</update>
+
+<select id="selectMainDataType" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+ select * from (select row_number() over( order by to_number(MDT_CD) desc ) rn , newtab.* from (
+  select MDT_CD,  MDT_CD mtid, MDT_SIGN ,MDT_NAME , MDT_DESC, to_char(CREATE_TIME,'yyyy-mm-dd hh24:mi') CREATE_TIME ,STATE , to_char(LASTEST_TIME,'yyyy-mm-dd hh24:mi')  LASTEST_TIME from MAIN_DATA_TYPE
+  <dynamic prepend="where">
+    <isNotNull prepend="and" property="mdtCd"> MDT_CD=#mdtCd#</isNotNull>
+    <isNotNull prepend="and" property="mdtName">   MDT_NAME like '%'||#mdtName#||'%' </isNotNull>
+    <isNotNull prepend="and" property="mdtDesc"> MDT_DESC=#mdtDesc#</isNotNull>
+    <isNotNull prepend="and" property="createTime"> CREATE_TIME=#createTime#</isNotNull>
+    <isNotNull prepend="and" property="arrayState"> 
+        STATE in 
+        <iterate property="arrayState" conjunction="," close=")" open="(">
+                  #arrayState[]#
+                 </iterate>
+       </isNotNull>
+    <isNotNull prepend="and" property="lastestTime"> LASTEST_TIME=#lastestTime#</isNotNull>
+    <isNotNull prepend="and" property="mdtSign"> MDT_SIGN like '%'||#mdtSign#||'%'</isNotNull>
+  </dynamic>
+    ) newtab ) where rn between #pro# and #end# 
+</select>
+
+
+<select id="selectMainDataTypeCount" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+ select count(*) ALLNUM  from (
+  select * from MAIN_DATA_TYPE
+  <dynamic prepend="where">
+    <isNotNull prepend="and" property="mdtCd"> MDT_CD=#mdtCd#</isNotNull>
+    <isNotNull prepend="and" property="mdtName">   MDT_NAME like '%'||#mdtName#||'%' </isNotNull>
+    <isNotNull prepend="and" property="mdtDesc"> MDT_DESC=#mdtDesc#</isNotNull>
+    <isNotNull prepend="and" property="createTime"> CREATE_TIME=#createTime#</isNotNull>
+    <isNotNull prepend="and" property="arrayState"> 
+     STATE in
+     <iterate property="arrayState" conjunction="," close=")" open="(">
+                  #arrayState[]#
+                 </iterate>
+     </isNotNull>
+    <isNotNull prepend="and" property="lastestTime"> LASTEST_TIME=#lastestTime#</isNotNull>
+    <isNotNull prepend="and" property="mdtSign"> MDT_SIGN like '%'||#mdtSign#||'%'</isNotNull>
+  </dynamic>
+  )
+</select>
+
+
+
+<select id="selectMainDataList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+ select * from (select row_number() over( order by to_number(MAIND_ID) desc ) rn , newtab.* from (
+  select MAIND_ID  , MDT_CD  , BASE_MAIND_ID  ,  CEP_NAME  , CEP_CODE  ,
+  CEP_VALUES  ,  STATE  ,  to_char(CREATE_TIME,'yyyy-mm-dd hh24:mi') CREATE_TIME  , to_char(LASTEST_TIME,'yyyy-mm-dd hh24:mi') LASTEST_TIME  , CEP_DES   from MAIN_DATA
+  <dynamic prepend="where">
+    <isNotNull prepend="and" property="maindId"> MAIND_ID=#maindId#</isNotNull>
+    <isNotNull prepend="and" property="mdtCd"> MDT_CD=#mdtCd#</isNotNull>
+    <isNotNull prepend="and" property="baseMaindId"> BASE_MAIND_ID=#baseMaindId#</isNotNull>
+    <isNotNull prepend="and" property="cepName"> CEP_NAME=#cepName#</isNotNull>
+    <isNotNull prepend="and" property="cepCode"> CEP_CODE=#cepCode#</isNotNull>
+    <isNotNull prepend="and" property="cepValues"> CEP_VALUES=#cepValues#</isNotNull>
+    <isNotNull prepend="and" property="state"> STATE=#state#</isNotNull>
+    <isNotNull prepend="and" property="createTime"> CREATE_TIME=#createTime#</isNotNull>
+    <isNotNull prepend="and" property="lastestTime"> LASTEST_TIME=#lastestTime#</isNotNull>
+    <isNotNull prepend="and" property="cepDes"> CEP_DES=#cepDes#</isNotNull>
+  </dynamic>
+   ) newtab ) where rn between #pro# and #end# 
+</select>
+
+
+
+<select id="selectMainDataListCount" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+  select count(*) ALLNUM  from MAIN_DATA 
+  <dynamic prepend="where">
+    <isNotNull prepend="and" property="maindId"> MAIND_ID=#maindId#</isNotNull>
+    <isNotNull prepend="and" property="mdtCd"> MDT_CD=#mdtCd#</isNotNull>
+    <isNotNull prepend="and" property="baseMaindId"> BASE_MAIND_ID=#baseMaindId#</isNotNull>
+    <isNotNull prepend="and" property="cepName"> CEP_NAME=#cepName#</isNotNull>
+    <isNotNull prepend="and" property="cepCode"> CEP_CODE=#cepCode#</isNotNull>
+    <isNotNull prepend="and" property="cepValues"> CEP_VALUES=#cepValues#</isNotNull>
+    <isNotNull prepend="and" property="state"> STATE=#state#</isNotNull>
+    <isNotNull prepend="and" property="createTime"> CREATE_TIME=#createTime#</isNotNull>
+    <isNotNull prepend="and" property="lastestTime"> LASTEST_TIME=#lastestTime#</isNotNull>
+    <isNotNull prepend="and" property="cepDes"> CEP_DES=#cepDes#</isNotNull>
+  </dynamic>
+</select>
+
+
+<select id="queryAuthList" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+ select * from (select row_number() over( order by AUTH_ID desc ) rn , newtab.* from (
+    select AUTH.*, AUTH_OBJ.AUTH_PATH
+        from AUTH, AUTH_OBJ
+       where AUTH.AUTH_OBJ_ID = AUTH_OBJ.AUTH_OBJ_ID
+         and AUTH.AUTH_ID in
+             (select AUTH_BASE.AUTH_ID
+                from AUTH_BASE, SER_INVOKE_INS
+               where AUTH_BASE.SER_INVOKE_INS_ID = SER_INVOKE_INS.SER_INVOKE_INS_ID
+                <dynamic>
+			            <isNotNull prepend="and" property="componentId">  SER_INVOKE_INS.COMPONENT_ID=#componentId#</isNotNull>
+			            <isNotNull prepend="and" property="serviceId">  SER_INVOKE_INS.SERVICE_ID=#serviceId#</isNotNull>
+			    </dynamic>
+              )
+      ) newtab ) where rn between #pro# and #end# 
+ </select>
+ 
+ 
+  <select id="queryAuthListCount" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+  select count(*) ALLNUM  from (
+         select AUTH.*, AUTH_OBJ.AUTH_PATH
+        from AUTH, AUTH_OBJ
+       where AUTH.AUTH_OBJ_ID = AUTH_OBJ.AUTH_OBJ_ID
+         and AUTH.AUTH_ID in
+             (select AUTH_BASE.AUTH_ID
+                from AUTH_BASE, SER_INVOKE_INS
+               where AUTH_BASE.SER_INVOKE_INS_ID = SER_INVOKE_INS.SER_INVOKE_INS_ID
+                 <dynamic>
+			            <isNotNull prepend="and" property="componentId">  SER_INVOKE_INS.COMPONENT_ID=#componentId#</isNotNull>
+			            <isNotNull prepend="and" property="serviceId">  SER_INVOKE_INS.SERVICE_ID=#serviceId#</isNotNull>
+			    </dynamic>
+              )
+    )
+ </select>
+ 
+ <select id="queryCompOrgidList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+ SELECT distinct org_id  FROM component WHERE STATE != 'X'
+ </select>
+ 
+    <delete id="delCtlCounterms2Comp" parameterClass="com.ailk.eaap.op2.bo.CtlCounterms2Comp">
+	   delete from CTL_COUNTERMS_2_COMP 
+	         where CTL_C_2_COMP_ID=#ctlC2CompId#
+	           and SER_INVOKE_INS_ID=#serInvokeInsId#
+	</delete> 
+ 
+<insert id="insertOrgAuthCode" parameterClass="com.ailk.eaap.op2.bo.OrgAuthCode">
+     <selectKey resultClass="int" keyProperty="orgAuthId">
+			SELECT SEQ_ORG_AUTH_CODE.NEXTVAL FROM DUAL
+	</selectKey>	
+  insert into org_auth_code
+  (AUTH_TIME, DISABLE_TIME
+  <dynamic >
+    <isNotNull prepend="," property="orgAuthId">ORG_AUTH_ID</isNotNull>
+    <isNotNull prepend="," property="orgId">ORG_ID</isNotNull>
+    <isNotNull prepend="," property="authType">AUTH_TYPE</isNotNull>
+    <isNotNull prepend="," property="authCode">AUTH_CODE</isNotNull>
+  </dynamic>
+  )
+  values
+  (SYS_EXTRACT_UTC(current_timestamp)+0, SYS_EXTRACT_UTC(current_timestamp)+0+(30/24/60)
+   <dynamic >
+    <isNotNull prepend="," property="orgAuthId">#orgAuthId#</isNotNull>
+    <isNotNull prepend="," property="orgId">#orgId#</isNotNull>
+    <isNotNull prepend="," property="authType">#authType#</isNotNull>
+    <isNotNull prepend="," property="authCode">#authCode#</isNotNull>
+   </dynamic>
+  )
+</insert>
+ 
+
+	<select id="queryPkgList" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+    SELECT * FROM (
+		SELECT DISTINCT
+			A.PROD_OFFER_ID,
+			A.PROD_OFFER_NAME PACKAGENAME,
+		  A.PROD_OFFER_DESC,
+			(
+				SELECT
+					wm_concat(G.API_NAME)
+				FROM
+					PRODUCT B,
+					OFFER_PROD_REL C,
+					SERVICE_PRODUCT_REAL F,
+					API G
+				WHERE
+					C.PROD_OFFER_ID = A.PROD_OFFER_ID
+				AND B.PRODUCT_ID = C.PRODUCT_ID
+				AND B.PRODUCT_ID = F.PRODUCT_ID
+				AND F.SERVICE_ID = G.SERVICE_ID
+				AND G.API_STATE = 'A'
+				AND B.STATUS_CD = '1000'
+			) API_NAME_S,
+			(
+				SELECT
+					wm_concat(D.PRICING_NAME)
+				FROM
+					PRICING_PLAN D,
+					PROD_OFFER_PRICING E
+				WHERE
+					D.STATUS_CD != '11'
+				AND E.PROD_OFFER_ID = A.PROD_OFFER_ID
+				AND D.PRICING_INFO_ID = E.PRICING_INFO_ID
+			) PRICING_NAME_S,
+			(
+				SELECT H.NAME FROM ORG H WHERE H.ORG_ID = A.PROD_OFFER_PUBLISHER and H.TENANT_ID=#tenantId#
+			) ORG_NAME
+		FROM
+			PROD_OFFER A,ORG_OFFER_ORDER_RELA OOOR
+		WHERE
+      a.prod_offer_id = OOOR.PROD_OFFER_ID
+    and OOOR.APP_ID = #appId#
+    and A.STATUS_CD = '1000') OO
+  ORDER BY OO.PROD_OFFER_ID DESC
+ 
+ </select>
+ 
+   <select id="queryApiIds" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+	          SELECT DISTINCT G.API_ID,G.API_DESC,G.API_NAME,
+					(SELECT CASE WHEN COUNT(1) > 0 THEN 1 ELSE 0 END
+						FROM APP_API_LIST H
+						WHERE G.API_ID = H.API_ID
+						AND H.PROD_OFFER_ID = C.PROD_OFFER_ID
+						AND H.STATE = 'A'
+					) FLAG 
+				FROM
+					PRODUCT B,
+					OFFER_PROD_REL C,
+					SERVICE_PRODUCT_REAL F,
+					API G
+				WHERE B.PRODUCT_ID = C.PRODUCT_ID
+				AND B.PRODUCT_ID = F.PRODUCT_ID
+				AND F.SERVICE_ID = G.SERVICE_ID
+				AND G.API_STATE = 'A'
+				AND B.STATUS_CD = '1000'
+         <dynamic>
+            <isNotNull prepend="and" property="arrayOfferId"> 
+            C.PROD_OFFER_ID IN 
+            <iterate property="arrayOfferId" conjunction="," close=")" open="(">
+            #arrayOfferId[]#
+            </iterate>
+            </isNotNull> 
+		 </dynamic>
+ </select>
+ 	  <select id="getPricingPlan" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+      SELECT  A.PRICING_INFO_ID PRICINGINFOID,
+              A.PRICING_NAME PRICINGNAME,
+      		  A.PRICING_TYPE PRICINGTYPE,
+      		  A.PRICING_DESC PRICINGDESC,
+      		  A.PRICE_SIGN PRICESIGN,
+      		  A.PRICE_CHA PRICECHA,
+      		  A.EFF_DATE EFFDATE,
+      		  A.EXP_DATE EXPDATE,
+      		  A.BILLING_PRIORITY BILLINGPRIORITY,
+      		  A.LICENSE_NBR LICENSENBR,
+      		  A.APPLIC_TYPE APPLICTYPE,
+      		  A.CYCLE_TYPE CYCLETYPE,
+      		  A.CREATE_DATE CREATEDATE,
+      		  A.STATUS_DATE STATUSDATE,
+      		  A.STATUS_CD STATUSCD,
+      		  B.PRICING_TARGET_ID PRICINGTARGETID 
+      FROM PRICING_PLAN A,PROD_OFFER_PRICING B 
+      WHERE   A.STATUS_CD!='11' AND B.PROD_OFFER_ID = #prodOfferId# 
+      AND A.PRICING_INFO_ID = B.PRICING_INFO_ID  
+      ORDER BY A.BILLING_PRIORITY DESC
+ </select>
+<select id="getTypeById" parameterClass="java.lang.String" resultClass="java.lang.String">
+     select scope_type from main_data_type where mdt_cd =#mdt_cd#
+ </select>
+ 
+  <select id="getLogLevelList"  resultClass="java.util.HashMap">
+ 	SELECT DISTINCT(log_level) log_level FROM log_level ORDER BY log_level_id
+ </select>
+ 
+ <select id="getOrgInfoById" parameterClass="java.lang.String" resultClass="com.ailk.eaap.op2.bo.Org">
+	select * from org o where o.org_id=#orgId#
+ </select>
+</sqlMap>

@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "http://ibatis.apache.org/dtd/sql-map-2.dtd" "-//ibatis.apache.org//DTD SQL Map 2.0//EN">
+
+<sqlMap namespace="eaap-op2-conf-messageFlow">
+	<typeAlias alias="templateModel"
+		type="com.ailk.eaap.op2.conf.messageFlow.action.TemplateModel" />
+	<select id="selectMessageFlowList" parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+		select message_flow_id,
+		message_flow_name,
+		state,
+		descriptor,
+		first_endpoint_id
+		from message_flow
+		where state = 'A'
+		   and tenant_id=#tenantId#
+		<dynamic>
+			<isNotNull prepend="and" property="messageFlowName"> message_flow_name like
+				CONCAT('%',#messageFlowName#,'%')</isNotNull>
+		</dynamic>
+		Limit #pro_mysql#,#page_record#
+	</select>
+
+	<select id="selectMessageFlowListCount" parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+		select count(*) ALLNUM
+		from message_flow
+		where state = 'A'
+		   and tenant_id=#tenantId#
+		<dynamic>
+			<isNotNull prepend="and" property="messageFlowName"> message_flow_name like
+				CONCAT('%',#messageFlowName#,'%')</isNotNull>
+		</dynamic>
+	</select>
+	
+	<insert id="addCacheStrategy" parameterClass="java.util.HashMap">
+		insert into cache_strategy
+		(CODE,NAME,CACHE_TYPE,STATE,
+		FORCE_REFRESH,EXPIRE_TIME,EXPIRE_TIME_PATH,TENANT_ID
+		)
+		values
+		(#code#,#name#,#cacheType#,#state#,#forceRefresh#,#expireTime#,#expireTimePath#,#tenantId#);
+		
+		<selectKey resultClass="String"  keyProperty="id" >    
+             SELECT last_insert_id() as id ;   
+        </selectKey>   
+	</insert>
+
+
+	<update id="updateCacheStrategy" parameterClass="java.util.HashMap">
+		update cache_strategy set
+		name=#name#,
+		cache_Type=#cacheType#,
+		force_Refresh=#forceRefresh#,
+		expire_Time=#expireTime#,
+		expire_Time_Path=#expireTimePath#
+		where id = #id#
+	</update>
+
+
+	<delete id="delCacheObjById" parameterClass="java.lang.String">
+		delete from 
+		cache_obj where ID =#cacheObjId#
+	</delete>
+
+	<select id="getAllTempleteList" parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+		select csv_template_id,csv_file_name,field_separator,
+		date_format,file_charset from csv_template
+		where 1=1
+		<dynamic>
+			<isNotNull prepend="and" property="cvsFileName"> csv_file_name like
+				CONCAT('%',#cvsFileName#,'%')</isNotNull>
+		</dynamic>
+		Limit #startPage_mysql#,#endPage_mysql#
+	</select>
+
+	<select id="queryAllTempletCount" parameterClass="java.util.HashMap"
+		resultClass="java.lang.String">
+		select count(1) from csv_template
+		where 1=1
+		<dynamic>
+			<isNotNull prepend="and" property="cvsFileName"> csv_file_name like
+				CONCAT('%',#cvsFileName#,'%')</isNotNull>
+		</dynamic>
+	</select>
+	
+	<select id="getCacheStrategyListSize" parameterClass="java.util.HashMap"
+		resultClass="java.lang.String">
+		select count(1) from cache_strategy
+		where 1=1
+		<dynamic>
+			<isNotNull prepend="and" property="cacheStrategyName"> name like
+				CONCAT('%',#cacheStrategyName#,'%')</isNotNull>
+		</dynamic>
+		<dynamic>
+			<isNotNull prepend="and" property="tenantId"> TENANT_ID =#tenantId#</isNotNull>
+		</dynamic>
+	</select>
+	
+	<select id="queryAllCacheStragyList" parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+		select * from cache_strategy
+		where 1=1
+		<dynamic>
+			<isNotNull prepend="and" property="cacheStrategyName"> name like
+				CONCAT('%',#cacheStrategyName#,'%')</isNotNull>
+		</dynamic>
+		<dynamic>
+			<isNotNull prepend="and" property="tenantId"> TENANT_ID =#tenantId#</isNotNull>
+		</dynamic>
+		ORDER BY ID DESC 
+		
+	</select>
+
+	<insert id="addCacheObj" parameterClass="java.util.HashMap">
+		insert into cache_obj
+		(CODE,KEY_RULE,STATE,
+		VALUE_PATH,CACHE_STRATEGY_ID,TENANT_ID
+		)
+		values
+		(#CODE#,#KEY_RULE#,#STATE#,#VALUE_PATH#,#CACHE_STRATEGY_ID#,#tenantId#)
+	</insert>
+
+
+	<select id="queryAllCacheStragyCount" parameterClass="java.util.HashMap"
+		resultClass="java.lang.String">
+		select count(1) from cache_strategy
+		where 1=1
+		<dynamic>
+			<isNotNull prepend="and" property="cacheStrategyName"> name like
+				CONCAT('%',#cacheStrategyName#,'%')</isNotNull>
+		</dynamic>
+		<dynamic>
+			<isNotNull prepend="and" property="tenantId"> TENANT_ID =#tenantId#</isNotNull>
+		</dynamic>
+	</select>
+	
+	<delete id="delStrategy" parameterClass="java.lang.String">
+		delete  from cache_strategy where id =#strategy_id#
+	</delete>
+	<select id="getStrategyById" parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+		select * from cache_strategy where id = #strategyId#
+		<dynamic>
+			<isNotNull prepend="and" property="tenantId"> TENANT_ID =#tenantId#</isNotNull>
+		</dynamic>
+	</select>
+	
+	<select id="getCacheObjById" parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+		select * from cache_obj where CACHE_STRATEGY_ID=#strategyId#
+		<dynamic>
+			<isNotNull prepend="and" property="tenantId"> TENANT_ID =#tenantId#</isNotNull>
+		</dynamic>
+	</select>
+	
+	<delete id="delCacheObj" parameterClass="java.lang.String">
+		delete  from cache_obj where CACHE_STRATEGY_ID =#strategy_id#
+	</delete>
+	<select id="queryTempletId" resultClass="java.lang.String">
+		SELECT nextval('SEQ_CSV_TEMPLATE')
+	</select>
+	<!-- 插入模板信息 -->
+	<insert id="addTemplate" parameterClass="templateModel">
+		insert into csv_template
+		(csv_template_id,csv_file_name,field_separator,is_textfield_add_quote_mark,
+		first_line_type,is_file_name_add_date,date_format,file_name_and_date_separator,new_line_character,file_charset
+		)
+		values
+		(#csv_template_id#,#csv_file_name#,#field_separator#,#quote_mark#,#first_line_type#,#file_add_date#,
+		#date_format#,#separator_name_and_date#,#new_line_character#,#file_charset#)
+	</insert>
+	<delete id="delTemplate" parameterClass="java.lang.String">
+		delete  from csv_template where csv_template_id =#template_id#
+	</delete>
+	<select id="getTemplateById" parameterClass="java.lang.String"
+		resultClass="java.util.HashMap">
+		select * from csv_template where csv_template_id = #template_id#
+	</select>
+	<update id="updateTemplate" parameterClass="templateModel">
+	    update csv_template set 
+	    csv_file_name=#csv_file_name#,
+	    field_separator=#field_separator#,
+	    is_textfield_add_quote_mark=#quote_mark#,
+	    first_line_type=#first_line_type#,
+	    is_file_name_add_date=#file_add_date#,
+	    date_format=#date_format#,
+	    file_name_and_date_separator=#separator_name_and_date#,
+	    new_line_character=#new_line_character#,
+	    file_charset=#file_charset#
+	    where csv_template_id = #csv_template_id#
+	</update>
+	<!-- 获得服务技术实现相关详细信息 -->
+	<select id="getTechImplMessageById" parameterClass="String"
+		resultClass="java.util.HashMap">
+		select ti.TECH_IMPL_NAME techImplName,
+		co.name comName,
+		o.name orgName,
+		cp.COMM_PRO_NAME commProName,
+		ti.TECH_IMP_CON_PO_ID
+		techImplConPoId,
+		ti.COMM_PRO_CD commProCd
+		from tech_impl ti
+		left join
+		COMPONENT co on ti.COMPONENT_ID = co.COMPONENT_ID
+		left join org o on
+		o.ORG_ID = co.ORG_ID
+		left join COMM_PROTOCAL cp on cp.COMM_PRO_CD =
+		ti.COMM_PRO_CD
+		left join ser_tech_impl sti on sti.TECH_IMPL_ID =
+		ti.TECH_IMPL_ID
+		where sti.SER_TECH_IMPL_ID = #serTechImplId#
+	</select>
+	<!-- 获得配置的属性规格及技术实现属性值 -->
+	<select id="getAttrSpecList" parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+		select tia.attr_spec_value attr_spec_value,
+		ats.ATTR_SPEC_NAME attr_spec_name
+		from TECH_IMP_ATT tia
+		left join
+		ATTR_SPEC ats on tia.ATTR_SPEC_ID = ats.ATTR_SPEC_ID
+		left join
+		TECH_IMP_ATTR_SPEC tias on tias.ATTR_SPEC_ID = ats.ATTR_SPEC_ID
+		left
+		join ser_tech_impl sti on sti.TECH_IMPL_ID = tia.TECH_IMPL_ID
+		where
+		sti.SER_TECH_IMPL_ID = #serTechImplId# and tias.COMM_PRO_CD =
+		#commProCd#
+		and ats.tenant_id=#tenantId#
+	</select>
+	<!-- 获得该服务技术实现的所有流量控制策略的记录数 -->
+	<select id="getAllTechImplRecordsById" parameterClass="String"
+		resultClass="java.lang.Integer">
+		select count(*) from CTL_COUNTERMS_2_TECH cct
+		left join ser_tech_impl sti on sti.TECH_IMPL_ID = cct.TECH_IMPL_ID
+		where sti.SER_TECH_IMPL_ID = #serTechImplId#
+	</select>
+	<!-- 获得该服务技术实现的所有流量控制策略 -->
+	<select id="getTechImplList" parameterClass="java.util.Map"
+		resultClass="java.util.HashMap">
+		SELECT
+		*
+		FROM(
+		select cc.name name,
+		cct.CYCLE_VALUE cycleValue,
+		cct.CUTMS_VALUE
+		cutmsValue,
+		cct.EFFECT_STATE effectState,
+		cct.CONFI_TIME confiTime
+		from
+		CTL_COUNTERMS_2_TECH cct
+		left join CONTROL_COUNTERMS cc on cc.CC_CD =
+		cct.CC_CD
+		left join ser_tech_impl sti on sti.TECH_IMPL_ID =
+		cct.TECH_IMPL_ID
+		where sti.SER_TECH_IMPL_ID = #serTechImplId#
+		) x
+		LIMIT
+		#startPage_mysql#,#endPage_mysql#
+	</select>
+	
+	<select id="checkCacheKeyIsExist" parameterClass="java.util.HashMap"
+		resultClass="java.lang.String">
+		select count(1) from cache_obj 
+		where key_rule=#keyRule#
+	</select>
+</sqlMap>

@@ -1,0 +1,179 @@
+<div id="basicTariff">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Basic Tariff</h4>
+  </div>
+  <div class="modal-body">   
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="control-label"> <font color="FF0000">*</font> Price Name</label>
+            <input type="text" class="form-control">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="control-label"> <font color="FF0000">*</font> Tax Type</label>
+            <select class="form-control">
+              <option value="2">VAT inclusive</option>
+              <option value="1">VAT exclusive</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="control-label"> <font color="FF0000">*</font> Effective Time</label>
+            <div data-date-format="mm/dd/yyyy" data-date-start-date="+0d" data-date="10/11/2012" class="input-group date-picker input-daterange" data-error-container="#error-container">
+              <input type="text" name="from2" class="form-control od">
+              <span class="input-group-addon"> to </span>
+              <input type="text" name="to2" class="form-control od">
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="control-label"> <font color="FF0000">*</font> Charging Unit</label>
+            <div class="row">
+              <div class="col-md-6">
+                <input type="text" class="form-control" data-class="chargingUnitValue" value="1">
+              </div>
+              <div class="col-md-6">
+                <select class="form-control" data-class="chargingUnit">
+                  <option value="109">Piece</option>
+                  <option value="110">Piece2</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="control-label"><font color="FF0000">*</font>Currency </label>
+            <select class="form-control" data-class="currency">
+              <option value="10302">Euro</option>
+              <option value="11403">DKK</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="control-label"><font color="FF0000">*</font>Charge Type </label>
+            <div class="form-control-static" data-error-container="#here2">
+              <label class="radio-inline">
+                <input type="radio" value="1" checked="" name="ChargeType" data-class="chargeType1">
+                Simple </label>
+              <label class="radio-inline">
+                <input type="radio" value="2" name="ChargeType" data-class="chargeType2">
+                Ladder </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="control-label"><font color="FF0000">*</font>Charge </label>
+            <div class="row" data-class="chargeTmpl1">
+              <div class="col-md-3">
+                <div class="input-group">
+                  <input type="text" name="" class="form-control">
+                  <span class="input-group-addon"> <span data-class="currencyArea">DKK</span>/<span data-class="numArea">1</span>*<span data-class="unitArea">Piece</span> </span> </div>
+              </div>
+              <div class="col-md-3">
+                <div class="input-group">
+                  <input type="text" name="" class="form-control" placeholder="Fixed Amount">
+                  <span class="input-group-addon"> <span data-class="currencyArea">DKK</span> </span> </div>
+              </div>
+            </div>
+            <div class="table-responsive" data-class="chargeTmpl2" style="display:none">
+              <table class="table table-bordered text-middle">
+                <thead>
+                  <tr>
+                    <th> <i class="fa fa-plus"></i> </th>
+                    <th> Charge Arrange <span class="label label-yellow"> <span data-class="numArea">1</span>*<span data-class="unitArea">Piece</span> </span> </th>
+                    <th> Charge <span class="label label-yellow"> <span data-class="currencyArea">DKK</span>/<span data-class="numArea">1</span>*<span data-class="unitArea">Piece</span> </span> </th>
+                    <th> Recurring Charge <span class="label label-yellow"> <span data-class="currencyArea">DKK</span></span> </th>
+                    <th class="th-operation text-center"> Operation </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td><div class="input-group">
+                        <input type="text" name="from3" class="form-control">
+                        <span class="input-group-addon"> to </span>
+                        <input type="text" name="to3" class="form-control">
+                      </div>
+                    <td><input type="text" name="" placeholder="" class="form-control input-xs"></td>
+                    <td><input type="text" name="" placeholder="" class="form-control input-xs"></td>
+                    <td class="text-center"><a class="btn-opt" href="javascript:;"><i class="fa fa-trash-o"></i></a></td>
+                  </tr>
+                  <tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="control-label">Description </label>
+            <textarea rows="3" class="form-control"></textarea>
+          </div>
+        </div>
+      </div>  
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <button type="button" class="btn theme-btn">OK</button>
+  </div>
+</div>
+<link href="resources/plugins/jstree/css/style.min.css" rel="stylesheet" type="text/css" />
+<link href="resources/plugins/bootstrap-datepicker/datepicker.css" rel="stylesheet" type="text/css" />
+<script src="resources/plugins/jstree/jstree.min.js" type="text/javascript"></script> 
+<script src="resources/plugins/bootstrap-datepicker/bootstrap-datepicker.js" type="text/javascript"></script> 
+<script>
+(function() {
+ var selector = '#basicTariff';
+ var $modal = $(selector).closest('.modal'); //获取当前modal对象
+ $modal.modal();
+
+ //表单联动
+ $(selector).on('click', 'input[data-class="chargeType1"]', function() {
+  $(selector + ' [data-class="chargeTmpl1"]').show();
+  $(selector + ' [data-class="chargeTmpl2"]').hide();
+ })
+ $(selector).on('click', 'input[data-class="chargeType2"]', function() {
+  $(selector + ' [data-class="chargeTmpl2"]').show();
+  $(selector + ' [data-class="chargeTmpl1"]').hide();
+ })
+ $(selector).on('change', '[data-class="chargingUnit"]', function() {
+  var unit = $(this).find('option:selected').text();
+  $(selector + ' [data-class="unitArea"]').html(unit);
+ })
+ $(selector + ' input[data-class="chargingUnitValue"]').focusout(function() {
+  var chargingValue = $(this).val();
+  $(selector + ' [data-class="numArea"]').html(chargingValue);
+ })
+
+ $(selector).on('change', '[data-class="currency"]', function() {
+  var currency = $(this).find('option:selected').text();
+  $(selector + ' [data-class="currencyArea"]').html(currency);
+ })
+
+ //datepicker
+       if (jQuery().datepicker) {
+            $(selector + ' .date-picker').datepicker({
+            autoclose: true,
+            minViewMode: 'year',
+            format: 'mm/dd/yyyy'
+        });
+        }
+
+})()
+</script>

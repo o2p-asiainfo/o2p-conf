@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "http://ibatis.apache.org/dtd/sql-map-2.dtd" "-//ibatis.apache.org//DTD SQL Map 2.0//EN">
+
+<sqlMap namespace="eaap-op2-conf-workFlow">
+
+	<insert id="insertBizFunction" parameterClass="com.ailk.eaap.op2.bo.BizFunction">
+		<selectKey resultClass="java.lang.Integer" keyProperty="bizFunctionId">
+			SELECT nextval('SEQ_BIZ_FUNCTION');
+       </selectKey>
+		insert into BIZ_FUNCTION
+		(CREATE_TIME ,STATE_TIME,STATE,TENANT_ID
+		<dynamic>
+			<isNotNull prepend="," property="bizFunctionId">BIZ_FUNCTION_ID</isNotNull>
+			<isNotNull prepend="," property="bizBizFunctionId">BIZ_BIZ_FUNCTION_ID</isNotNull>
+			<isNotNull prepend="," property="name">NAME</isNotNull>
+			<isNotNull prepend="," property="code">CODE</isNotNull>
+			<isNotNull prepend="," property="descriptor">DESCRIPTOR</isNotNull>
+		</dynamic>
+		)
+		values(utc_timestamp() ,utc_timestamp(),'A',#tenantId#
+		<dynamic>
+			<isNotNull prepend="," property="bizFunctionId">#bizFunctionId#</isNotNull>
+			<isNotNull prepend="," property="bizBizFunctionId">#bizBizFunctionId#</isNotNull>
+			<isNotNull prepend="," property="name">#name#</isNotNull>
+			<isNotNull prepend="," property="code">#code#</isNotNull>
+			<isNotNull prepend="," property="descriptor">#descriptor#</isNotNull>
+		</dynamic>
+		)
+	</insert>
+	
+	<update id="updateBizFunction" parameterClass="com.ailk.eaap.op2.bo.BizFunction">
+		update BIZ_FUNCTION set STATE_TIME = utc_timestamp() 
+		<dynamic>
+			<isNotNull prepend="," property="bizBizFunctionId"> BIZ_BIZ_FUNCTION_ID = #bizBizFunctionId# </isNotNull>
+			<isNotNull prepend="," property="name"> NAME = #name# </isNotNull>
+			<isNotNull prepend="," property="code"> CODE = #code# </isNotNull>
+			<isNotNull prepend="," property="descriptor"> DESCRIPTOR = #descriptor# </isNotNull>
+		</dynamic>
+		where STATE = 'A' and BIZ_FUNCTION_ID = #bizFunctionId# and TENANT_ID=#tenantId#
+	</update>
+
+	<select id="queryOrgInfoByBizFunctionId" parameterClass="com.ailk.eaap.op2.bo.BizFunction"  resultClass="com.ailk.eaap.op2.bo.BizFunction">
+		select BIZ_FUNCTION_ID bizFunctionId,
+		      BIZ_BIZ_FUNCTION_ID bizBizFunctionId,
+		      NAME name,
+		      CODE code,
+		      CREATE_TIME createTime,
+		      STATE state,
+		      STATE_TIME stateTime,
+		      DESCRIPTOR descriptor
+		from   BIZ_FUNCTION
+		where  STATE ='A' and TENANT_ID=#tenantId#
+	    <dynamic>
+	            <isEmpty prepend="and" property="bizBizFunctionId"> BIZ_BIZ_FUNCTION_ID is null </isEmpty>
+	            <isNotEmpty prepend="and" property="bizBizFunctionId"> BIZ_BIZ_FUNCTION_ID = #bizBizFunctionId#</isNotEmpty>
+	    </dynamic>	   	   
+	 </select>
+	 
+	 <select id="getWorkFlowNodeById" parameterClass="com.ailk.eaap.op2.bo.BizFunction" resultClass="com.ailk.eaap.op2.bo.BizFunction">
+	 	select BIZ_FUNCTION_ID bizFunctionId,
+		      BIZ_BIZ_FUNCTION_ID bizBizFunctionId,
+		      NAME name,
+		      CODE code
+		from   BIZ_FUNCTION 
+		where  STATE ='A'  and TENANT_ID=#tenantId#
+		<dynamic>
+	            <isNotEmpty prepend="and" property="bizFunctionId"> BIZ_FUNCTION_ID = #bizFunctionId# </isNotEmpty>
+	    </dynamic>	
+	 </select>
+	 
+	 <delete id="deleWorkFlowNode" parameterClass="java.util.HashMap">
+	 	delete from biz_function where FIND_IN_SET(BIZ_FUNCTION_ID,getBizFunChildLst(#nodeId#)) and tenant_id=#tenantId#
+	 </delete>
+
+	<select id="isExistWorkFlowName" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		select count(1) from BIZ_FUNCTION where NAME = #name# and TENANT_ID=#tenantId#
+		<dynamic>
+		        <isNotEmpty prepend="and" property="bizBizFunctionId"> BIZ_BIZ_FUNCTION_ID = #bizBizFunctionId#</isNotEmpty>
+		        <isEmpty prepend="and" property="bizBizFunctionId"> (BIZ_BIZ_FUNCTION_ID is null or BIZ_BIZ_FUNCTION_ID = '')</isEmpty>
+	            <isNotEmpty prepend="and" property="bizFunctionId"> BIZ_FUNCTION_ID != #bizFunctionId#</isNotEmpty>
+	    </dynamic>	
+	</select>
+	
+	<select id="isExistBizFunctionCodeWhenEdit" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		select count(1) from BIZ_FUNCTION where CODE = #bizFunctionCode# and BIZ_FUNCTION_ID != #bizFunctionId# and TENANT_ID=#tenantId#
+	</select>
+	
+</sqlMap>

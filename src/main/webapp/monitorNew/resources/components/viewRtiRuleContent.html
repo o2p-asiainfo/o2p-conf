@@ -1,0 +1,51 @@
+<!--
+  入参：
+  rtiRuleId
+
+  App.modal({width:'container',remote:App.urls.viewRtiRuleContent,data:{rtiRuleId:100000072}})
+-->
+<div id="component-viewRtiRuleContent">
+</div>
+<script type="text/html" id="art-viewRtiRuleContent">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Rti Rule Content</h4>
+  </div>
+  <div class="modal-body">
+    <div class="form-body">
+      <table class="table table-bordered">
+        <colgroup style="background:#f9f9f9; width:25%"></colgroup>
+        <colgroup></colgroup>
+        <tbody>
+          <tr>
+            <td class="text-middle text-center"> RTI Rule Content: </td>
+            <td> {{rtiRuleContent}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+  </div>
+</script>
+<script>
+  var ViewRtiRuleContent = function() {
+    var myData = {};
+    var $modal;
+    var selector;
+    
+    return {
+      init: function() {
+        var selector = '#component-viewRtiRuleContent';
+        $modal = $(selector).closest('.modal'); //获取当前modal对象
+        myData = App.serialize($modal.data('myData'));
+        App.template(App.urls.viewRtiRuleContentData, 'art-viewRtiRuleContent', 'component-viewRtiRuleContent', myData, function(data) {
+          $modal.modal();
+          App.transferI18nRes();
+        })
+      }
+    }
+  }()
+  ViewRtiRuleContent.init();
+</script>

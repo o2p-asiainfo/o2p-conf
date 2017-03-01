@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "http://ibatis.apache.org/dtd/sql-map-2.dtd" "-//ibatis.apache.org//DTD SQL Map 2.0//EN">
+<sqlMap namespace="eaap-op2-conf-logserver">
+<typeAlias alias="dataSourceBean"
+		type="com.ailk.eaap.op2.conf.logServer.bean.DataSourceBean" />
+	<resultMap id="DataSourceMap" class="com.ailk.eaap.op2.conf.logServer.bean.DataSourceBean" >
+	    <result column="data_source_id" property="dataSourceId" javaType="java.lang.String" />
+		<result column="data_source_name" property="dataSourceName" javaType="java.lang.String" />
+    	<result column="component_code" property="componentCode" javaType="java.lang.String" />
+		<result column="component_name" property="componentName" javaType="java.lang.String" />
+    	<result column="tab_suffix" property="tabSuffix" javaType="java.lang.String" />
+    	<result column="is_default" property="isDefault" javaType="java.lang.String" />
+    	<result column="isBeginInit" property="isbegininit" javaType="java.lang.String" />
+	</resultMap>
+	<select id="queryDataSourceList" parameterClass="java.util.HashMap"
+		resultMap="DataSourceMap">
+		select * from (select row_number() over( order by to_number(mod_id)
+		desc )rn, newtab.* from (
+		SELECT 
+			  d.data_source_id,
+			  d.data_source_name,
+			  c.code component_code,
+			  c.name component_name,
+			  d.tab_suffix,
+			  d.is_default,
+			  d.isBeginInit 
+			FROM
+			  data_source d 
+			  LEFT JOIN component c 
+			    ON d.component_id = c.component_id
+			    and   d.tenant_id=c.tenant_id
+			  where d.tenant_id=#tenantId#) t where 1 = 1
+			    
+		<dynamic>
+  			<isNotNull prepend="and" property="dataSourceName"> 
+  				t.data_source_name LIKE '%'||#dataSourceName#||'%'  
+  			</isNotNull>
+  			<isNotNull prepend="and" property="componentName"> 
+  				t.component_name LIKE '%'||#componentName#||'%'
+  			</isNotNull>
+  			<isNotNull prepend="and" property="tabSuffix"> 
+  				t.tab_suffix LIKE '%'||#tabSuffix#||'%'  
+  			</isNotNull>
+   		</dynamic>
+   		order by t.data_source_id desc
+		) newtab )
+		<dynamic prepend="where">
+  			<isNotNull prepend="and" property="pro"> 
+  				rn between #pro# and #end#
+  			</isNotNull>
+  		</dynamic>
+	</select>
+	<select id="queryDataSourceCount" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+		SELECT COUNT(*) ALLNUM FROM
+			(SELECT 
+			  d.data_source_name,
+			  c.code component_code,
+			  c.name component_name,
+			  d.tab_suffix,
+			  d.is_default,
+			  d.isBeginInit 
+			FROM
+			  data_source d 
+			  LEFT JOIN component c 
+			    ON d.component_id = c.component_id and   d.tenant_id=c.tenant_id
+			  where d.tenant_id=#tenantId#) t where 1 = 1
+			    
+		<dynamic>
+  			<isNotNull prepend="and" property="dataSourceName"> 
+  				t.data_source_name LIKE '%'||#dataSourceName#||'%'  
+  			</isNotNull>
+  			<isNotNull prepend="and" property="componentName"> 
+  				t.component_name LIKE '%'||#componentName#||'%' 
+  			</isNotNull>
+  			<isNotNull prepend="and" property="tabSuffix"> 
+  				t.tab_suffix LIKE '%'||#tabSuffix#||'%'  
+  			</isNotNull>
+   		</dynamic>
+	</select>
+    <select id="getCurrenId" resultClass="java.lang.String">
+        SELECT SEQ_DATA_SOURCE.NEXTVAL FROM DUAL
+	</select>
+	<insert id="addDataSourceBean" parameterClass="dataSourceBean">
+	    insert into data_source(data_source_id,data_source_name,component_id,tab_suffix,remarks,is_default,isBeginInit,tenant_id)
+	    values(#dataSourceId#,#dataSourceName#,#componentCode#,#tabSuffix#,#remarks#,#isDefault#,#isbegininit#,#tenantId#)
+	</insert>
+	<delete id="delDataSource" parameterClass="java.lang.String">
+		delete  from data_source where data_source_id =#dataSourceId# and tenant_id=#tenantId#
+	</delete>
+	<select id="getDataSourceById" parameterClass="java.lang.String"
+		resultClass="java.util.HashMap">
+		select ds.*,com.name as component_name from data_source  ds 
+        left join component com on ds.component_id = com.component_id where ds.data_source_id = #dataSourceId#
+        and ds.tenant_id=#tenantId#
+        and com.tenant_id=#tenantId#
+	</select>
+	<update id="updateDataSourceBean" parameterClass="dataSourceBean">
+	    update data_source set 
+	    data_source_name = #dataSourceName#,
+	    component_id = #componentCode#,
+	    tab_suffix = #tabSuffix#,
+	    remarks = #remarks#,
+	    is_default = #isDefault#,
+	    isBeginInit = #isbegininit#
+	    where data_source_id = #dataSourceId#
+	    and tenant_id=#tenantId#
+	</update>
+	
+	
+<select id="getDataSourceDbcpById" parameterClass="java.lang.String" resultClass="com.ailk.eaap.op2.bo.DataSourceDbcp">
+	 select data_source_id dataSourceId, driverclassname, url,conpooltype,username,passwd,defaultautocommit,defaultreadonly,defaulttransactionisolation,initialsize,maxactive,maxidle,minidle,maxwait,validationquery,testonborrow,testonreturn,testwhileidle,timebetweenevictionrunsmillis,numtestsperevictionrun,minevictableidletimemillis,poolpreparedstatements,maxopenpreparedstatements,accesstounderlyingconnectional,logabandoned,removeabandoned,removeabandonedtimeout, state
+	  from data_source_dbcp 
+	where data_source_id = #dataSourceId#
+	and tenant_id=#tenantId#
+</select>
+
+<select id="getDataSourceJndiById" parameterClass="java.lang.String" resultClass="com.ailk.eaap.op2.bo.DataSourceJndi">
+	 select data_source_id dataSourceId, jndi_name jndiName, remarks remarks, state state
+	  from data_source_jndi 
+	where data_source_id = #dataSourceId#
+	and tenant_id=#tenantId#
+</select>
+
+<select id="getDataSourceRouteById" parameterClass="java.lang.String" resultClass="com.ailk.eaap.op2.bo.DataSourceRoute">
+	 select data_source_id dataSourceId, data_source_route_id dataSourceRouteId, decision_rule decisionRule, pri pri, state state, date_format(state_date,'%Y-%m-%d %H:%i:%s') stateDate 
+	  from data_source_route 
+	where data_source_id = #dataSourceId#
+	and tenant_id=#tenantId#
+</select>
+
+<insert id="addDataSource" parameterClass="com.ailk.eaap.op2.bo.DataSource">
+    insert into data_source(data_source_id,data_source_name,component_id,tab_suffix,remarks,is_default,isBeginInit，tenant_id)
+    values(#dataSourceId#,#dataSourceName#,#componentId#,#tabSuffix#,#remarks#,#isDefault#,#isbegininit#,#tenantId#)
+</insert>
+<insert id="addDataSourceDbcp" parameterClass="com.ailk.eaap.op2.bo.DataSourceDbcp">
+    insert into data_source_dbcp(data_source_id,driverclassname,url,conpooltype,username,passwd,defaultautocommit,defaultreadonly,defaulttransactionisolation,initialsize,maxactive,maxidle,minidle,maxwait,validationquery,testonborrow,testonreturn,testwhileidle,timebetweenevictionrunsmillis,numtestsperevictionrun,minevictableidletimemillis,poolpreparedstatements,maxopenpreparedstatements,accesstounderlyingconnectional,logabandoned,removeabandoned,removeabandonedtimeout,state,tenant_id)
+    values(#dataSourceId#,#driverclassname#,#url#,#conpooltype#,#username#,#passwd#,#defaultautocommit#,#defaultreadonly#,#defaulttransactionisolation#,#initialsize#,#maxactive#,#maxidle#,#minidle#,#maxwait#,#validationquery#,#testonborrow#,#testonreturn#,#testwhileidle#,#timebetweenevictionrunsmillis#,#numtestsperevictionrun#,#minevictableidletimemillis#,#poolpreparedstatements#,#maxopenpreparedstatements#,#accesstounderlyingconnectional#,#logabandoned#,#removeabandoned#,#removeabandonedtimeout#,#state#,#tenantId#)
+</insert>
+<insert id="addDataSourceJndi" parameterClass="com.ailk.eaap.op2.bo.DataSourceJndi">
+    insert into data_source_jndi(data_source_id, jndi_name, remarks, state,tenant_id)
+    values(#dataSourceId#,#jndiName#,#remarks#,#state#,#tenantId#)
+</insert>
+ <insert id="addDataSourceRoute" parameterClass="com.ailk.eaap.op2.bo.DataSourceRoute">
+	<selectKey resultClass="String" keyProperty="dataSourceRouteId">
+		SELECT SEQ_DATA_SOURCE_ROUTE.NEXTVAL FROM DUAL
+	</selectKey>
+	INSERT INTO DATA_SOURCE_ROUTE
+	(state_date  
+	<dynamic >
+		<isNotNull prepend=","  property="dataSourceRouteId">DATA_SOURCE_ROUTE_ID</isNotNull>
+		<isNotNull prepend=","  property="dataSourceId">DATA_SOURCE_ID</isNotNull>
+		<isNotNull prepend=","  property="decisionRule">DECISION_RULE</isNotNull>
+		<isNotNull prepend=","  property="pri">PRI</isNotNull>
+		<isNotNull prepend=","  property="state">STATE</isNotNull>
+		<isNotNull prepend="," property="tenantId">TENANT_ID</isNotNull>
+	</dynamic>
+	) values (sysdate
+	<dynamic>
+		<isNotNull prepend="," property="dataSourceRouteId">#dataSourceRouteId#</isNotNull>
+		<isNotNull prepend="," property="dataSourceId">#dataSourceId#</isNotNull>
+		<isNotNull prepend="," property="decisionRule">#decisionRule#</isNotNull>
+		<isNotNull prepend="," property="pri">#pri#</isNotNull>
+		<isNotNull prepend="," property="state">#state#</isNotNull>
+		<isNotNull prepend="," property="tenantId">#tenantId#</isNotNull>
+	</dynamic>
+	)
+</insert>
+
+<update id="updateDataSource" parameterClass="com.ailk.eaap.op2.bo.DataSource">
+	  update DATA_SOURCE
+	  <dynamic prepend="set">
+		    <isNotNull prepend="," property="dataSourceName"> DATA_SOURCE_NAME=#dataSourceName#</isNotNull>
+		    <isNotNull prepend="," property="componentId"> COMPONENT_ID=#componentId#</isNotNull>
+		    <isNotNull prepend="," property="tabSuffix"> TAB_SUFFIX=#tabSuffix#</isNotNull>
+		    <isNotNull prepend="," property="remarks"> REMARKS=#remarks#</isNotNull>
+		    <isNotNull prepend="," property="isDefault"> IS_DEFAULT=#isDefault#</isNotNull>
+		    <isNotNull prepend="," property="isbegininit"> ISBEGININIT=#isbegininit#</isNotNull>
+	  </dynamic>
+	  where DATA_SOURCE_ID=#dataSourceId# and tenant_id=#tenantId#
+</update>
+<update id="updateDataSourceRoute" parameterClass="com.ailk.eaap.op2.bo.DataSourceRoute">
+	  update DATA_SOURCE_ROUTE
+	  <dynamic prepend="set">
+		    <isNotNull prepend="," property="decisionRule"> DECISION_RULE=#decisionRule#</isNotNull>
+		    <isNotNull prepend="," property="pri"> PRI=#pri#</isNotNull>
+		    <isNotNull prepend="," property="state"> STATE=#state#</isNotNull>
+	  </dynamic>
+	  where DATA_SOURCE_ROUTE_ID=#dataSourceRouteId# and tenant_id=#tenantId#
+</update>
+<delete id="delDataSourceDbcp" parameterClass="java.lang.String">
+	delete from data_source_dbcp where data_source_id =#dataSourceId# and tenant_id=#tenantId#
+</delete>
+<delete id="delDataSourceJndi" parameterClass="java.lang.String">
+	delete from data_source_jndi where data_source_id =#dataSourceId# and tenant_id=#tenantId#
+</delete>
+<delete id="delDataSourceRoute" parameterClass="java.lang.String">
+	delete from data_source_route where data_source_id =#dataSourceId# and tenant_id=#tenantId#
+</delete>
+	
+	<select id="validatorDataSource" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+		SELECT
+			COUNT(*) ALLNUM
+		FROM
+			data_source d
+		WHERE
+			d.tenant_id = #tenantId#     
+		<dynamic>
+			<isNotNull prepend="and" property="dataSourceId"> 
+  				d.data_source_id != #dataSourceId#
+  			</isNotNull>
+  			<isNotNull prepend="and" property="dataSourceName"> 
+  				d.data_source_name = #dataSourceName#
+  			</isNotNull>
+  			<isNotNull prepend="and" property="isDefault"> 
+  				d.is_default = #isDefault# 
+  			</isNotNull>
+   		</dynamic>
+	</select>
+</sqlMap>

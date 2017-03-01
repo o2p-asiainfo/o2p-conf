@@ -1,0 +1,483 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="eaap-op2-conf-proof-manage-sqlmap">
+
+	<!-- 查看所有有效认证类型 -->
+	<select id="getAllProofType" resultClass="java.util.HashMap">
+		select pt_cd,pt_name
+		from PROOF_TYPE
+	</select>
+	<!-- 获得有效验证的记录数 -->
+	<select id="queryAllProofInstanceCount" parameterClass="java.util.Map"
+		resultClass="java.lang.String">
+		select count(*)
+		from PROOF_EFFECT pe
+		left join PROOF_TYPE ptype on
+		pe.PT_CD = ptype.PT_CD
+		inner join component com on pe.COMPONENT_ID = com.COMPONENT_ID
+		where
+		1 = 1
+		and  pe.TENANT_ID=#tenantId#
+		and com.TENANT_ID=#tenantId#
+		<dynamic prepend="and">
+			<isNotNull prepend="and" property="pt_cd">
+				ptype.PT_CD =#pt_cd#
+			</isNotNull>
+			<isNotNull prepend="and" property="prooffId">
+				pe.PROOFE_ID =#prooffId#
+			</isNotNull>
+			<isNotNull prepend="and" property="COMPONENT_ID">
+				pe.COMPONENT_ID =#componentId#
+			</isNotNull>
+		</dynamic>
+	</select>
+
+	<!-- 获得有效验证的列表 -->
+	<select id="getAllProofInstance" parameterClass="java.util.Map"
+		resultClass="java.util.HashMap">
+		select * from 
+        (
+		SELECT
+		x.*,ROWNUM RN 
+		FROM(
+		select
+		pe.PROOFE_ID,
+		pe.PT_CD,
+		ptype.PT_NAME,
+		to_char(pe.CREATE_TIME,'YYYY-MM-DD') as CREATE_TIME,
+		com.name
+		from PROOF_EFFECT pe
+		left join PROOF_TYPE ptype on pe.PT_CD = ptype.PT_CD
+		inner join component com on pe.COMPONENT_ID = com.COMPONENT_ID
+		where
+		1 = 1
+		and  pe.TENANT_ID=#tenantId#
+		and com.TENANT_ID=#tenantId#
+		<dynamic prepend="and">
+			<isNotNull prepend="and" property="pt_cd">
+				ptype.PT_CD =#pt_cd#
+			</isNotNull>
+			<isNotNull prepend="and" property="prooffId">
+				pe.PROOFE_ID =#prooffId#
+			</isNotNull>
+			<isNotNull prepend="and" property="componentId">
+				pe.COMPONENT_ID =#componentId#
+			</isNotNull>
+		</dynamic>
+		) x
+		WHERE <![CDATA[ ROWNUM <= #endPage# ) Y  WHERE RN >= #startPage# ]]>
+	</select>
+
+	<!-- 得到所有属性规格的记录数 -->
+	<select id="queryAllAttrSpecValue" parameterClass="java.util.Map"
+		resultClass="java.lang.String">
+		select count(*)
+		from ATTR_SPEC
+		where
+		1 = 1
+		and TENANT_ID=#tenantId#
+		<dynamic prepend="and">
+			<isNotNull prepend="and" property="attr_spec_name">
+				attr_spec_name LIKE
+				'%'||#attr_spec_name#||'%'
+			</isNotNull>
+			<isNotNull prepend="and" property="attr_spec_code">
+				attr_spec_code LIKE
+				'%'||#attr_spec_code#||'%'
+			</isNotNull>
+		</dynamic>
+	</select>
+
+	<!-- 得到所有属性规格的值 -->
+	<select id="getAllAttrSpecValule" parameterClass="java.util.Map"
+		resultClass="java.util.HashMap">
+		SELECT
+		*
+		FROM(
+		select
+		attr_spec_id attrSpecId,
+		attr_spec_name attrSpecName,
+		attr_spec_code attrSpecCode,
+		attr_spec_desc attrSpecDesc,
+		date_format(create_date,'%Y-%m-%d') createDate
+		from ATTR_SPEC
+		where
+		1 = 1
+		and  TENANT_ID=#tenantId#
+		<dynamic prepend="and">
+			<isNotNull prepend="and" property="attr_spec_name">
+				attr_spec_name LIKE
+				'%'||#attr_spec_name#||'%'
+			</isNotNull>
+			<isNotNull prepend="and" property="attr_spec_code">
+				attr_spec_code LIKE
+				'%'||#attr_spec_code#||'%'
+			</isNotNull>
+		</dynamic>
+		) x
+		WHERE <![CDATA[ ROWNUM <= #endPage# ) Y  WHERE Y.ROW_NUM >= #startPage# ]]>
+	</select>
+
+	<!-- 得到配置好的属性值记录数 -->
+	<select id="queryAllAttrValue" parameterClass="java.util.Map"
+		resultClass="java.lang.String">
+
+		select count(*)
+		from PROOF_TYPE_ATR_SPEC ptas
+		left join
+		ATTR_SPEC asp on asp.ATTR_SPEC_ID = ptas.ATTR_SPEC_ID
+		left join
+		PROOF_VALUES pv on pv.PR_ATR_SPEC_CD = ptas.PR_ATR_SPEC_CD
+		where
+		pv.PROOFE_ID = #attr_proofe_id#
+		
+		and   pv.TENANT_ID=#tenantId#
+		and   asp.TENANT_ID=#tenantId#
+	</select>
+
+	<!-- 得到配置好的属性值列表 -->
+	<select id="getAllAttrValule" parameterClass="java.util.Map"
+		resultClass="java.util.HashMap">
+		SELECT
+		*
+		FROM(
+		select
+		ptas.PR_ATR_SPEC_CD,
+		ptas.PR_ATR_SPEC_NAME,
+		asp.ATTR_SPEC_NAME,
+		asp.ATTR_SPEC_CODE,
+		pv.PV_ID,
+		pv.ATTR_VALUE
+		from PROOF_TYPE_ATR_SPEC ptas
+		left join ATTR_SPEC asp on
+		asp.ATTR_SPEC_ID = ptas.ATTR_SPEC_ID
+		left join PROOF_VALUES pv on
+		pv.PR_ATR_SPEC_CD = ptas.PR_ATR_SPEC_CD
+		where pv.PROOFE_ID =
+		#attr_proofe_id#
+		and   pv.TENANT_ID=#tenantId#
+		and   asp.TENANT_ID=#tenantId#
+		) x
+		WHERE <![CDATA[ ROWNUM <= #endPage# ) Y  WHERE Y.ROW_NUM >= #startPage# ]]>
+	</select>
+
+	<!-- 获得认证类型属性规格记录 -->
+	<select id="queryAllPrAttrValue" parameterClass="java.util.Map"
+		resultClass="java.lang.String">
+		select count(*)
+		from PROOF_TYPE_ATR_SPEC ptas
+		left join ATTR_SPEC asp on
+		asp.ATTR_SPEC_ID = ptas.ATTR_SPEC_ID
+		left join PROOF_TYPE pt on
+		pt.PT_CD = ptas.PT_CD
+		where 1=1
+		and   asp.TENANT_ID=#tenantId#
+		<dynamic prepend="and">
+			<isNotNull prepend="and" property="pr_attr_spec_name">
+				ptas.PR_ATR_SPEC_NAME
+				LIKE
+				'%'||#pr_attr_spec_name#||'%'
+			</isNotNull>
+		</dynamic>
+
+	</select>
+
+	<!-- 获得认证类型属性规格列表 -->
+	<select id="getAllPrAttrValule" parameterClass="java.util.Map"
+		resultClass="java.util.HashMap">
+		SELECT
+		*
+		FROM(
+		select
+		ptas.PR_ATR_SPEC_CD,
+		ptas.PR_ATR_SPEC_NAME,
+		asp.ATTR_SPEC_NAME,
+		asp.ATTR_SPEC_CODE,
+		pt.PT_CD,
+		pt.PT_NAME
+		from
+		PROOF_TYPE_ATR_SPEC ptas
+		left join ATTR_SPEC asp on asp.ATTR_SPEC_ID =
+		ptas.ATTR_SPEC_ID
+		left join PROOF_TYPE pt on pt.PT_CD = ptas.PT_CD
+		where 1=1
+		
+		and   asp.TENANT_ID=#tenantId#
+		<dynamic prepend="and">
+			<isNotNull prepend="and" property="pr_attr_spec_name">
+				ptas.PR_ATR_SPEC_NAME
+				LIKE
+				'%'||#pr_attr_spec_name#||'%'
+			</isNotNull>
+		</dynamic>
+		) x
+		WHERE <![CDATA[ ROWNUM <= #endPage# ) Y  WHERE Y.ROW_NUM >= #startPage# ]]>
+	</select>
+	<!-- 添加认证类型属性规格 -->
+	<insert id="addPrAttrSpecValue" parameterClass="java.util.Map">
+		<selectKey resultClass="int" keyProperty="pr_atr_spec_cd">
+			SELECT
+			nextval('SEQ_PROOF_TYPE_ATR_SPEC');
+		</selectKey>
+		insert into
+		PROOF_TYPE_ATR_SPEC(pr_atr_spec_cd,pr_atr_spec_name,attr_spec_id,pt_cd,lastest_time,create_time,state)
+		values(#pr_atr_spec_cd#,#pr_attr_spec_name#,#hidden_attr_spec_id#,#pt_cd#,sysdate,sysdate,'A')
+	</insert>
+	<!-- 删除认证类型属性规格配置 -->
+	<delete id="delPrAttrSpecValue" parameterClass="java.util.Map">
+
+		delete from
+		PROOF_TYPE_ATR_SPEC where pr_atr_spec_cd =#pr_attr_spec_cd#
+	</delete>
+
+	<!-- 获得有效认证当前最新记录ID -->
+	<select id="getMaxProofId" resultClass="java.lang.String">
+		select max(PROOFE_ID)+1
+		from PROOF_EFFECT
+	</select>
+	<!-- 添加有效认证记录 -->
+	<insert id="addProofEffect" parameterClass="java.util.Map">
+		insert into
+		PROOF_EFFECT(proofe_id,pt_cd,create_time,status,datetime,COMPONENT_ID,PROOF_EFFECT_CODE
+		<isNotNull prepend="," property="tenantId">TENANT_ID</isNotNull>
+		)
+		values(#proof_id#,#pt_cd#,SYS_EXTRACT_UTC(current_timestamp)+0,'A',SYS_EXTRACT_UTC(current_timestamp)+0,#componentId#,sys_guid()
+		<isNotNull prepend="," property="tenantId">#tenantId#</isNotNull>
+		)
+	</insert>
+	<!-- 添加认证属性值 -->
+	<insert id="addAttrValues" parameterClass="java.util.Map">
+		insert into
+		PROOF_VALUES(pv_id,proofe_id,pr_atr_spec_cd,attr_value,create_time,state,lastest_time
+		<isNotNull prepend="," property="tenantId">TENANT_ID</isNotNull>
+		)
+		values(SEQ_ACCOUNT.Nextval,#hide_attr_proofe_id#,#hidden_pr_attr_spec_id#,#attr_value#,sysdate,'A',sysdate
+		<isNotNull prepend="," property="tenantId">#tenantId#</isNotNull>)
+	</insert>
+	<!-- 修改认证属性值 -->
+	<update id="updateAttrValues" parameterClass="java.util.Map">
+	   update PROOF_VALUES set ATTR_VALUE= #attr_value# where PROOFE_ID= #hide_attr_proofe_id# and PR_ATR_SPEC_CD=#hidden_pr_attr_spec_id#  and TENANT_ID=#tenantId#
+	</update>
+	<!-- 删除认证属性值 -->
+	<delete id="delProofValues" parameterClass="java.util.Map">
+
+		delete from
+		PROOF_VALUES where pv_id =#pv_id#  and TENANT_ID=#tenantId#
+	</delete>
+	<!-- 由认证ID删除认证属性值 -->
+	<delete id="delProofValuesBuProofId" parameterClass="java.util.Map">
+
+		delete from
+		PROOF_VALUES where PROOFE_ID =#proofe_id#  and TENANT_ID=#tenantId#
+	</delete>
+	<!-- 删除有效验证实例 -->
+	<delete id="delProofEffect" parameterClass="java.util.Map">
+
+		delete from
+		PROOF_EFFECT where PROOFE_ID =#proofe_id#  and TENANT_ID=#tenantId#
+	</delete>
+
+	<!-- 由认证类型得到所有的认证类型属性规格 -->
+	<select id="getAllAttrValueByType" parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+		select
+		ptas.PR_ATR_SPEC_CD,
+		ptas.PR_ATR_SPEC_NAME,
+		ptas.ATTR_SPEC_ID,
+		ptas.DISPLAY_TYPE,
+		asp.ATTR_SPEC_NAME,
+		asp.ATTR_SPEC_CODE
+		from PROOF_TYPE_ATR_SPEC ptas
+		left join ATTR_SPEC asp
+		on asp.ATTR_SPEC_ID = ptas.ATTR_SPEC_ID
+		where ptas.PT_CD = #pt_cd#
+		and asp.TENANT_ID=#tenantId#
+		order by asp.ATTR_SPEC_ID asc
+	</select>
+	<!-- 查看有效认证配置 -->
+	<select id="getAllAttrValueByMap" parameterClass="java.util.Map"
+		resultClass="java.util.HashMap">
+		select
+		ptas.PR_ATR_SPEC_CD,
+		ptas.PR_ATR_SPEC_NAME,
+		ptas.ATTR_SPEC_ID,
+		ptas.DISPLAY_TYPE,
+		asp.ATTR_SPEC_NAME,
+		asp.ATTR_SPEC_CODE,
+		pv.ATTR_VALUE,
+		pt.PT_NAME,
+		pt.PT_CODE
+		from PROOF_TYPE_ATR_SPEC
+		ptas
+		left join ATTR_SPEC asp on
+		asp.ATTR_SPEC_ID = ptas.ATTR_SPEC_ID
+		left join PROOF_VALUES pv on pv.PR_ATR_SPEC_CD = ptas.PR_ATR_SPEC_CD
+		left join PROOF_TYPE pt on pt.PT_CD = ptas.PT_CD
+		where
+		ptas.PT_CD =
+		#pt_cd# and pv.PROOFE_ID = #prooffId#
+		and asp.TENANT_ID=#tenantId#
+		 and pv.TENANT_ID=#tenantId#
+		order by asp.ATTR_SPEC_ID asc
+	</select>
+
+	<!-- 得到页面显示的值 -->
+	<select id="getShowPageValue" parameterClass="java.util.Map"
+		resultClass="java.lang.String">
+
+		select attr_value_name
+		from ATTR_VALUE
+		where attr_spec_id = #attr_spec_id# and attr_value = #attr_value# and TENANT_ID=#tenantId#
+	</select>
+		<!-- 取得有效认证关联表的最大ID -->
+	<select id="getMidMaxID" resultClass="java.lang.String">
+		select max(ID)+1 from
+		PROOEF_EFFECT_MID
+	</select>
+	<!-- 添加有效认证关联表记录 -->
+	<insert id="addProoefMid" parameterClass="java.util.Map">
+
+		insert into
+		PROOEF_EFFECT_MID(ID,PROOFE_ID,SER_INVOKE_INS_ID
+		<isNotNull prepend="," property="tenantId">TENANT_ID</isNotNull>
+		)
+		values(#ID#,#proofe_id#,#serInvokeInsId#
+		<isNotNull prepend="," property="tenantId">#tenantId#</isNotNull>
+		)
+	</insert>
+
+	<!-- 获得该调用实例的所有认证 -->
+	<select id="getSerInvokerProoef" parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+		select
+		pem.PROOFE_ID,
+		pt.PT_NAME,
+		pt.PT_CD,
+		pt.PT_CODE
+		from PROOEF_EFFECT_MID pem
+		left join PROOF_EFFECT pe on pe.PROOFE_ID = pem.PROOFE_ID
+		left join PROOF_TYPE pt on pt.PT_CD = pe.PT_CD
+		where pem.SER_INVOKE_INS_ID = #serInvokeInsId#
+		and pem.TENANT_ID=#tenantId#
+		  and pe.TENANT_ID=#tenantId#
+		  
+	</select>
+	<!-- 删除所有记录-->
+	<delete id="deleteAllProoefMidById" parameterClass="java.util.HashMap">
+
+		delete from
+		PROOEF_EFFECT_MID where SER_INVOKE_INS_ID =#serInvokeInsId# and TENANT_ID=#tenantId#
+	</delete>
+	<!-- 由服务调用实例得到webservice的调用地址 -->
+	<select id="getWebServiceMsg" parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+		select basecv.version,
+		cd.DOC_VERSION,
+		cd.RESOURCE_ALISS
+		from CONTRACT_VERSION cv
+		left join service ser on
+		ser.contract_version_id = cv.contract_version_id
+		left join
+		ser_invoke_ins sii on sii.service_id = ser.service_id
+		left join
+		DOC_CONTRACT dc on dc.CONTRACT_VERSION_ID =
+		cv.CONTRACT_VERSION_ID
+		left
+		join CONTRACT_DOC cd on cd.CONTRACT_DOC_ID = dc.CONTRACT_DOC_ID,
+		CONTRACT c,
+		CONTRACT_VERSION basecv,
+		CONTRACT basecon
+		where
+		sii.ser_invoke_ins_id=#serInvokeInsId#
+		and cv.contract_id=c.contract_id
+		and c.BASE_CONTRACT_ID=basecon.CONTRACT_ID
+		and
+		basecv.CONTRACT_ID=basecon.contract_id
+		
+		and cv.TENANT_ID=#tenantId#
+		and ser.TENANT_ID=#tenantId#
+		and sii.TENANT_ID=#tenantId#
+		and dc.TENANT_ID=#tenantId#
+		and cd.TENANT_ID=#tenantId#
+		and c.TENANT_ID=#tenantId#
+		and basecv.TENANT_ID=#tenantId#
+		and basecon.TENANT_ID=#tenantId#
+		
+	</select>
+
+	<!-- 由服务调用实例得到webservice api的调用地址 -->
+	<select id="getWebServiceApiMsg" parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+		select api.api_method,
+		com.code
+		from api api
+		left join
+		service ser on ser.service_id = api.service_id
+		left join ser_invoke_ins
+		sii on sii.service_id = ser.service_id
+		left join component com on
+		com.component_id = sii.component_id
+		where sii.ser_invoke_ins_id =
+		#serInvokeInsId#
+		and api.TENANT_ID=#tenantId#
+		  and ser.TENANT_ID=#tenantId#
+		   and sii.TENANT_ID=#tenantId#
+		    and com.TENANT_ID=#tenantId#
+	</select>
+
+	<!-- 由服务调用实例得到http的调用地址 -->
+	<select id="getHttpAddress" parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+		select ser.service_code from service ser
+		left join ser_invoke_ins sii on sii.service_id = ser.service_id
+		where sii.ser_invoke_ins_id=#serInvokeInsId#
+		 and ser.TENANT_ID=#tenantId#
+		  and sii.TENANT_ID=#tenantId#
+	</select>
+
+	<!-- 由服务调用实例得到rest的调用地址 -->
+	<select id="getRestAddress" parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+		select tia.ATTR_SPEC_VALUE
+		from ser_invoke_ins sii
+		left join
+		SER_TECH_IMPL sti on sti.SERVICE_ID = sii.SERVICE_ID
+		left join
+		TECH_IMP_ATT tia on tia.TECH_IMPL_ID = sti.TECH_IMPL_ID
+		where
+		tia.ATTR_SPEC_ID = 205 and sii.ser_invoke_ins_id = #serInvokeInsId#
+		and sii.TENANT_ID=#tenantId#
+		  and sti.TENANT_ID=#tenantId#
+		   and tia.TENANT_ID=#tenantId#
+	</select>
+	<!-- 得到请求的JavaField主数类型 -->
+	<select id="getAllJavaFieldReq" resultClass="java.util.HashMap">
+		select
+		mad.maind_id,
+		mad.cep_values
+		from main_data mad
+		left join main_data_type mdt on mdt.mdt_cd = mad.mdt_cd
+		where mdt.mdt_sign = 'JavaField_req'
+		and mad.TENANT_ID=#tenantId#
+		  and mdt.TENANT_ID=#tenantId#
+	</select>
+	<!-- 得到响应的JavaField主数类型-->
+	<select id="getAllJavaFieldRsp" resultClass="java.util.HashMap">
+		select
+		mad.maind_id,
+		mad.cep_values
+		from main_data mad
+		left join main_data_type mdt on mdt.mdt_cd = mad.mdt_cd
+		where mdt.mdt_sign = 'JavaField_rsp'
+		and mad.TENANT_ID=#tenantId#
+		  and mdt.TENANT_ID=#tenantId#
+	</select>
+	<!-- 查看记录有没有被用 -->
+	<select id="countRecourds" parameterClass="java.util.HashMap"
+		resultClass="java.lang.Integer">
+		select count(1) from PROOEF_EFFECT_MID where PROOFE_ID = #proofe_id# and TENANT_ID=#tenantId#
+	</select>
+</sqlMap> 
+

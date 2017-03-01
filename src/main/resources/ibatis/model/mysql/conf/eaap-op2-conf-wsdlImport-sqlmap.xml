@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "http://ibatis.apache.org/dtd/sql-map-2.dtd" "-//ibatis.apache.org//DTD SQL Map 2.0//EN">
+
+<sqlMap namespace="eaap-op2-conf-wsdlImport">
+
+<!--获取主键ID -->
+<select id="getSeqContract" parameterClass="java.util.Map" resultClass="java.lang.Integer" remapResults="true" >
+	select nextval('SEQ_CONTRACT');
+</select>
+<select id="getSeqContractVersion" parameterClass="java.util.Map" resultClass="java.lang.Integer" remapResults="true" >
+	select nextval('SEQ_CONTRACT_VERSION');
+</select>
+<select id="getSeqContractFormat" parameterClass="java.util.Map" resultClass="java.lang.Integer" remapResults="true" >
+	select nextval('SEQ_CONTRACT_FORMAT');
+</select>
+<select id="getSeqNodeDesc" parameterClass="java.util.Map" resultClass="java.lang.Integer" remapResults="true" >
+	select nextval('SEQ_NODE_DESC');
+</select>
+
+<select id="getWsdlImportList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	select i.IMPORT_ID, 
+		i.RESOURCE_ALIAS,
+		i.DOC_VERSION,
+		i.IMPORT_OBJECT_TYPE,
+		(SELECT d.maind_id FROM main_data d,main_data_type t WHERE d.mdt_cd = t.mdt_cd AND t.mdt_sign = 'wsdlImportObjectType' AND d.cep_values = i.IMPORT_OBJECT_TYPE and d.TENANT_ID=#tenantId# and t.TENANT_ID=#tenantId#) AS IMPORT_OBJECT_TYPE_id,
+		(SELECT d.cep_name from main_data d,main_data_type t where d.mdt_cd = t.mdt_cd and t.mdt_sign='wsdlImportObjectType' and d.cep_values = i.IMPORT_OBJECT_TYPE  and d.TENANT_ID=#tenantId# and t.TENANT_ID=#tenantId#) as IMPORT_OBJECT_TYPE_NAME, 
+		i.IMPORT_FILE,
+		i.IMPORT_URL,
+		i.IMPORT_TYPE,
+		(SELECT d.cep_name from main_data d,main_data_type t where d.mdt_cd = t.mdt_cd and t.mdt_sign='wsdlImportType' and d.cep_values = i.IMPORT_TYPE  and d.TENANT_ID=#tenantId# and t.TENANT_ID=#tenantId#) as IMPORT_TYPE_NAME,
+		date_format(i.IMPORT_TIME,'%Y-%m-%d %H:%i') as IMPORT_TIME,
+		i.FILE_ATTACH_ID,
+		i.FILE_TYPE,
+		i.REMARK
+	from wsdl_import i
+	<dynamic prepend="where">
+	    <isNotNull prepend="and" property="resourceAlias"> i.RESOURCE_ALIAS like CONCAT('%',#resourceAlias#,'%')</isNotNull>
+	    <isNotNull prepend="and" property="importObjectType"> i.IMPORT_OBJECT_TYPE = #importObjectType#</isNotNull>
+	    <isNotEmpty prepend="and" property="importTimeBegin"> <![CDATA[ i.IMPORT_TIME >= #importTimeBegin# ]]></isNotEmpty>
+	    <isNotEmpty prepend="and" property="importTimeEnd"> <![CDATA[ i.IMPORT_TIME <= #importTimeEnd# ]]></isNotEmpty>
+		<isNotNull prepend="and" property="tenantId"> i.TENANT_ID=#tenantId#</isNotNull>
+	</dynamic>
+	order by i.IMPORT_TIME desc
+	Limit #pro_mysql#,#page_record#
+</select>
+
+<select id="getWsdlImportListCount" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	select count(*) ALLNUM  from (
+		select  i.IMPORT_ID from wsdl_import i
+		<dynamic prepend="where">
+		    <isNotNull prepend="and" property="resourceAlias"> i.RESOURCE_ALIAS like CONCAT('%',#resourceAlias#,'%')</isNotNull>
+		    <isNotNull prepend="and" property="importObjectType"> i.IMPORT_OBJECT_TYPE = #importObjectType#</isNotNull>
+		    <isNotEmpty prepend="and" property="importTimeBegin"> <![CDATA[ i.IMPORT_TIME >= #importTimeBegin# ]]></isNotEmpty>
+		    <isNotEmpty prepend="and" property="importTimeEnd"> <![CDATA[ i.IMPORT_TIME <= #importTimeEnd# ]]></isNotEmpty>
+			<isNotNull prepend="and" property="tenantId"> i.TENANT_ID=#tenantId#</isNotNull>
+		</dynamic>
+	) temp
+</select>
+
+<insert id="insertWsdlImport" parameterClass="com.ailk.eaap.op2.bo.WsdlImport" >
+  <selectKey resultClass="int" keyProperty="importId">
+		select nextval('SEQ_WSDL_IMPORT')
+  </selectKey>
+   Insert into WSDL_IMPORT (IMPORT_TIME,TENANT_ID
+  <dynamic >
+	    <isNotNull prepend=","  property="importId">IMPORT_ID</isNotNull>
+	    <isNotNull prepend=","  property="resourceAlias">RESOURCE_ALIAS</isNotNull>
+	    <isNotNull prepend=","  property="docVersion">DOC_VERSION</isNotNull>
+	    <isNotNull prepend=","  property="importObjectType">IMPORT_OBJECT_TYPE</isNotNull>
+	    <isNotNull prepend=","  property="importFile">IMPORT_FILE</isNotNull>
+	    <isNotNull prepend=","  property="importUrl">IMPORT_URL</isNotNull>
+	    <isNotNull prepend=","  property="importType">IMPORT_TYPE</isNotNull>
+	    <isNotNull prepend=","  property="fileAttachId">FILE_ATTACH_ID</isNotNull>
+	    <isNotNull prepend=","  property="fileType">FILE_TYPE</isNotNull>
+	    <isNotNull prepend=","  property="contractDocId">CONTRACT_DOC_ID</isNotNull>
+	    <isNotNull prepend=","  property="remark">REMARK</isNotNull>
+  </dynamic>
+   ) values (utc_timestamp(),#tenantId#
+   <dynamic>
+	    <isNotNull prepend=","  property="importId">#importId#</isNotNull>
+	    <isNotNull prepend=","  property="resourceAlias">#resourceAlias#</isNotNull>
+	    <isNotNull prepend=","  property="docVersion">#docVersion#</isNotNull>
+	    <isNotNull prepend=","  property="importObjectType">#importObjectType#</isNotNull>
+	    <isNotNull prepend=","  property="importFile">#importFile#</isNotNull>
+	    <isNotNull prepend=","  property="importUrl">#importUrl#</isNotNull>
+	    <isNotNull prepend=","  property="importType">#importType#</isNotNull>
+	    <isNotNull prepend=","  property="fileAttachId">#fileAttachId#</isNotNull>
+	    <isNotNull prepend=","  property="fileType">#fileType#</isNotNull>
+	    <isNotNull prepend=","  property="contractDocId">#contractDocId#</isNotNull>
+	    <isNotNull prepend=","  property="remark">#remark#</isNotNull>
+   </dynamic>
+    )
+</insert>
+
+<select id="getWsdlImport" parameterClass="com.ailk.eaap.op2.bo.WsdlImport" resultClass="com.ailk.eaap.op2.bo.WsdlImport">
+	select IMPORT_ID importId, RESOURCE_ALIAS resourceAlias, DOC_VERSION docVersion,IMPORT_OBJECT_TYPE importObjectType,
+			IMPORT_FILE importFile, IMPORT_URL importUrl, IMPORT_TYPE importType, FILE_ATTACH_ID fileAttachId, FILE_TYPE fileType,
+			CONTRACT_DOC_ID contractDocId, REMARK remark
+	from WSDL_IMPORT
+	where  IMPORT_ID=#importId# 
+		and TENANT_ID=#tenantId#
+</select>
+
+<select id="queryDocContractList" parameterClass="com.ailk.eaap.op2.bo.DocContract"  resultClass="java.util.HashMap">
+	   select DOC_CONTR_ID docContrId, CONTRACT_DOC_ID contractDocId, CONTRACT_VERSION_ID contractVersionId, DESCRIPTOR descriptor
+		from DOC_CONTRACT  
+	  where CONTRACT_DOC_ID=#contractDocId# 
+		and TENANT_ID=#tenantId#
+</select>
+	
+</sqlMap>

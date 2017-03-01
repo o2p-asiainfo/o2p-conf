@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "http://ibatis.apache.org/dtd/sql-map-2.dtd" "-//ibatis.apache.org//DTD SQL Map 2.0//EN">
+
+<sqlMap namespace="eaap-op2-conf-contractDoc">
+  
+
+ <select id="showContractDocs" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+    select cd.contract_doc_id contractDocId,cd.doc_name docName,cd.doc_version docVersion,
+    date_format(cd.doc_create_time,'%Y-%m-%d %H:%i')  docCreateTime,cd.state state,date_format(cd.lastest_time,'%Y-%m-%d %H:%i') lastestTime 
+    from contract_doc cd where state='A' and TENANT_ID=#tenantId#
+ </select>
+ 
+ <select id="countDocSum" parameterClass="java.util.HashMap"  resultClass="java.lang.Integer">
+    SELECT COUNT(contract_doc_id) NUM FROM contract_doc C where state='A' and TENANT_ID=#tenantId#
+    <dynamic >
+	    <isNotNull prepend="and " property="docName"> DOC_NAME like CONCAT('%',#docName#,'%')</isNotNull>
+	    <isNotNull prepend="and " property="docVersion"> DOC_VERSION=#docVersion#</isNotNull>
+	    <isNotNull prepend="and " property="resourceAliss"> resource_aliss=#resourceAliss#</isNotNull>
+	</dynamic>
+ </select>
+ <!-- 查询信息 -->
+<select id="countDoc" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+		SELECT
+			*
+		FROM
+			(
+				SELECT
+					cd.contract_doc_id contractDocId,
+					cd.doc_name docName,
+					cd.doc_version docVersion,  
+					date_format (
+						cd.doc_create_time,
+						'%Y-%m-%d %H:%i'
+					) docCreateTime,
+					cd.state state,
+					date_format (
+						cd.lastest_time,
+						'%Y-%m-%d %H:%i'
+					) lastestTime,
+					cd.doc_path docpath,
+					cd.resource_aliss resourceAliss 
+				FROM
+					contract_doc cd
+				Where state='A' 
+				and TENANT_ID=#tenantId#
+		<dynamic >
+	    <isNotNull prepend="and " property="docName">DOC_NAME like CONCAT('%',#docName#,'%')</isNotNull>
+	    <isNotNull prepend="and " property="docVersion">DOC_VERSION=#docVersion#</isNotNull>
+	    <isNotNull prepend="and " property="resourceAliss">resource_aliss=#resourceAliss#</isNotNull>
+	   </dynamic>
+				ORDER BY
+					contractDocId desc
+			) X
+			LIMIT #startPage_mysql#,#endPage_mysql#
+</select>
+
+ <update id="updateContractDoc" parameterClass="com.ailk.eaap.op2.bo.ContractDoc">
+    update contract_doc set LASTEST_TIME=utc_timestamp()
+	   <dynamic >
+	    <isNotNull prepend="," property="docName">DOC_NAME=#docName#</isNotNull>
+	    <isNotNull prepend="," property="docVersion">DOC_VERSION=#docVersion#</isNotNull>
+	    <isNotNull prepend="," property="docPath">DOC_PATH=#docPath#</isNotNull>
+	    <isNotNull prepend="," property="resourceAliss">resource_aliss=#resourceAliss#</isNotNull>
+	   </dynamic>
+	   where CONTRACT_DOC_ID=#contractDocId# and state='A' and TENANT_ID=#tenantId#
+</update>
+
+ <insert id="addContractDoc" parameterClass="com.ailk.eaap.op2.bo.ContractDoc">
+ 	 <selectKey resultClass="Integer" keyProperty="contractDocId">
+			SELECT nextval('SEQ_CONTRACT_DOC') from DUAL
+	 </selectKey>
+    insert into contract_doc
+	  (DOC_CREATE_TIME,LASTEST_TIME,STATE  
+	  <dynamic >
+	  	<isNotNull prepend="," property="contractDocId">CONTRACT_DOC_ID</isNotNull>
+	    <isNotNull prepend="," property="docName">DOC_NAME</isNotNull>
+	    <isNotNull prepend="," property="docVersion">DOC_VERSION</isNotNull>
+	    <isNotNull prepend="," property="docPath">DOC_PATH</isNotNull>
+	    <isNotNull prepend="," property="docType">DOC_TYPE</isNotNull>
+	    <isNotNull prepend="," property="resourceAliss">resource_aliss</isNotNull>
+	    <isNotNull prepend="," property="tenantId">TENANT_ID</isNotNull>
+	  </dynamic>
+	  )
+	  values
+	  (utc_timestamp(), utc_timestamp(),'A'
+	   <dynamic >
+	   <isNotNull prepend="," property="contractDocId">#contractDocId#</isNotNull>
+	    <isNotNull prepend="," property="docName">#docName#</isNotNull>
+	    <isNotNull prepend="," property="docVersion">#docVersion#</isNotNull>
+	    <isNotNull prepend="," property="docPath">#docPath#</isNotNull>
+	    <isNotNull prepend="," property="docType">#docType#</isNotNull>
+	    <isNotNull prepend="," property="resourceAliss">#resourceAliss#</isNotNull>
+	    <isNotNull prepend="," property="tenantId">#tenantId#</isNotNull>
+	    
+	   </dynamic>
+	     )
+</insert>
+<delete id="delContracDoc" parameterClass="Integer">
+	 update contract_doc set LASTEST_TIME=utc_timestamp(),state='X' 
+	   where CONTRACT_DOC_ID=#contractDocId#
+</delete>
+
+<select id="isExitDocName" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+	select count(1) from contract_doc where DOC_NAME = #name# and TENANT_ID=#tenantId#
+</select>
+<select id="isResAlissExit" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+	select count(1) from contract_doc where resource_aliss = #name# and TENANT_ID=#tenantId#
+</select>
+</sqlMap>

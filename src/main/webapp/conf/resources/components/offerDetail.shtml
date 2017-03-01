@@ -1,0 +1,240 @@
+<div id="offerDetailTmpl">
+</div>
+<script type="text/html" id="tmpl-offer-detail">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">{{offerName}}</h4>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="form-body">      
+        <a name="step6"></a>
+        <h3 class="form-section mt5">Settlement</h3>
+        <div class="table-responsive">
+          <table class="table table-bordered table-nowrap">
+            <thead class="th-heading">
+              <tr>
+                <th> Operator </th>
+                <th class="th-name"> Name </th>
+                <th> First Settlement Date </th>
+                <th> Cycle Type </th>
+                <th> Product Category </th>
+                <th> Effective Date </th>
+                <th> Rule </th>
+                <th> Description </th>
+              </tr>
+            </thead>
+            <tbody>
+              {{if (settlement.length>0)}} {{each settlement}}
+              <tr>                
+                <td> {{$value.operator}}</td>
+                <td> {{$value.name}}</td>
+                <td> {{$value.firstSettlementDate}} </td>
+                <td> {{$value.cycleType}} </td>
+                <td> {{$value.productCategory}} </td>
+                <td> {{$value.effectiveDate}} </td>
+                <td>
+                  <a href="javascript:;" class="label label-primary" onclick="App.modal({width:'container',remote:App.urls.settlementRules,data:{{$value.busiId}}})">View</a>
+                  </td>
+                  <td>{{$value.description}}</td>
+              </tr>
+              {{/each}} {{else}}
+              <tr>
+                <td colspan="8" class="text-center i18n">CNF00000065</td>
+              </tr>
+              {{/if}}
+            </tbody>
+          </table>
+        </div>
+        <a name="step1"></a>
+        <h3 class="form-section"> Basic Infomation</h3>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="control-label">Offer Name:</label>
+              <input type="text" class="form-control" readonly value="{{offerName}}">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="control-label">Offer Code:</label>
+              <input type="text" class="form-control" readonly value="{{offerCode}}">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="control-label">Offer Type:</label>
+              <input type="text" class="form-control" readonly value="{{offerType}}">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="control-label">Sales Channel:</label>
+              <input type="text" class="form-control" readonly value="{{salesChannel}}">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="control-label">Validity Date:</label>
+              <input type="text" class="form-control" readonly value="{{validityDate}}">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="control-label">Status:</label>
+              <input type="text" class="form-control" readonly value="{{status}}">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <label class="control-label">Description:</label>
+              <textarea name="" id="" rows="2" readonly class="form-control ">{{description}}</textarea>
+            </div>
+          </div>
+        </div>
+        <a name="step2"></a>
+        <h3 class="form-section">Product</h3>
+        <div class="table-responsive">
+          <table class="table table-bordered table-nowrap">
+            <thead class="th-heading">
+              <tr>
+                <th class="th-name"> Name </th>
+                <th> Product Provider </th>
+                <th> Code </th>
+                <th> Min Value </th>
+                <th> Max Value </th>
+              </tr>
+            </thead>
+            <tbody>
+              {{if (products.length>0)}} {{each products}}
+              <tr>
+                <td> {{$value.name}}</td>
+                <td> {{$value.productProvider}} </td>
+                <td> {{$value.code}} </td>
+                <td> {{$value.minValue}} </td>
+                <td> {{$value.maxValue}} </td>
+              </tr>
+              {{/each}} {{else}}
+              <tr>
+                <td colspan="5" class="text-center i18n">CNF00000065</td>
+              </tr>
+              {{/if}}
+            </tbody>
+          </table>
+        </div>
+        <a name="step3"></a>
+        <h3 class="form-section">Product Offer<font color="FF0000">*</font></h3>
+        <div class="table-responsive">
+          <table class="table table-bordered table-nowrap">
+            <thead class="th-heading">
+              <tr>
+                <th class="th-name"> Name </th>
+                <th> Code </th>
+                <th> Min Value </th>
+                <th> Max Value </th>
+              </tr>
+            </thead>
+            <tbody>
+              {{if (productOffer.length>0)}} {{each productOffer}}
+              <tr>
+                <td> {{$value.name}}</td>
+                <td> {{$value.code}} </td>
+                <td> {{$value.minValue}} </td>
+                <td> {{$value.maxValue}} </td>
+              </tr>
+              {{/each}} {{else}}
+              <tr>
+                <td colspan="4" class="text-center i18n">CNF00000065</td>
+              </tr>
+              {{/if}}
+            </tbody>
+          </table>
+        </div>
+        <a name="step4"></a>
+        <h3 class="form-section">Mutual Exclusion</h3>
+        <div class="table-responsive">
+          <table class="table table-bordered table-nowrap">
+            <thead class="th-heading">
+              <tr>
+                <th width="50%"> Name </th>
+                <th> Code </th>
+              </tr>
+            </thead>
+            <tbody>
+              {{if (mutualExclusion.length>0)}} {{each mutualExclusion}}
+              <tr>
+                <td> {{$value.name}}</td>
+                <td> {{$value.code}} </td>
+              </tr>
+              {{/each}} {{else}}
+              <tr>
+                <td colspan="2" class="text-center i18n">CNF00000065</td>
+              </tr>
+              {{/if}}
+            </tbody>
+          </table>
+        </div>
+        <a name="step5"></a>
+        <h3 class="form-section">Price Plan</h3>
+        <div class="table-responsive">
+          <table class="table table-bordered table-nowrap">
+            <thead class="th-heading">
+              <tr role="row">
+                <th class="th-name"> Price Name </th>
+                <th> Offset Type </th>
+                <th> Effective Date </th>
+                <th> Price Object-Product </th>
+                <th> Priority </th>
+                <th> Charge Information </th>
+              </tr>
+            </thead>
+            <tbody>
+              {{if (pricePlan.length>0)}} {{each pricePlan}}
+              <tr>
+                <td> {{$value.priceName}}</td>
+                <td> {{$value.offsetType}} </td>
+                <td> {{$value.effectiveDate}} </td>
+                <td> {{$value.priceObjectProduct}} </td>
+                <td> {{$value.priority}} </td>
+                <td>
+                  {{each $value.chargeInformation}} {{ if ($value.type == null) }} {{ else if ($value.type == 0) }}
+                  <a href="javascript:;" class="i18n label label-default" onclick="App.modal({width:'container',remote:App.urls.basicTariff4PdtOfr,data:{{$value.id}}})">CNF00000019</a> {{ else if ($value.type == 7)}}
+                  <a href="javascript:;" class="i18n label label-default" onclick="App.modal({width:'container',remote:App.urls.recurringCharge4PdtOfr,data:{{$value.id}}})">CNF00000020</a> {{ else if ($value.type == 5)}}
+                  <a href="javascript:;" class="i18n label label-default" onclick="App.modal({width:'container',remote:App.urls.ratingDiscount4PdtOfr,data:{{$value.id}}})">CNF00000021</a> {{ else if ($value.type == 9)}}
+                  <a href="javascript:;" class="i18n label label-default" onclick="App.modal({width:'container',remote:App.urls.oneTimeCharge4PdtOfr,data:{{$value.id}}})">CNF00000022</a> {{ else if ($value.type == 8)}}
+                  <a href="javascript:;" class="i18n label label-default" onclick="App.modal({width:'container',remote:App.urls.billingDiscount4PdtOfr,data:{{$value.id}}})">CNF00000023</a> {{/if}} {{/each}}
+                </td>
+              </tr>
+              {{/each}} {{else}}
+              <tr>
+                <td colspan="6" class="text-center i18n">CNF00000065</td>
+              </tr>
+              {{/if}}
+            </tbody>
+          </table>
+        </div>
+          <br>
+      </div>
+    </form>
+  </div>
+</script>
+<script>
+  var OfferDetail = function() {
+    return {
+      init: function() {
+        var $modal = $('#offerDetailTmpl').closest('.modal'); //获取当前modal对象
+        App.template(App.urls.offerDetailData, 'tmpl-offer-detail', 'offerDetailTmpl', {
+          offerId: $modal.data('myData')
+        }, function() {
+          App.transferI18nRes();
+          $modal.modal();
+        })
+      }
+    }
+  }()
+  OfferDetail.init();
+</script>

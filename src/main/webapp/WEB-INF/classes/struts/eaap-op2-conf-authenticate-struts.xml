@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="authenticate" extends="default" namespace="/authenticate">
+		
+		<action name="authenticateIndex" class="com.ailk.eaap.op2.conf.authenticate.action.AuthenticateAction" method="authenticateIndex">
+			<result name="success">/authenticate/authenticate.jsp</result> 
+		</action>
+		
+		<action name="getServiceInfo" class="com.ailk.eaap.op2.conf.authenticate.action.AuthenticateAction" method="getServiceInfo" />
+		
+		<action name="queryExistsAuthenticate" class="com.ailk.eaap.op2.conf.authenticate.action.AuthenticateAction" method="queryExistsAuthenticate" >
+			<result name="success">/authenticate/authenticateList.jsp</result> 
+		</action>
+		
+		<action name="deleteAuthenticate" class="com.ailk.eaap.op2.conf.authenticate.action.AuthenticateAction" method="deleteAuthenticate">
+			<result name="success" type="redirectAction">
+				<param name="actionName">queryExistsAuthenticate</param>
+			</result>
+		</action>
+		
+		<action name="addAuthenticatePre" class="com.ailk.eaap.op2.conf.authenticate.action.AuthenticateAction" method="addAuthenticatePre">
+			<result name="success">/authenticate/authenticateAdd.jsp</result> 
+		</action>
+		
+		<!-- 
+			 <action name="getProofTypeInfo" class="com.ailk.eaap.op2.conf.authenticate.action.AuthenticateAction" method="getProofTypeInfo" />
+		-->
+		<action name="queryProofAttr" class="com.ailk.eaap.op2.conf.authenticate.action.AuthenticateAction" method="queryProofAttr"></action>
+		
+		<action name="addAuthenticate" class="com.ailk.eaap.op2.conf.authenticate.action.AuthenticateAction" method="addAuthenticate">
+			<result name="success">/authenticate/authenticate.jsp</result> 
+			
+			<result name="error" type="redirectAction">
+				<param name="actionName">addAuthenticatePre</param>
+			</result>
+		</action>
+		
+		<action name="queryExistsAttr" class="com.ailk.eaap.op2.conf.authenticate.action.AuthenticateAction" method="queryExistsAttr"></action>
+		
+		<action name="updateAuthenticatePre" class="com.ailk.eaap.op2.conf.authenticate.action.AuthenticateAction" method="updateAuthenticatePre">
+			<result name="success">/authenticate/authenticateUpdate.jsp</result> 
+		</action>
+		
+		<action name="updateAuthenticate" class="com.ailk.eaap.op2.conf.authenticate.action.AuthenticateAction" method="updateAuthenticate">
+			<result name="success">/authenticate/authenticate.jsp</result> 
+		</action>
+		
+	 </package>
+</struts>

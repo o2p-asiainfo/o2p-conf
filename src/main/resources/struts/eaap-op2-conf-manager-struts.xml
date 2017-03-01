@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="mgr" extends="default" namespace="/mgr">
+		<action name="queryOrgInfo" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="queryOrgInfo">
+			<result name="success">/auditing/org_auditing.jsp</result> 
+			<result name="successtoinfo">/mgr/orginfo.jsp</result> 
+			<result name="successtoedit">/mgr/org_edit.jsp</result> 
+		</action>
+		
+		<action name="showOrgList" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="showOrgList">
+			<result name="success">/mgr/orgList.jsp</result> 
+		</action>
+		
+		<action name="loadCityAreaList" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="loadCityAreaList">
+		</action>
+		
+		<action name="isDeleteByproductOrOffer" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="isDeleteByproductOrOffer">
+		</action>
+		
+		<action name="chooseOrgInfo" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="chooseOrgInfo">
+			<result name="success">/common/chooseOrgInfo.jsp</result> 
+		</action>
+		
+		<action name="updateOrgInfo" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="updateOrgInfo">
+			   <result name="success" type="redirectAction">  
+                      <param name="actionName">showOrgList</param>
+               </result>  
+		</action>
+		
+		<action name="updateOrgInfoState" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="updateOrgInfoState">
+			   <result name="success" type="redirectAction">  
+                      <param name="actionName">showOrgList</param>  
+                     
+               </result>  
+		</action>
+		
+		<action name="preAddOrgInfo" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="preAddOrgInfo">
+			<result name="success">/mgr/org_add.jsp</result> 
+		</action>
+		
+		<action name="insertOrgInfo" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="insertOrgInfo">
+		       <result name="success" type="redirectAction">  
+                      <param name="actionName">showOrgList</param>  
+               </result>  
+		</action>
+	   
+	    <action name="showMainDataTypeList" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="showMainDataTypeList">
+			<result name="success">/mgr/mian_type_list.jsp</result> 
+		</action>
+		
+		<action name="updateMainDataType" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="updateMainDataType">
+			 <result name="success" type="redirectAction">  
+                      <param name="actionName">showMainDataTypeList</param>  
+             </result>  
+		</action>
+		
+		<action name="updateMainData" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="updateMainData">
+			 <result name="success" type="redirectAction">  
+                      <param name="actionName">queryMainDataListByTypeId</param>  
+                      <param name="mainDataType.mdtCd">${mainDataType.mdtCd}</param> 
+             </result>  
+		</action>
+		
+	    <action name="queryMainDataListByTypeId" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="queryMainDataListByTypeId">
+			 <result name="success">/mgr/mian_data_list.jsp</result> 
+		</action>
+		
+		<action name="preAddMainDataType" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="preAddMainDataType">
+			 <result name="success">/mgr/main_type_add.jsp</result> 
+			 <result name="successToedit">/mgr/main_type_edit.jsp</result> 
+		</action>
+		
+		<action name="insertMainDataType" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="insertMainDataType">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">preAddMainDataByMtCd</param>  
+                      <param name="mainDataType.mdtCd">${mainDataType.mdtCd}</param> 
+             </result>  
+		</action>
+		<action name="preAddMainDataByMtCd" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="preAddMainDataByMtCd">
+			 <result name="success">/mgr/main_type_edit.jsp</result> 
+		</action>
+		
+		
+		<action name="preAddMainData" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="preAddMainData">
+			 <result name="success">/mgr/main_data_add.jsp</result> 
+		</action>
+		<action name="selectSerInvokeInsList" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="selectSerInvokeInsList">
+			 <result name="success">/mgr/serInvokeInsList.jsp</result> 
+		</action>
+		<action name="preAddSerInvokeIns" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="preAddSerInvokeIns">
+			 <result name="success">/mgr/serInvokeIns_add.jsp</result> 
+		</action>
+		<action name="show_addrdss" class="com.ailk.eaap.op2.conf.manager.action.ShowAddressAction" method="showAddress">
+			 <result name="success">/mgr/show_address.jsp</result> 
+		</action>
+		
+		<action name="updateSerInvokeIns" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="updateSerInvokeIns">
+			   <result name="success" type="redirectAction">  
+                      <param name="actionName">selectSerInvokeInsList</param>  
+                      <param name="serInvokeIns.serInvokeInsId">${serInvokeIns.serInvokeInsId}</param>
+               </result>  
+		</action>
+		
+		
+		<action name="insertSerInvokeIns" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="insertSerInvokeIns">
+			   <result name="success" type="redirectAction">  
+                      <param name="actionName">showProof</param>  
+                      <param name="serInvokeIns.serInvokeInsId">${serInvokeIns.serInvokeInsId}</param>
+               </result>  
+		</action>
+		
+		
+		
+		<action name="showProof" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="showProof">
+			 <result name="success">/mgr/proof_info.jsp</result> 
+		</action>
+		<action name="insertProof" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="insertProof">
+			   <result name="success" type="redirectAction">  
+                      <param name="actionName">showCC2C</param>  
+                      <param name="serInvokeIns.serInvokeInsId">${serInvokeIns.serInvokeInsId}</param>
+               </result>  
+               <result name="successtoshow" type="redirectAction">  
+                      <param name="actionName">showProof</param>  
+                      <param name="serInvokeIns.serInvokeInsId">${serInvokeIns.serInvokeInsId}</param>
+               </result>  
+		</action>
+		<action name="authExpressConfig" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="authExpressConfig">
+			 <result name="success">/mgr/authExpressConfig.jsp</result> 
+		</action>
+		
+		<action name="showCC2C" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="showCC2C">
+			 <result name="success">/mgr/cc2c_info.jsp</result> 
+		</action>
+		<action name="insertCC2C" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="insertCC2C">
+			 <result name="success" type="redirectAction">  
+                      <param name="actionName">showCC2C</param>  
+                      <param name="serInvokeIns.serInvokeInsId">${ctlCounterms2Comp.serInvokeInsId}</param>
+               </result>  
+		</action>
+		
+		
+		<action name="showAuthList" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="showAuthList">
+			 <result name="success">/mgr/auth_info.jsp</result> 
+		</action>
+		
+		<action name="insertAuthInfo" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="insertAuthInfo">
+			 <result name="success" type="redirectAction">  
+                      <param name="actionName">showAuthList</param>  
+                      <param name="serInvokeIns.serInvokeInsId">${authBase.serInvokeInsId}</param>
+               </result>  
+		</action>
+		
+		
+		
+		<action name="insertMainData" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="insertMainData">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">preAddMainDataByMtCd</param>  
+                      <param name="mainDataType.mdtCd">${mainDataType.mdtCd}</param> 
+             </result>  
+		</action>
+		
+		
+	 
+	   <action name="ShowOrgListForLike" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="ShowOrgListForLike">
+			<result name="success">/mgr/serInvokeInsList.jsp</result>
+		</action>
+		
+		<action name="showPardMixList" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="showPardMixList">
+			<result name="success">/mgr/prodyyxList.jsp</result>
+		</action>
+		
+		
+		 <action name="queryAuthList" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="queryAuthList">
+			<result name="success">/mgr/auth_list.jsp</result> 
+		 </action>
+		<action name="getServiceInfo" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="getServiceInfo" />
+		
+		<action name="checkOperation" class="com.ailk.eaap.op2.conf.manager.action.ConfManagerAction" method="checkOperation">
+			<result name="success">/mgr/auth_list.jsp</result> 
+		 </action>
+	 </package>
+</struts>

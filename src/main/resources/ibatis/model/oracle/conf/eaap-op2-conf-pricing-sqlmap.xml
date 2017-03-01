@@ -1,0 +1,486 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "http://ibatis.apache.org/dtd/sql-map-2.dtd" "-//ibatis.apache.org//DTD SQL Map 2.0//EN">
+
+<sqlMap namespace="eaap-op2-conf-pricing">
+	
+	<select id="queryPackage" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">	
+           SELECT DISTINCT
+				A.PROD_OFFER_ID,
+				A.PROD_OFFER_NAME PACKAGENAME,
+				( SELECT
+						GROUP_CONCAT(B.PRODUCT_NAME)
+					FROM
+						PRODUCT B,
+						OFFER_PROD_REL C
+					WHERE
+						C.PROD_OFFER_ID = A.PROD_OFFER_ID
+					AND B.PRODUCT_ID = C.PRODUCT_ID 
+				) PRODUCTS,
+	          to_char(A.STATUS_DATE,'yyyy-mm-dd hh:mi:ss')STATUS_DATE,
+			 if(STATUS_CD='1000', 'In Use',if(STATUS_CD='1000','In Use','Invalid'))STATUS_CD ,
+             (SELECT IF(D.ORG_TYPE_CODE = 1,'Enterprise', IF(D.ORG_TYPE_CODE = 2,'Enterprise',IF(D.ORG_TYPE_CODE = 0,'Internal Organization','Unknown'))) 
+                FROM ORG D WHERE D.ORG_ID = A.OFFER_PROVIDER_ID) ORG_TYPE 
+			FROM
+				PROD_OFFER A
+			WHERE a.status_cd != '1300'
+			<isNotNull prepend="" property="ORG_TYPE_CODE">
+				AND A.OFFER_PROVIDER_ID IN(
+					SELECT M.ORG_ID FROM ORG M WHERE M.ORG_TYPE_CODE IN 
+					<iterate property="ORG_TYPE_CODE" conjunction="," close=")" open="(">
+			            #ORG_TYPE_CODE[]#
+			        </iterate> 
+			        )
+			</isNotNull>
+			AND A.COOPERATION_TYPE IN (10,12,13,14)
+			<isNotNull prepend="" property="ORG_ID">
+			AND	a.OFFER_PROVIDER_ID = #ORG_ID#
+			</isNotNull>
+			<isNotNull prepend="" property="PROD_OFFER_NAME">
+			AND A.PROD_OFFER_NAME like concat('%',#PROD_OFFER_NAME#,'%')
+			</isNotNull>
+			<isNotNull prepend="" property="PROD_OFFER_ID">
+			AND A.PROD_OFFER_ID IN
+               <iterate property="PROD_OFFER_ID" conjunction="," close=")" open="(">
+	            #PROD_OFFER_ID[]#
+	           </iterate>
+	        </isNotNull>
+	        <isNotNull prepend="" property="pro_mysql">
+			 Limit #pro_mysql#,#page_record#
+			 </isNotNull>
+			 
+	</select>
+    <select id="queryPackageSum" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">	
+          SELECT COUNT(1) ALLNUM FROM(
+			     SELECT DISTINCT A.PROD_OFFER_ID
+						FROM PROD_OFFER A
+						WHERE A.STATUS_CD != '1300'
+						<isNotNull prepend="" property="ORG_ID">
+						AND	a.OFFER_PROVIDER_ID = #ORG_ID#
+						</isNotNull>
+						<isNotNull prepend="" property="ORG_TYPE_CODE">
+						AND A.OFFER_PROVIDER_ID IN(
+							SELECT M.ORG_ID FROM ORG M WHERE M.ORG_TYPE_CODE IN 
+							<iterate property="ORG_TYPE_CODE" conjunction="," close=")" open="(">
+					            #ORG_TYPE_CODE[]#
+					        </iterate> 
+					        )
+						</isNotNull>
+						AND A.COOPERATION_TYPE IN (10,12,13,14)
+						<isNotNull prepend="" property="PROD_OFFER_NAME">
+						AND A.PROD_OFFER_NAME like concat('%',#PROD_OFFER_NAME#,'%')
+						</isNotNull>
+						<isNotNull prepend="" property="PROD_OFFER_ID">
+						AND A.PROD_OFFER_ID IN
+			               <iterate property="PROD_OFFER_ID" conjunction="," close=")" open="(">
+				            #PROD_OFFER_ID[]#
+				        </iterate>
+				        </isNotNull>
+			) T
+	</select>
+	
+	<select id="queryServiceList" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">	
+           SELECT
+				SERVICE_ID,
+				CONTRACT_VERSION_ID,
+				SERVICE_CN_NAME,
+				SERVICE_EN_NAME,
+				SERVICE_CODE,
+				SERVICE_TYPE,
+				SERVICE_VERSION,
+			  to_char(CREATE_DATE,'yyyy-mm-dd hh:mi:ss')CREATE_DATE,
+				STATE,
+			  to_char(LASTEST_DATE,'yyyy-mm-dd hh:mi:ss')LASTEST_DATE,
+				SERVICE_DESC,
+				IS_PUBLISHED,
+				SERVICE_PRIORITY,
+				SERVICE_TIMEOUT,
+				DEFAULT_MSG_FLOW,
+				AUDIT_FLOW_ID
+			FROM
+				SERVICE A
+			WHERE A.STATE = 'A'
+			 Limit #pro_mysql#,#page_record#
+			 
+	</select>
+	<select id="queryServiceListSum" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">	
+          SELECT
+			COUNT(1) ALLNUM
+			FROM
+				SERVICE A
+			WHERE A.STATE = 'A'
+	</select>
+    <insert id="insertOfferProdRel" parameterClass="com.ailk.eaap.op2.bo.OfferProdRel">
+        <selectKey resultClass="int" keyProperty="offerProdRelaId">
+        SELECT nextval('SEQ_OFFER_PROD_REL') FROM DUAL
+		</selectKey>	
+		  insert into OFFER_PROD_REL
+		  (RULE_TYPE
+		 <dynamic>
+		    <isNotNull prepend="," property="offerProdRelaId">OFFER_PROD_RELA_ID</isNotNull>
+		    <isNotNull prepend="," property="roleCd">ROLE_CD</isNotNull>
+		    <isNotNull prepend="," property="prodOfferId">PROD_OFFER_ID</isNotNull>
+		    <isNotNull prepend="," property="productId">PRODUCT_ID</isNotNull>
+		    <isNotNull prepend="," property="maxCount">MAX_COUNT</isNotNull>
+		    <isNotNull prepend="," property="minCount">MIN_COUNT</isNotNull>
+		    <isNotNull prepend="," property="defaultCount">DEFAULT_COUNT</isNotNull>
+		    <isNotNull prepend="," property="prodExistType">PROD_EXIST_TYPE</isNotNull>
+		    <isNotNull prepend="," property="compoentType">COMPOENT_TYPE</isNotNull>
+		 </dynamic>
+		 )
+		  values 
+		  ('1'
+		  <dynamic>
+		    <isNotNull prepend="," property="offerProdRelaId">#offerProdRelaId#</isNotNull>
+		    <isNotNull prepend="," property="roleCd">#roleCd#</isNotNull>
+		    <isNotNull prepend="," property="prodOfferId">#prodOfferId#</isNotNull>
+		    <isNotNull prepend="," property="productId">#productId#</isNotNull>
+		    <isNotNull prepend="," property="maxCount">#maxCount#</isNotNull>
+		    <isNotNull prepend="," property="minCount">#minCount#</isNotNull>
+		    <isNotNull prepend="," property="defaultCount">#defaultCount#</isNotNull>
+		    <isNotNull prepend="," property="prodExistType">#prodExistType#</isNotNull>
+		    <isNotNull prepend="," property="compoentType">#compoentType#</isNotNull>
+		  </dynamic>
+		  )
+		</insert>
+	
+		<insert id="insertProdOffer" parameterClass="com.ailk.eaap.op2.bo.ProdOffer">
+		<selectKey resultClass="java.math.BigDecimal" keyProperty="prodOfferId">
+		  SELECT nextval('SEQ_PROD_OFFER') FROM DUAL
+		</selectKey>
+		insert into PROD_OFFER
+		(STATUS_DATE,CREATE_DT,VERSION
+		<dynamic>
+			<isNotNull prepend="," property="prodOfferId">PROD_OFFER_ID</isNotNull>
+			<isNotNull prepend="," property="offerType">OFFER_TYPE</isNotNull>
+			<isNotNull prepend="," property="prodOfferName">PROD_OFFER_NAME</isNotNull>
+			<isNotNull prepend="," property="innerOfferName">INNER_OFFER_NAME</isNotNull>
+
+			<isNotNull prepend="," property="prodOfferPublisher">PROD_OFFER_PUBLISHER</isNotNull>
+			<isNotNull prepend="," property="statusCd">STATUS_CD</isNotNull>
+			<isNotNull prepend="," property="effDate">EFF_DATE</isNotNull>
+			<isNotNull prepend="," property="expDate">EXP_DATE</isNotNull>
+			<isNotNull prepend="," property="offerNbr">OFFER_NBR</isNotNull>
+			<isNotNull prepend="," property="offerProviderId">OFFER_PROVIDER_ID</isNotNull>
+			<isNotNull prepend="," property="brandId">BRAND_ID</isNotNull>
+			<isNotNull prepend="," property="servBrandId">SERV_BRAND_ID</isNotNull>
+			<isNotNull prepend="," property="templetId">TEMPLET_ID</isNotNull>
+			<isNotNull prepend="," property="defaultTimePeriod">DEFAULT_TIME_PERIOD</isNotNull>
+			<isNotNull prepend="," property="prodOfferDesc">PROD_OFFER_DESC</isNotNull>
+			<isNotNull prepend="," property="extProdOfferId">EXT_PROD_OFFER_ID</isNotNull>
+			<isNotNull prepend="," property="expProcMethod">EXP_PROC_METHOD</isNotNull>
+			<isNotNull prepend="," property="valueAddedFlag">VALUE_ADDED_FLAG</isNotNull>
+			<isNotNull prepend="," property="manageGrade">MANAGE_GRADE</isNotNull>
+			<isNotNull prepend="," property="prodOfferInitialamount">PROD_OFFER_INITIALAMOUNT</isNotNull>
+			<isNotNull prepend="," property="expireHandleCondition">EXPIRE_HANDLE_CONDITION</isNotNull>
+			<isNotNull prepend="," property="commonRegionId">COMMON_REGION_ID</isNotNull>
+			<isNotNull prepend="," property="manageGrade2">MANAGE_GRADE2</isNotNull>
+
+			<isNotNull prepend="," property="simpleSpell">SIMPLE_SPELL</isNotNull>
+
+			<isNotNull prepend="," property="innerOfferNbr">INNER_OFFER_NBR</isNotNull>
+			<isNotNull prepend="," property="prodOfferTrait">PROD_OFFER_TRAIT</isNotNull>
+			<isNotNull prepend="," property="cooperationType">COOPERATION_TYPE</isNotNull>
+			<isNotNull prepend="," property="logoFileId">LOGO_FILE_ID</isNotNull>
+		</dynamic>
+		)
+		values
+		(utc_timestamp(),utc_timestamp(),utc_timestamp()
+		<dynamic>
+			<isNotNull prepend="," property="prodOfferId">#prodOfferId#</isNotNull>
+			<isNotNull prepend="," property="offerType">#offerType#</isNotNull>
+			<isNotNull prepend="," property="prodOfferName">#prodOfferName#</isNotNull>
+			<isNotNull prepend="," property="innerOfferName">#innerOfferName#</isNotNull>
+
+			<isNotNull prepend="," property="prodOfferPublisher">#prodOfferPublisher#</isNotNull>
+			<isNotNull prepend="," property="statusCd">#statusCd#</isNotNull>
+			<isNotNull prepend="," property="effDate">#effDate#</isNotNull>
+			<isNotNull prepend="," property="expDate">#expDate#</isNotNull>
+			<isNotNull prepend="," property="offerNbr">#offerNbr#</isNotNull>
+			<isNotNull prepend="," property="offerProviderId">#offerProviderId#</isNotNull>
+			<isNotNull prepend="," property="brandId">#brandId#</isNotNull>
+			<isNotNull prepend="," property="servBrandId">#servBrandId#</isNotNull>
+			<isNotNull prepend="," property="templetId">#templetId#</isNotNull>
+			<isNotNull prepend="," property="defaultTimePeriod">#defaultTimePeriod#</isNotNull>
+			<isNotNull prepend="," property="prodOfferDesc">#prodOfferDesc#</isNotNull>
+			<isNotNull prepend="," property="extProdOfferId">#extProdOfferId#</isNotNull>
+			<isNotNull prepend="," property="expProcMethod">#expProcMethod#</isNotNull>
+			<isNotNull prepend="," property="valueAddedFlag">#valueAddedFlag#</isNotNull>
+			<isNotNull prepend="," property="manageGrade">#manageGrade#</isNotNull>
+			<isNotNull prepend="," property="prodOfferInitialamount">#prodOfferInitialamount#</isNotNull>
+			<isNotNull prepend="," property="expireHandleCondition">#expireHandleCondition#</isNotNull>
+			<isNotNull prepend="," property="commonRegionId">#commonRegionId#</isNotNull>
+			<isNotNull prepend="," property="manageGrade2">#manageGrade2#</isNotNull>
+
+			<isNotNull prepend="," property="simpleSpell">#simpleSpell#</isNotNull>
+
+			<isNotNull prepend="," property="innerOfferNbr">#innerOfferNbr#</isNotNull>
+			<isNotNull prepend="," property="prodOfferTrait">#prodOfferTrait#</isNotNull>
+			<isNotNull prepend="," property="cooperationType">#cooperationType#</isNotNull>
+			<isNotNull prepend="," property="logoFileId">#logoFileId#</isNotNull>
+		</dynamic>
+		)
+	</insert>
+
+	 <insert id="insertProduct" parameterClass="com.ailk.eaap.op2.bo.Product">
+         <selectKey resultClass="java.math.BigDecimal" keyProperty="productId">
+			 SELECT nextval('SEQ_PRODUCT') FROM DUAL
+		</selectKey>	
+  	   INSERT INTO PRODUCT
+  	  ( STATUS_DATE,CREATE_DATE
+	  <dynamic>
+	  	<isNotNull prepend="," property="productId">PRODUCT_ID</isNotNull>
+	    <isNotNull prepend="," property="productNbr">PRODUCT_NBR</isNotNull>
+	    <isNotNull prepend="," property="productName">PRODUCT_NAME</isNotNull>
+	    <isNotNull prepend="," property="productDesc">PRODUCT_DESC</isNotNull>
+	    <isNotNull prepend="," property="manageGrade">MANAGE_GRADE</isNotNull>
+	    <isNotNull prepend="," property="productType">PRODUCT_TYPE</isNotNull>
+	    <isNotNull prepend="," property="productProviderId">PRODUCT_PROVIDER_ID</isNotNull>
+	    <isNotNull prepend="," property="statusCd">STATUS_CD</isNotNull>
+	    <isNotNull prepend="," property="effDate">EFF_DATE</isNotNull>
+	    <isNotNull prepend="," property="expDate">EXP_DATE</isNotNull>
+	    <isNotNull prepend="," property="prodFuncType">PROD_FUNC_TYPE</isNotNull>
+	    <isNotNull prepend="," property="extProdId">EXT_PROD_ID</isNotNull>
+	    <isNotNull prepend="," property="valueAddedFlag">VALUE_ADDED_FLAG</isNotNull>
+	    <isNotNull prepend="," property="innerProdNbr">INNER_PROD_NBR</isNotNull>
+	    <isNotNull prepend="," property="commonRegionId">COMMON_REGION_ID</isNotNull>
+	    <isNotNull prepend="," property="isTemplate">IS_TEMPLATE</isNotNull>
+	    <isNotNull prepend="," property="parentProductId">PARENT_PRODUCT_ID</isNotNull>
+	    <isNotNull prepend="," property="cooperationType">COOPERATION_TYPE</isNotNull>
+	    
+	  </dynamic>
+	  )
+	  VALUES
+	  (utc_timestamp(),utc_timestamp()
+	  <dynamic>
+	    <isNotNull prepend="," property="productId">#productId#</isNotNull>
+	    <isNotNull prepend="," property="productNbr">#productNbr#</isNotNull>
+	    <isNotNull prepend="," property="productName">#productName#</isNotNull>
+	    <isNotNull prepend="," property="productDesc">#productDesc#</isNotNull>
+	    <isNotNull prepend="," property="manageGrade">#manageGrade#</isNotNull>
+	    <isNotNull prepend="," property="productType">#productType#</isNotNull>
+	    <isNotNull prepend="," property="productProviderId">#productProviderId#</isNotNull>
+	    <isNotNull prepend="," property="statusCd">#statusCd#</isNotNull>
+	    <isNotNull prepend="," property="effDate">#effDate#</isNotNull>
+	    <isNotNull prepend="," property="expDate">#expDate#</isNotNull>
+	    <isNotNull prepend="," property="prodFuncType">#prodFuncType#</isNotNull>
+	    <isNotNull prepend="," property="extProdId">#extProdId#</isNotNull>
+	    <isNotNull prepend="," property="valueAddedFlag">#valueAddedFlag#</isNotNull>
+	    <isNotNull prepend="," property="innerProdNbr">#innerProdNbr#</isNotNull>
+	    <isNotNull prepend="," property="commonRegionId">#commonRegionId#</isNotNull>
+	    <isNotNull prepend="," property="isTemplate">#isTemplate#</isNotNull>
+	    <isNotNull prepend="," property="parentProductId">#parentProductId#</isNotNull>
+	    <isNotNull prepend="," property="cooperationType">#cooperationType#</isNotNull>
+	   </dynamic>
+	  )
+	</insert>
+	
+	
+	<insert id="insertServiceProRel" parameterClass="java.util.HashMap">
+   	<selectKey resultClass="int" keyProperty="serviceProRelId">
+			SELECT  nextval('SEQ_SERVICE_PRODUCT_REAL');
+		</selectKey>
+	   INSERT INTO 
+		SERVICE_PRODUCT_REAL
+		(
+		SERVICE_PRODUCT_REAL_ID,
+		PRODUCT_ID,
+		SERVICE_ID
+		)
+		VALUES(
+		#serviceProRelId#,
+		#PRODUCT_ID#,
+		#SERVICEID#
+		)
+   </insert>
+<!-- 在应用页面查询服务能力 -->
+	<select id="queryService" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT B.SERVICE_ID SERVICEID,B.SERVICE_CN_NAME CNNAME,D.DIR_NAME DIRNAME,B.SERVICE_DESC SERVICEDESC,B.SERVICE_VERSION SERVICEVERSION
+		 FROM 
+		service B,dir_ser_list C,directory D  WHERE B.SERVICE_ID=C.SERVICE_ID AND C.DIR_ID=D.DIR_ID AND B.SERVICE_ID IN 
+		<iterate property="service" conjunction="," close=")" open="(">
+            #service[]#
+	 	</iterate>
+	</select>
+	
+	<select id="querySelectedService" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT B.SERVICE_ID SERVICEID,B.SERVICE_CN_NAME CNNAME,B.SERVICE_DESC SERVICEDESC,B.SERVICE_VERSION SERVICEVERSION
+		 FROM 
+		service B  WHERE B.TENANT_ID=#tenantId#
+		 AND B.SERVICE_ID IN 
+		<iterate property="service" conjunction="," close=")" open="(">
+            #service[]#
+	 	</iterate>
+	</select>
+	
+<!-- 查询能力是否已经是产品 -->
+	<select id="getProductbyCap" parameterClass="java.util.HashMap" resultClass="java.math.BigDecimal">
+	    SELECT PRODUCT_ID FROM SERVICE_PRODUCT_REAL WHERE SERVICE_ID = #SERVICEID#
+	</select> 
+	
+	<select id="getOffersIds" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+     SELECT DISTINCT
+			 FF.PROD_OFFER_ID ,
+			 (SELECT H.NAME FROM ORG H WHERE H.ORG_ID = FF.OFFER_PROVIDER_ID) ORG_NAME,
+			 FF.OFFER_PROVIDER_ID ORG_ID
+		FROM
+			SERVICE D,
+			DIR_SER_LIST A,
+			SERVICE_PRODUCT_REAL B,
+			PRODUCT C,
+			OFFER_PROD_REL DD,
+			PROD_OFFER FF
+		WHERE
+			A.SERVICE_ID = B.SERVICE_ID
+		AND D.SERVICE_ID = A.SERVICE_ID
+		AND B.PRODUCT_ID = C.PRODUCT_ID
+		AND A.STATE = 'A'
+		AND C.STATUS_CD != '1300'
+		AND C.PRODUCT_ID = DD.PRODUCT_ID 
+		AND DD.PROD_OFFER_ID = FF.PROD_OFFER_ID
+		AND FF.STATUS_CD = '1000'
+		<isNotNull prepend="" property="STATE">
+        AND D.STATE = #STATE#
+        </isNotNull>
+        <isNotNull prepend="" property="API_IDS">
+        AND D.SERVICE_ID IN 
+        <iterate property="API_IDS" conjunction="," close=")" open="(">
+            #API_IDS[]#
+        </iterate>
+        </isNotNull>
+   </select>
+   <select id="getPricingPlan" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+      SELECT  A.PRICING_INFO_ID PRICINGINFOID,
+              A.PRICING_NAME PRICINGNAME,
+      		  A.PRICING_TYPE PRICINGTYPE,
+      		  A.PRICING_DESC PRICINGDESC,
+      		  A.PRICE_SIGN PRICESIGN,
+      		  A.PRICE_CHA PRICECHA,
+      		  A.EFF_DATE EFFDATE,
+      		  A.EXP_DATE EXPDATE,
+      		  A.BILLING_PRIORITY BILLINGPRIORITY,
+      		  A.LICENSE_NBR LICENSENBR,
+      		  A.APPLIC_TYPE APPLICTYPE,
+      		  A.CYCLE_TYPE CYCLETYPE,
+      		  A.CREATE_DATE CREATEDATE,
+      		  A.STATUS_DATE STATUSDATE,
+      		  A.STATUS_CD STATUSCD,
+      		  B.PRICING_TARGET_ID PRICINGTARGETID 
+      FROM PRICING_PLAN A,PROD_OFFER_PRICING B 
+      WHERE   A.STATUS_CD!='11' AND B.PROD_OFFER_ID = #prodOfferId# 
+      AND A.PRICING_INFO_ID = B.PRICING_INFO_ID  
+      ORDER BY A.BILLING_PRIORITY DESC
+ </select>
+   <update id="updatePricingPlan" parameterClass="com.ailk.eaap.op2.bo.PricingPlan" >
+  	update pricing_plan  
+  	 <dynamic prepend="set">
+	    <isNotNull prepend="," property="pricingClassify">pricing_classify=#pricingClassify#</isNotNull>
+	    <isNotNull prepend="," property="pricingType">pricing_type=#pricingType#</isNotNull>
+	    <isNotNull prepend="," property="pricingDesc">pricing_desc=#pricingDesc#</isNotNull>
+	    <isNotNull prepend="," property="beyondDesc">beyond_desc=#beyondDesc#</isNotNull>
+	    <isNotNull prepend="," property="priceSign">price_sign=#priceSign#</isNotNull>
+	    <isNotNull prepend="," property="priceCha">price_cha=#priceCha#</isNotNull>
+	    <isNotNull prepend="," property="effDate">eff_date=#effDate#</isNotNull> 
+	    <isNotNull prepend="," property="expDate">exp_date=#expDate#</isNotNull> 
+	    <isNotNull prepend="," property="isMain">is_main=#isMain#</isNotNull> 
+	    <isNotNull prepend="," property="licenseNbr">license_nbr=#licenseNbr#</isNotNull> 
+	    <isNotNull prepend="," property="applicType">applic_type=#applicType#</isNotNull> 
+	    <isNotNull prepend="," property="billingPriority">billing_priority=#billingPriority#</isNotNull> 
+	    <isNotNull prepend="," property="cycletype">cycle_type=#cycletype#</isNotNull> 
+	    <isNotNull prepend="," property="statusCd">status_cd=#statusCd#</isNotNull> 
+	    <isNotNull prepend="," property="cycleUnit">cycle_unit=#cycleUnit#</isNotNull> 
+	    <isNotNull prepend="," property="pricingName">PRICING_NAME=#pricingName#</isNotNull> 
+	  </dynamic>
+	  where pricing_info_id = #pricingInfoId#
+  </update>
+    <!--定价计划冠梁 -->
+  <select id="queryProdOfferPricing" parameterClass="com.ailk.eaap.op2.bo.ProdOfferPricing"  resultClass="com.ailk.eaap.op2.bo.ProdOfferPricing">
+      select prod_offer_pricing_id prodOfferPricingId,
+             PROD_OFFER_ID prodOfferId,
+             PRICING_INFO_ID pricingInfoId,
+             PRICING_TARGET_ID pricingTargetId,
+             CREATE_DATE createDate,
+             STATUS_CD statusCd,
+             STATUS_DATE statusDate,
+             PRICING_TYPE pricingType 
+      from prod_offer_pricing  
+      where STATUS_CD!='11' 
+      <dynamic>
+	    <isNotNull prepend="and" property="prodOfferPricingId"> PROD_OFFER_PRICING_ID=#prodOfferPricingId# </isNotNull>
+	    <isNotNull prepend="and" property="prodOfferId"> PROD_OFFER_ID=#prodOfferId# </isNotNull>
+	    <isNotNull prepend="and" property="pricingInfoId"> PRICING_INFO_ID=#pricingInfoId# </isNotNull>
+	    <isNotNull prepend="and" property="pricingTargetId"> PRICING_TARGET_ID=#pricingTargetId# </isNotNull>
+	  </dynamic>
+      order by PRICING_TARGET_ID asc
+ </select>
+  <update id="updateProdOfferPricing" parameterClass="com.ailk.eaap.op2.bo.ProdOfferPricing" >
+  	update prod_offer_pricing set STATUS_DATE = utc_timestamp() 
+  	 <dynamic>
+	    <isNotNull prepend="," property="statusCd">STATUS_CD=#statusCd#</isNotNull>
+	    <isNotNull prepend="," property="pricingType">PRICING_TYPE=#pricingType#</isNotNull>
+	  </dynamic>
+	  where  PROD_OFFER_PRICING_ID=#prodOfferPricingId#
+  </update>
+    <update id="updatePricingTarget" parameterClass="com.ailk.eaap.op2.bo.PricingTarget" >
+  	update pricing_target set STATUS_DATE = utc_timestamp() 
+  	 <dynamic>
+	    <isNotNull prepend="," property="statusCd">STATUS_CD=#statusCd#</isNotNull>
+	    <isNotNull prepend="," property="pricingTargetName">PRICING_TARGET_NAME=#pricingTargetName#</isNotNull>
+	    <isNotNull prepend="," property="pricingTargetType">PRICING_TARGET_TYPE=#pricingTargetType#</isNotNull>
+	  </dynamic>
+	  where  PRICING_TARGET_ID=#pricingTargetId#
+  </update>
+   <!-- 定价关联 -->
+ <select id="queryOfferProdRelPricing" parameterClass="com.ailk.eaap.op2.bo.OfferProdRelPricing"  resultClass="com.ailk.eaap.op2.bo.OfferProdRelPricing">
+      select offer_prod_rel_pricing_id offerProdRelPricingId,
+             offer_prod_rela_id offerProdRelaId,
+             pricing_target_id pricingInfoId,
+             create_date createDate,
+             status_cd statusCd,
+             status_date statusDate 
+      from offer_prod_rel_pricing    
+      where status_cd!='11' 
+      <dynamic>
+	    <isNotNull prepend="and" property="offerProdRelPricingId"> offer_prod_rel_pricing_id=#offerProdRelPricingId# </isNotNull>
+	    <isNotNull prepend="and" property="offerProdRelaId"> offer_prod_rela_id=#offerProdRelaId# </isNotNull>
+	    <isNotNull prepend="and" property="pricingInfoId"> pricing_target_id=#pricingInfoId# </isNotNull>
+	  </dynamic>
+      order by offer_prod_rel_pricing_id asc
+ </select>
+  <update id="updateProdRelPricing" parameterClass="com.ailk.eaap.op2.bo.OfferProdRelPricing" >
+  	update offer_prod_rel_pricing set STATUS_DATE = utc_timestamp() 
+  	 <dynamic>
+	    <isNotNull prepend="," property="statusCd">STATUS_CD=#statusCd#</isNotNull>
+	  </dynamic>
+	  where  offer_prod_rel_pricing_id=#offerProdRelPricingId#
+  </update>
+    <update id="updateProdOffer" parameterClass="com.ailk.eaap.op2.bo.ProdOffer" >
+  
+    UPDATE PROD_OFFER S SET S.STATUS_CD = #statusCd# WHERE S.PROD_OFFER_ID = #prodOfferId#
+  
+  </update>
+  
+  
+  <select id="queryTenant" parameterClass="com.ailk.eaap.op2.bo.Tenant" resultClass="com.ailk.eaap.op2.bo.Tenant">
+		SELECT tenant_id tenantId,
+			name name,
+			code code,
+			logo logo,
+			country country,
+			province province,
+			language language,
+			zip_code zipCode,
+			contract_num contractNum,
+			currency currency,
+			status status,
+			time_zone timeZone,
+			theme theme,
+			create_dt createDt,
+			start_dt startDt,
+			end_dt endDt
+		FROM tenant 
+		<dynamic prepend="where">
+		     <isNotNull prepend="and" property="tenantId"> tenant_id=#tenantId#</isNotNull>
+		     <isNotNull prepend="and" property="code"> code=#code#</isNotNull>
+		</dynamic>
+	</select>
+</sqlMap> 

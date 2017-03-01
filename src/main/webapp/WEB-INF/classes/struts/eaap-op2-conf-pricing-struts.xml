@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+	
+<struts>
+	<package name="pricing" extends="default" namespace="/pricing">
+        <action name="servicePricingList" class="com.ailk.eaap.op2.conf.pricing.action.ServicePricingAction" method="servicePricingList">
+			<result name="success">/servicePricing/pricingManagement.jsp</result>
+		</action>
+		<action name="getPackageList" class="com.ailk.eaap.op2.conf.pricing.action.ServicePricingAction" method="getPackageList">
+		</action>
+		<action name="addServicePricing" class="com.ailk.eaap.op2.conf.pricing.action.ServicePricingAction" method="addServicePricing">
+			<result name="success">/servicePricing/servicePring.jsp</result>
+		</action>
+		<action name="addservicePkg" class="com.ailk.eaap.op2.conf.pricing.action.ServicePricingAction" method="addservicePkg">
+			<result name="success">/servicePricing/pricePlan.jsp</result>
+		</action>
+ 		<action name="addPricePlan" class="com.ailk.eaap.op2.conf.pricing.action.ServicePricingAction" method="addPricePlan">
+			 
+		</action>
+        <action name="servicePkgDetail" class="com.ailk.eaap.op2.conf.pricing.action.ServicePricingAction" method="servicePkgDetail">
+			<result name="success">/servicePricing/pricePlan.jsp</result>
+		</action>
+		<action name="goPricePlan" class="com.ailk.eaap.op2.conf.pricing.action.ServicePricingAction" method="goPricePlan">
+			 
+		</action>
+		<action name="delPricePlan" class="com.ailk.eaap.op2.conf.pricing.action.ServicePricingAction" method="delPricePlan">
+			 
+		</action>
+		<action name="delServicePkg" class="com.ailk.eaap.op2.conf.pricing.action.ServicePricingAction" method="delServicePkg">
+			 
+		</action>
+        
+ 
+    </package>
+</struts>

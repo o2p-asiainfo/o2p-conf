@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?> 
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="default" extends="struts-default" namespace="/">
+		<interceptors>  
+            <!--userName验证拦截器 
+            <interceptor class="com.ailk.eaap.o2p.common.interceptor.UserNameInterceptor" name="userNameInterceptor">
+            	<param name="excludeMethods">uploadImage,twiceUploadImage,readImage</param>
+            </interceptor> --> 
+            <!--操作日志审计拦截器-->
+            <interceptor class="com.ailk.eaap.op2.conf.util.ActInterceptor" name="actInterceptor">
+            </interceptor>
+            <interceptor-stack name="default-auth"> 
+                <!-- 
+            	<interceptor-ref name="userNameInterceptor"/>
+            	<interceptor-ref name="actInterceptor"/> -->
+                <interceptor-ref name="defaultStack"/>  
+            </interceptor-stack>  
+        </interceptors>  
+        <default-interceptor-ref name="default-auth"/>  
+        
+		<default-action-ref name="pageNotFund"></default-action-ref>
+
+		<global-results>
+            <result name="exception-error">/error.jsp</result>
+        </global-results>
+        <global-exception-mappings>
+            <exception-mapping result="exception-error" exception="java.lang.Exception"></exception-mapping>
+        </global-exception-mappings>
+        <action name="pageNotFund">
+			<result>/err404.jsp</result>
+		</action>
+	</package>
+	<!--主struts.xml文件,此文件此用于包含各子系统的struts action配置文件 -->
+      <include file="com/linkage/rainbow/ui/views/action/struts-comm-package.xml" />  
+       <include file="struts/eaap-op2-conf-adapter-struts.xml" />
+       <include file="struts/eaap-op2-conf-adapter-new-struts.xml" />
+	   <include file="struts/eaap-op2-conf-auditing-prov-struts.xml" />
+	   <include file="struts/eaap-op2-conf-fileShare-struts.xml" />
+	   <include file="struts/eaap-op2-conf-autiting-organdapp-struts.xml" />
+	   <include file="struts/eaap-op2-conf-monitor-report-struts.xml" />
+	   <include file="struts/eaap-op2-conf-monitor-view-struts.xml" />
+	   <include file="struts/eaap-op2-conf-auditing-mealrate-struts.xml" />
+	   <include file="struts/eaap-op2-conf-pard-pord-struts.xml" />
+	   <include file="struts/eaap-op2-conf-auditing-pardSell-struts.xml" />
+	   <include file="struts/eaap-op2-conf-techimpl-struts.xml" />
+	   <include file="struts/eaap-op2-conf-authenticate-struts.xml" />
+	   <include file="struts/eaap-op2-conf-flowcontrol-struts.xml" />
+       <include file="struts/eaap-op2-conf-service-manager-struts.xml" />
+       <include file="struts/eaap-op2-conf-autoComplete-struts.xml" />
+       <include file="struts/eaap-op2-conf-manager-struts.xml" />
+       <include file="struts/eaap-op2-conf-autiting-component-struts.xml" />
+	   <include file="struts/eaap-op2-conf-auditing-contract-struts.xml" />
+	   <include file="struts/eaap-op2-conf-api-manager-struts.xml" />
+	   <include file="struts/eaap-op2-conf-contract-manager-struts.xml" />
+	   <include file="struts/eaap-op2-conf-doc-manager-struts.xml" />
+	   <include file="struts/eaap-op2-conf-directory-manager-struts.xml" />
+	   <include file="struts/eaap-op2-conf-prodOffer-struts.xml" />
+	   <include file="struts/eaap-op2-conf-task-manager-struts.xml" />
+	   <include file="struts/eaap-op2-conf-workFlow-manager-struts.xml" /> 
+	   <include file="struts/eaap-op2-conf-testPiles-struts.xml"/>
+	   <include file="struts/eaap-op2-conf-hadoop-log-struts.xml"/>
+	   <include file="struts/eaap-op2-conf-messageFlow-struts.xml" />
+	   <include file="struts/eaap-op2-conf-proofeffect-struts.xml" />
+	   <include file="struts/eaap-op2-conf-operatorlog-struts.xml" />
+	   <include file="struts/eaap-op2-conf-wsdlImport-struts.xml"/>
+	   <include file="struts/eaap-op2-conf-remoteCallInfo-struts.xml"/>
+	   <include file="struts/eaap-op2-conf-msgFlowException-struts.xml"/>
+	   <!-- 产品销售品审核 -->
+	   <include file="struts/eaap-op2-conf-autiting-prodAndOffer-struts.xml"/>
+	   <!--Crm订单-->
+	   <include file="struts/eaap-op2-conf-crmorder-struts.xml"/>
+	   <!--Logserver部署配置查询-->
+	   <include file="struts/eaap-op2-conf-logserver-struts.xml"/>
+	   <include file="struts/eaap-op2-conf-sqllog-struts.xml"/>
+	    <!-- 定价 -->
+	   <include file="struts/eaap-op2-conf-pricing-struts.xml"/>
+	   <!--工作流定时器-->
+	   <include file="struts/eaap-op2-conf-workflow-task-struts.xml"/>
+	   <!-- 消息提醒 -->
+	   <include file="struts/eaap_op2_conf_message-struts.xml"/>
+
+</struts>

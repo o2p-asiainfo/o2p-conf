@@ -1,0 +1,196 @@
+/**
+ * 系统管理各模块使用的样式表 
+ */
+ 
+
+/*
+字体  
+
+font-family: 宋体 ;
+*/
+*{
+	font-size: 12px;
+	
+}
+
+/*
+body边框  #F6FAFC
+*/
+HTML,BODY {
+	 BACKGROUND: #FFFFFF; margin-left: 0px;margin-right: 0px;margin-top: 0px;margin-bottom: 0px;
+	 padding:0px;border:0px;
+	 overflow:auto;
+}
+
+/*
+form点位为零  
+*/
+FORM{
+	margin: 0px;	
+}
+
+/*
+链接样式 
+*/
+A:link {
+	COLOR: #003399; TEXT-DECORATION: none;  
+}
+A:visited {
+	COLOR: #003399; TEXT-DECORATION: none;  
+}
+A:hover {
+	COLOR: #ff9900; TEXT-DECORATION: underline;  
+}
+
+
+/*
+按钮样式 
+*/
+.sys-btn{
+	border: 1px solid #608aa3 !important;
+	width: auto !important;
+	height: 24px !important;
+	border-spacing:5px;
+	padding: 4px 3px;
+	line-height: normal !important;
+	background: url(../images/btn-1.gif) repeat-x;
+	background-color: #fff;
+	cursor:pointer;
+	white-space:nowrap;
+	star:expression(css_sys_btn_setbg(this)) ;
+}
+a.sys-btn:hover{
+	
+	border: 1px solid #608aa3 !important;
+	width: auto !important;
+	height: 24px !important;
+	padding: 4px 3px;
+	line-height: normal !important;
+	background: url(../images/btn-2.gif) repeat-x;
+	background-color: #fff;
+	cursor:pointer;
+	white-space:nowrap;
+	font: #000000;
+	COLOR: #000000; TEXT-DECORATION: none;  
+}
+a.sys-btn:link {
+	COLOR: #000000; TEXT-DECORATION: none;  
+}
+a.sys-btn:visited {
+	COLOR: #000000; TEXT-DECORATION: none;  
+}
+
+a.sys-btn:visited {
+	COLOR: #000000; TEXT-DECORATION: none;  
+}
+a.sys-btn:link {
+	COLOR: #000000; TEXT-DECORATION: none;  
+}
+.sys-btn-over{
+	border: 1px solid #608aa3 !important;
+	width: auto !important;
+	height: 24px !important;
+	padding: 4px 3px;
+	line-height: normal !important;
+	background: url(../images/btn-2.gif) repeat-x;
+	background-color: #fff;
+	cursor:pointer;
+	white-space:nowrap;
+	font: #000000;
+	COLOR: #000000; TEXT-DECORATION: none;
+	
+}
+.sys-btn-down{
+	border: 1px solid #608aa3 !important;
+	width: auto !important;
+	height: 24px !important;
+	padding: 4px 3px;
+	line-height: normal !important;
+	background: url(../images/btn-3.gif) repeat-x;
+	background-color: #fff;
+	cursor:pointer;
+	white-space:nowrap;
+}
+
+/*
+标题类样式
+*/
+.sys-title{
+	height: 25px;
+	background-image: url(../images/title-bg.gif);
+	background-repeat: repeat-x;
+	/*background-position:0px -45px;*/
+	color: #666666;
+	font-weight:bold;
+	
+}
+
+/*
+用于增删改等输入表单的表格样式
+*/
+.sys-inputTable{
+ 
+ border-color:#99BBE8;
+
+ border-top:1pt solid #99BBE8; 
+ border-bottom:0pt solid #99BBE8; 
+ border-left:1pt solid #99BBE8; 
+ border-right:0pt solid #99BBE8;
+ 
+}
+.sys-inputTable-td{
+	border-width: 1px;
+	border-style: solid;
+	border-color: #ffffff #a9bfd3 #a9bfd3 #ffffff;
+	background-color:#f1f3f5;
+	height: 25;min-height: 25;
+}
+.sys-inputTable-td-left{
+	border-width: 1px;
+	border-style: solid;
+	border-color: #ffffff #a9bfd3 #a9bfd3 #ffffff;
+	background-color:#FFF8DC;
+	height: 25;min-height: 25;
+	
+}
+
+
+/*
+用于数据列表表格的样式
+*/
+.sys-listTable{
+}
+
+.sys-listTable-td{
+	height: 25px;
+	/**
+	FONT: 12px 宋体;
+	**/
+	FONT: 12px ;
+	border-bottom:1pt solid #99BBE8;
+	border-right:1pt solid #eeeccc;
+	/*star:expression(css_tab_body_format_orange(this)) ;*/
+}
+
+.sys-listTable-th{
+	height: 25px;
+	/**
+	FONT: 12px 宋体;
+	**/
+	FONT: 12px ;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #ffffff #a9bfd3 #a9bfd3 #ffffff;
+	position: relative;
+	background: url(../images/listTable_thead-bg.gif) repeat-x left top;
+	text-align: center;
+}
+
+/*
+用于文本输入框样式
+*/
+.sys-text-area{
+	
+}
+
+

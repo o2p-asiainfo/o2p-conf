@@ -1,0 +1,9 @@
+  <link href="${APP_PATH}/conf/resources/css/style-template.css" rel="stylesheet" />
+  <link href="${APP_PATH}/conf/resources/css/style.css" rel="stylesheet" />
+  <link href="${APP_PATH}/conf/resources/css/themes/blue.css" rel="stylesheet" id="style_color" />
+  <link href="${APP_PATH}/conf/resources/css/style-responsive.css" rel="stylesheet" />
+  <link href="${APP_PATH}/conf/resources/css/custom.css" rel="stylesheet" />
+  <script>
+   var APP_PATH = "${APP_PATH}";
+   var transferData="../front/transferData?url=";
+  </script>

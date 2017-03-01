@@ -1,0 +1,921 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "http://ibatis.apache.org/dtd/sql-map-2.dtd" "-//ibatis.apache.org//DTD SQL Map 2.0//EN">
+
+<sqlMap namespace="eaap-op2-conf-serviceManager">
+     <!--查询表数据的数目-->
+	 <select id="queryGridCount" resultClass="java.lang.String" >	
+          select count(*) from SERVICE where TENANT_ID=#tenantId#
+	 </select>
+	 <!--查询服务表的序列-->
+	 <select id="selectServiceSeq" resultClass="java.lang.String" >	
+          select Seq_Service.Nextval from dual
+	 </select>
+	 <!--查询目录表的序列-->
+	 <select id="selectDirSeq" resultClass="java.lang.String" >	
+          select Seq_Dir_Ser_List.Nextval from dual
+	 </select>
+	 <!--查询业务流程表的序列-->
+	 <select id="selectFuncSeq" resultClass="java.lang.String" >	
+          select  Seq_Func_2_Service.Nextval from dual
+	 </select>
+	 <!--查询接口表的序列-->
+	 <select id="selectApiSeq" resultClass="java.lang.String" >	
+          select  Seq_Api.Nextval from dual
+	 </select>
+	 <!--分页查询服务表-->
+	 <select id="queryService" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">	
+             SELECT * FROM  
+              (SELECT ROWNUM RECNO, SERVICE_ID,CONTRACT_VERSION_ID,VERSION,SERVICE_VERSION,SERVICE_EN_NAME,SERVICE_CN_NAME,SERVICE_CODE,STATE, DEFAULT_MSG_FLOW FROM
+                (SELECT a.SERVICE_ID, 
+                a.CONTRACT_VERSION_ID,
+                b.VERSION,
+                a.SERVICE_VERSION,
+                a.SERVICE_EN_NAME,
+                a.SERVICE_CN_NAME,
+                a.SERVICE_CODE,
+                a.STATE,
+                a.DEFAULT_MSG_FLOW 
+                FROM service a ,
+                CONTRACT_VERSION b where 
+                a.CONTRACT_VERSION_ID=b.CONTRACT_VERSION_ID  
+                 and a.TENANT_ID=#tenantId# 
+                <dynamic>
+                	<isNotNull prepend="and" property="state">
+                		a.STATE = #state# 
+                	</isNotNull>
+                </dynamic>
+                ORDER BY SERVICE_ID DESC ) WHERE <![CDATA[ ROWNUM <= (#startRow# + #rows# - 1) ]]> ORDER BY ROWNUM)
+                WHERE RECNO BETWEEN #startRow# AND (#startRow# + #rows# - 1) 
+	 </select>
+	 <!--通过服务Id查询服务表-->
+	 <select id="queryServiceByServiceId" parameterClass="com.ailk.eaap.op2.bo.Service" resultClass="java.util.HashMap">	
+	        <!--改为左连接  select * from service a ,message_flow b where a.SERVICE_ID=#serviceId# and b.MESSAGE_FLOW_ID=a.DEFAULT_MSG_FLOW   -->
+	 		SELECT a.*,b.*,c.contract_id FROM service a 
+	 		LEFT JOIN message_flow b on a.default_msg_flow=b.message_flow_id 
+	 		LEFT JOIN contract_version c on a.contract_version_id = c.contract_version_id
+	 		WHERE a.service_id=#serviceId#
+	 </select>
+	 <!--通过协议版本Id协议相关信息-->
+	 <select id="queryContractByContractVersionId" parameterClass="java.lang.String" resultClass="java.util.HashMap">	           
+      select a.name                contractName,
+             b.contract_version_id versionId,
+             b.version             version
+             from contract a, contract_version b
+             where a.contract_id = b.contract_id
+             and b.contract_version_id = #contractVersionId#
+	 </select>
+	 <!--服务表插入-->
+     <insert id="insertServiceManager" parameterClass="com.ailk.eaap.op2.bo.Service">
+		INSERT INTO SERVICE  
+		(
+		<dynamic>
+		    <isNotNull  property="serviceId">SERVICE_ID</isNotNull>
+			<isNotNull prepend="," property="contractVersionId">CONTRACT_VERSION_ID</isNotNull>
+			<isNotNull prepend="," property="serviceCnName">SERVICE_CN_NAME</isNotNull>
+			<isNotNull prepend="," property="serviceEnName">SERVICE_EN_NAME</isNotNull>
+			<isNotNull prepend="," property="serviceVersion">SERVICE_VERSION</isNotNull>
+			<isNotNull prepend="," property="lastestDate">LASTEST_DATE</isNotNull>
+			<isNotNull prepend="," property="createDate">CREATE_DATE</isNotNull>
+			<isNotNull prepend="," property="isPublished">IS_PUBLISHED</isNotNull>
+			<isNotNull prepend="," property="serviceType">SERVICE_TYPE</isNotNull>
+			<isNotNull prepend="," property="serviceCode">SERVICE_CODE</isNotNull>
+			<isNotNull prepend="," property="serviceDesc">SERVICE_DESC</isNotNull>
+			<isNotNull prepend="," property="state">STATE</isNotNull>
+			<isNotNull prepend="," property="defaultMsgFlow">DEFAULT_MSG_FLOW</isNotNull>
+			<isNotNull prepend="," property="tenantId">TENANT_ID</isNotNull>
+		</dynamic>
+		)
+		VALUES
+		(
+		<dynamic>
+		    <isNotNull  property="serviceId">#serviceId#</isNotNull>
+		    <isNotNull prepend="," property="contractVersionId">#contractVersionId#</isNotNull>
+			<isNotNull prepend="," property="serviceCnName">#serviceCnName#</isNotNull>
+			<isNotNull prepend="," property="serviceEnName">#serviceEnName#</isNotNull>
+		    <isNotNull prepend="," property="serviceVersion">#serviceVersion#</isNotNull>
+			<isNotNull prepend="," property="lastestDate">#lastestDate#</isNotNull>
+			<isNotNull prepend="," property="createDate">#createDate#</isNotNull>
+			<isNotNull prepend="," property="isPublished">#isPublished#</isNotNull>
+			<isNotNull prepend="," property="serviceType">#serviceType#</isNotNull>
+			<isNotNull prepend="," property="serviceCode">#serviceCode#</isNotNull>
+			<isNotNull prepend="," property="serviceDesc">#serviceDesc#</isNotNull>
+			<isNotNull prepend="," property="state">#state#</isNotNull>
+			<isNotNull prepend="," property="defaultMsgFlow">#defaultMsgFlow#</isNotNull>
+			<isNotNull prepend="," property="tenantId">#tenantId#</isNotNull>
+		</dynamic>
+		)
+	</insert>
+	
+     <insert id="insertServiceBean" parameterClass="java.util.HashMap">
+	    <selectKey resultClass="int" keyProperty="serviceBeanId">
+			select SEQ_SERVICE_BEAN.nextval from dual
+		</selectKey>	
+		insert into SERVICE_BEAN(CREATE_DATE,MODIFY_DATE,TENANT_ID
+		<dynamic>
+		    <isNotNull prepend="," property="serviceBeanId">SERVICE_BEAN_ID</isNotNull>
+			<isNotNull prepend="," property="serviceBeanCode">SERVICE_BEAN_CODE</isNotNull>
+			<isNotNull prepend="," property="serviceBeanName">SERVICE_BEAN_NAME</isNotNull>
+			<isNotNull prepend="," property="style">STYLE</isNotNull>
+			<isNotNull prepend="," property="description">DESCRIPTION</isNotNull>
+			<isNotNull prepend="," property="state">STATE</isNotNull>
+		</dynamic>
+		) values(sysdate,sysdate,#tenantId#
+		<dynamic>
+		    <isNotNull prepend="," property="serviceBeanId">#serviceBeanId#</isNotNull>
+		    <isNotNull prepend="," property="serviceBeanCode">#serviceBeanCode#</isNotNull>
+			<isNotNull prepend="," property="serviceBeanName">#serviceBeanName#</isNotNull>
+			<isNotNull prepend="," property="style">#style#</isNotNull>
+		    <isNotNull prepend="," property="description">#description#</isNotNull>
+			<isNotNull prepend="," property="state">#state#</isNotNull>
+		</dynamic>)
+	</insert>
+	
+     <insert id="insertServiceBean2Service" parameterClass="java.util.HashMap">
+	    <selectKey resultClass="int" keyProperty="serviceBean2ServiceId">
+			select SEQ_SERVICE_BEAN_2_SERVICE.nextval from dual
+		</selectKey>
+		insert into SERVICE_BEAN_2_SERVICE(
+		<dynamic>
+		    <isNotNull property="serviceBean2ServiceId">SERVICE_BEAN_2_SERVICE_ID</isNotNull>
+			<isNotNull prepend="," property="serviceId">SERVICE_ID</isNotNull>
+			<isNotNull prepend="," property="serviceBeanId">SERVICE_BEAN_ID</isNotNull>
+			<isNotNull prepend="," property="state">STATE</isNotNull>
+			<isNotNull prepend="," property="tenantId">TENANT_ID</isNotNull>
+		</dynamic>
+		) values(
+		<dynamic>
+		    <isNotNull property="serviceBean2ServiceId">#serviceBean2ServiceId#</isNotNull>
+		    <isNotNull prepend="," property="serviceId">#serviceId#</isNotNull>
+			<isNotNull prepend="," property="serviceBeanId">#serviceBeanId#</isNotNull>
+			<isNotNull prepend="," property="state">#state#</isNotNull>
+			<isNotNull prepend="," property="tenantId">#tenantId#</isNotNull>
+		</dynamic>)
+	</insert>
+	
+	<!--查询服务和目标关联表插入-->
+	 <insert id="insertDirService" parameterClass="com.ailk.eaap.op2.bo.DirSerList">
+		INSERT INTO DIR_SER_LIST  
+		(
+		<dynamic>
+		    <isNotNull  property="dirSerListId">DIR_SER_LIST_ID</isNotNull>
+			<isNotNull prepend="," property="serviceId">SERVICE_ID</isNotNull>
+			<isNotNull prepend="," property="dirId">DIR_ID</isNotNull>
+			<isNotNull prepend="," property="state">STATE</isNotNull>
+			<isNotNull prepend="," property="createTime">CREATE_TIME</isNotNull>
+			<isNotNull prepend="," property="lastestTime">LASTEST_TIME</isNotNull>
+			<isNotNull prepend="," property="tenantId">TENANT_ID</isNotNull>
+		</dynamic>
+		)
+		VALUES
+		(
+		<dynamic>
+		    <isNotNull  property="dirSerListId">#dirSerListId#</isNotNull>
+		    <isNotNull prepend="," property="serviceId">#serviceId#</isNotNull>
+			<isNotNull prepend="," property="dirId">#dirId#</isNotNull>
+			<isNotNull prepend="," property="state">#state#</isNotNull>
+		    <isNotNull prepend="," property="createTime">#createTime#</isNotNull>
+			<isNotNull prepend="," property="lastestTime">#lastestTime#</isNotNull>
+			<isNotNull prepend="," property="tenantId">#tenantId#</isNotNull>
+		</dynamic>
+		)
+	</insert>
+	<!--业务流程和服务关联表插入-->
+	 <insert id="insertFuncService" parameterClass="com.ailk.eaap.op2.bo.Func2Service">
+		INSERT INTO FUNC_2_SERVICE  
+		(
+		<dynamic>
+		    <isNotNull  property="func2SerId">FUNC_2_SER_ID</isNotNull>
+			<isNotNull prepend="," property="bizFunctionId">BIZ_FUNCTION_ID</isNotNull>
+			<isNotNull prepend="," property="serviceId">SERVICE_ID</isNotNull>
+			<isNotNull prepend="," property="state">STATE</isNotNull>
+			<isNotNull prepend="," property="tenantId">TENANT_ID</isNotNull>
+		</dynamic>
+		)
+		VALUES
+		(
+		<dynamic>
+		    <isNotNull  property="func2SerId">#func2SerId#</isNotNull>
+		    <isNotNull prepend="," property="bizFunctionId">#bizFunctionId#</isNotNull>
+			<isNotNull prepend="," property="serviceId">#serviceId#</isNotNull>
+			<isNotNull prepend="," property="state">#state#</isNotNull>
+			<isNotNull prepend="," property="tenantId">#tenantId#</isNotNull>
+		</dynamic>
+		)
+	</insert>
+	<!--接口与服务关联表插入-->
+	<insert id="insertApiService" parameterClass="com.ailk.eaap.op2.bo.Api">
+		INSERT INTO API  
+		(
+		<dynamic>
+		    <isNotNull  property="apiId">API_ID</isNotNull>
+			<isNotNull prepend="," property="serviceId">SERVICE_ID</isNotNull>
+			<isNotNull prepend="," property="apiName">API_NAME</isNotNull>
+			<isNotNull prepend="," property="apiVersion">API_VERSION</isNotNull>
+			<isNotNull prepend="," property="orgId">ORG_ID</isNotNull>
+			<isNotNull prepend="," property="apiState">API_STATE</isNotNull>
+			<isNotNull prepend="," property="apiRegTime">API_REG_TIME</isNotNull>
+			<isNotNull prepend="," property="apiEnableTime">API_ENABLE_TIME</isNotNull>
+			<isNotNull prepend="," property="apiDisableTime">API_DISABLE_TIME</isNotNull>
+			<isNotNull prepend="," property="apiDesc">API_DESC</isNotNull>
+			<isNotNull prepend="," property="apiMethod">API_METHOD</isNotNull>
+			<isNotNull prepend="," property="isNeedUserAuth">IS_NEED_USER_AUTH</isNotNull>
+			<isNotNull prepend="," property="tenantId">TENANT_ID</isNotNull>
+		</dynamic>
+		)
+		VALUES
+		(
+		<dynamic>
+		    <isNotNull  property="apiId">#apiId#</isNotNull>
+		    <isNotNull prepend="," property="serviceId">#serviceId#</isNotNull>
+			<isNotNull prepend="," property="apiName">#apiName#</isNotNull>
+			<isNotNull prepend="," property="apiVersion">#apiVersion#</isNotNull>
+		    <isNotNull prepend="," property="orgId">#orgId#</isNotNull>
+			<isNotNull prepend="," property="apiState">#apiState#</isNotNull>
+			<isNotNull prepend="," property="apiRegTime">#apiRegTime#</isNotNull>
+			<isNotNull prepend="," property="apiEnableTime">#apiEnableTime#</isNotNull>
+			<isNotNull prepend="," property="apiDisableTime">#apiDisableTime#</isNotNull>
+			<isNotNull prepend="," property="apiDesc">#apiDesc#</isNotNull>
+			<isNotNull prepend="," property="apiMethod">#apiMethod#</isNotNull>
+			<isNotNull prepend="," property="isNeedUserAuth">#isNeedUserAuth#</isNotNull>
+			<isNotNull prepend="," property="tenantId">#tenantId#</isNotNull>
+		</dynamic>
+		)
+	</insert>
+	<!--服务表更新-->
+	<update  id="updateServiceManager" parameterClass="com.ailk.eaap.op2.bo.Service">
+	   update SERVICE set CONTRACT_VERSION_ID=#contractVersionId#,
+	   SERVICE_CN_NAME=#serviceCnName#,
+	   SERVICE_EN_NAME=#serviceEnName#,
+	   SERVICE_VERSION=#serviceVersion#,
+	   LASTEST_DATE=#lastestDate#,
+	   IS_PUBLISHED=#isPublished#,
+	   CREATE_DATE=#createDate#,
+	   SERVICE_TYPE=#serviceType#,
+	   SERVICE_CODE=#serviceCode#,
+	   STATE=#state#,
+	   SERVICE_DESC=#serviceDesc#,
+	   DEFAULT_MSG_FLOW=#defaultMsgFlow# where SERVICE_ID=#serviceId#
+	 </update>
+	 <!--服务表状态更新-->
+	 <update  id="updateServiceManagerState" parameterClass="com.ailk.eaap.op2.bo.Service">
+	   update SERVICE set STATE=#state# where SERVICE_ID=#serviceId#
+	 </update>
+	 <!--分页总数目服务表有条件查询-->
+     <select id="queryGridCountChoice" resultClass="java.lang.String" parameterClass="com.ailk.eaap.op2.bo.Service">	
+          select count(*) from SERVICE where CONTRACT_VERSION_ID=#contractVersionId# 
+	 </select>
+	 <!--分页服务表有条件查询-->
+	 <select id="queryServiceChoice" resultClass="com.ailk.eaap.op2.bo.Service" parameterClass="java.util.HashMap">	
+             SELECT SERVICE_ID as serviceId,SERVICE_VERSION as serviceVersion,CONTRACT_VERSION_ID as contractVersionId, SERVICE_CN_NAME as serviceCnName,SERVICE_EN_NAME as serviceEnName,SERVICE_CODE as serviceCode, STATE as state, DEFAULT_MSG_FLOW as defaultMsgFlow FROM  
+              (SELECT ROWNUM RECNO, SERVICE_ID,CONTRACT_VERSION_ID,SERVICE_VERSION,SERVICE_EN_NAME,SERVICE_CN_NAME,SERVICE_CODE,STATE, DEFAULT_MSG_FLOW FROM
+                (SELECT * FROM service where CONTRACT_VERSION_ID=#contractVersionId# ORDER BY SERVICE_ID DESC ) WHERE <![CDATA[ ROWNUM <= (#startRow# + #rows# - 1) ]]> ORDER BY ROWNUM)
+                WHERE RECNO BETWEEN #startRow# AND (#startRow# + #rows# - 1) 
+	 </select>
+	 <!--服务表协议版本模糊查询-->
+	 <select id="showService" parameterClass="com.ailk.eaap.op2.bo.Service" resultClass="com.ailk.eaap.op2.bo.Service">
+	   select S.CONTRACT_VERSION_ID as contractVersionId from service S where (S.CONTRACT_VERSION_ID like '%'||#contractVersionId#||'%')
+	 </select>
+	 <!-- 查出所有的协议版本信息 -->
+	 <select id="queryAllConstarctList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+    SELECT * FROM (SELECT ROW_NUMBER() OVER( ORDER BY CONTRACT_VERSION_ID ) rn , newtab.* FROM (
+    SELECT CONTRACT_VERSION_ID CONTRACT_VERSION_ID,CONTRACT_ID CONTRACT_ID , VERSION VERSION , CREATE_TIME CREATE_TIME , IS_NEED_CHECK IS_NEED_CHECK, 
+         STATE STATE, EFF_DATE EFF_DATE , EXP_DATE EXP_DATE, DESCRIPTOR DESCRIPTOR FROM CONTRACT_VERSION
+   ) newtab ) WHERE rn BETWEEN #pro# AND #end#    
+   </select>
+   <!--查询节点信息表 -->
+   <select id="queryNodeDesc" resultClass="com.ailk.eaap.op2.bo.NodeDesc" parameterClass="java.util.HashMap">	
+             SELECT  NODE_DESC_ID as nodeDescId,TCP_CTR_F_ID as tcpCtrFId,NODE_NAME as nodeName,NODE_CODE as nodeCode,NODE_PATH as nodePath,NODE_TYPE as nodeType,NODE_LENGTH_CONS as nodeLengthCons, NODE_TYPE_CONS as nodeTypeCons,NODE_NUMBER_CONS as nodeNumberCons,NEVL_CONS_TYPE as nevlConsType,NEVL_CONS_VALUE as nevlConsValue,NEVL_CONS_DESC as nevlConsDesc,IS_NEED_CHECK as isNeedCheck,IS_NEED_SIGN as isNeedSign,'closed' as state,CREATE_TIME as createTime,LASTEST_TIME as lastestTime,DESCRIPTION as description FROM  
+              (SELECT ROWNUM RECNO, NODE_DESC_ID,TCP_CTR_F_ID,NODE_NAME,NODE_CODE,NODE_PATH,NODE_TYPE,NODE_LENGTH_CONS, NODE_TYPE_CONS,NODE_NUMBER_CONS,NEVL_CONS_TYPE,NEVL_CONS_VALUE,NEVL_CONS_DESC,IS_NEED_CHECK,IS_NEED_SIGN,STATE,CREATE_TIME,LASTEST_TIME,DESCRIPTION FROM
+                (SELECT * FROM NODE_DESC where NODE_DESC.NODE_PATH='\' ORDER BY NODE_DESC_ID DESC ) WHERE <![CDATA[ ROWNUM <= (#startRow# + #rows# - 1) ]]> ORDER BY ROWNUM)
+                WHERE RECNO BETWEEN #startRow# AND (#startRow# + #rows# - 1) 
+   </select>
+   <!--查询树节点的根节点-->
+   <select id="queryTreeGridCount" resultClass="java.lang.String" >	
+          select count(*) from NODE_DESC where NODE_DESC.NODE_PATH='\'
+  </select> 
+  <!--查询树节点的根节点-->
+  <select id="queryDirectoryTreeRoot" resultClass="java.util.HashMap" >	
+                select *
+          from directory a
+         where (a.fa_dir_id is null or
+               (select count(*)
+                   from directory b
+                  where b.dir_id = a.FA_DIR_ID
+                    and b.dir_type = a.dir_type) = 0) and (a.dir_type = 1 or a.dir_type = 0) and a.tenant_id=#tenantId#
+  </select> 
+    <!--查询树节点的根节点-->
+  <select id="queryDirectoryNodeById" resultClass="java.util.HashMap" parameterClass="java.lang.String">	
+         select * from DIRECTORY a where a.fa_dir_id=#id# and (a.dir_type=1 or a.dir_type=0) 
+  </select> 
+    <!--查询树节点的根节点-->
+  <select id="queryBizFunctionTreeRoot" resultClass="java.util.HashMap" >	
+         select * from BIZ_FUNCTION a where a.TENANT_ID=#tenantId# and a.BIZ_BIZ_FUNCTION_ID is null
+  </select> 
+    <!--查询树节点的根节点-->
+  <select id="queryBizFunctionNodeById" resultClass="java.util.HashMap" parameterClass="java.lang.String">	
+         select * from BIZ_FUNCTION a where a.BIZ_BIZ_FUNCTION_ID=#id#
+  </select> 
+    <!--查询出符合条件的所有的数据-->
+  <select id="queryDirSerList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+          SELECT *  FROM (
+		          SELECT ROWNUM RECNO,VERSION, SERVICE_ID,CONTRACT_VERSION_ID,SERVICE_VERSION,SERVICE_EN_NAME,SERVICE_CN_NAME,SERVICE_CODE,STATE, DEFAULT_MSG_FLOW,MESSAGE_FLOW_NAME
+					FROM(
+					          select f.VERSION, b.SERVICE_ID,b.CONTRACT_VERSION_ID,b.SERVICE_VERSION,b.SERVICE_EN_NAME,b.SERVICE_CN_NAME,b.SERVICE_CODE,b.STATE, b.DEFAULT_MSG_FLOW,m.MESSAGE_FLOW_NAME
+					            from contract_version f ,contract c,service b left join MESSAGE_FLOW m on b.default_msg_flow=m.MESSAGE_FLOW_ID 
+					           where b.CONTRACT_VERSION_ID=f.CONTRACT_VERSION_ID and f.CONTRACT_ID=c.CONTRACT_ID and b.TENANT_ID=#tenantId#      
+					          <dynamic>            
+						          <isNotNull prepend=" AND " property="contractVersionId">   
+						            b.CONTRACT_VERSION_ID = #contractVersionId# 
+						          </isNotNull>       
+						          <isNotNull prepend=" AND " property="contractVersion">   
+						            f.version like '%'||#contractVersion#||'%'
+						          </isNotNull>
+						          <isNotNull prepend=" AND " property="serviceCode">   
+						            b.SERVICE_CODE like '%'||#serviceCode#||'%'
+						          </isNotNull> 
+						          <isNotNull prepend=" AND " property="serviceCnName">  
+						            b.SERVICE_CN_NAME like '%'||#serviceCnName#||'%'
+						          </isNotNull>  
+						          <isNotNull prepend=" AND " property="contractName">   
+						            c.NAME like '%'||#contractName#||'%'
+						          </isNotNull>  
+						          <isNotNull prepend=" AND " property="contractCode">   
+						            c.CODE like '%'||#contractCode#||'%'
+						          </isNotNull>  
+						          <isNotNull prepend=" AND " property="state">   
+						            b.STATE = #state# 
+						          </isNotNull>
+					          </dynamic>
+					            ORDER BY SERVICE_ID DESC
+		          ) 
+		          WHERE <![CDATA[ ROWNUM <= (#startRow# + #rows# - 1) ]]> ORDER BY ROWNUM
+          )
+          WHERE RECNO BETWEEN #startRow# AND (#startRow# + #rows# - 1) 
+           
+  </select> 
+   <!--查询出符合条件的所有的数据的数量-->
+  <select id="queryCountDirSerList" resultClass="java.lang.String" parameterClass="java.util.HashMap">	         
+          select count(*) from service b    
+          <dynamic   prepend= "where ">       
+          <isNotNull prepend=" AND " property="contractVersionId">   
+            b.CONTRACT_VERSION_ID = #contractVersionId# 
+          </isNotNull>
+          <isNotNull prepend=" AND " property="serviceCode">   
+            b.SERVICE_CODE = #serviceCode# 
+          </isNotNull> 
+          <isNotNull prepend=" AND " property="serviceCnName">   
+            b.SERVICE_CN_NAME = #serviceCnName# 
+          </isNotNull> 
+          <isNotNull prepend=" AND " property="state">   
+            b.STATE = #state# 
+          </isNotNull>
+          <isNotNull prepend=" AND " property="tenantId">   
+            b.TENANT_ID = #tenantId# 
+          </isNotNull>
+          </dynamic>
+    </select>
+   
+     <!--查询出符合条件的所有的数据-->
+    <select id="queryRegesiterSerList" parameterClass="java.util.HashMap" resultClass="com.ailk.eaap.op2.bo.Service">
+          SELECT SERVICE_ID as serviceId,SERVICE_VERSION as serviceVersion,CONTRACT_VERSION_ID as contractVersionId, SERVICE_CN_NAME as serviceCnName,SERVICE_EN_NAME as serviceEnName,SERVICE_CODE as serviceCode, STATE as state, DEFAULT_MSG_FLOW as defaultMsgFlow FROM  
+          (
+          SELECT ROWNUM RECNO, SERVICE_ID,CONTRACT_VERSION_ID,SERVICE_VERSION,SERVICE_EN_NAME,SERVICE_CN_NAME,SERVICE_CODE,STATE, DEFAULT_MSG_FLOW FROM
+          (
+          select * from service b 
+          WHERE b.tenant_id=#tenantId# 
+          <isNotNull prepend=" AND " property="dirTreeNode">   
+       	    b.SERVICE_ID in 
+            (select c.SERVICE_ID from DIR_SER_LIST c  
+              where c.DIR_ID = #dirTreeNode#   
+            )      
+          </isNotNull>
+          <isNotNull prepend=" AND " property="func2SerId">  
+       		b.SERVICE_ID in 
+           (select c.SERVICE_ID from FUNC_2_SERVICE c  
+             where c.biz_function_ID = #func2SerId# 
+            )
+          </isNotNull>
+          ORDER BY SERVICE_ID DESC
+          ) 
+          WHERE <![CDATA[ ROWNUM <= (#startRow# + #rows# - 1) ]]> ORDER BY ROWNUM
+          )
+          WHERE RECNO BETWEEN #startRow# AND (#startRow# + #rows# - 1) 
+           
+  </select> 
+   <!--查询出符合条件的所有的数据的数量-->
+  <select id="queryCountRegesiterSerList" resultClass="java.lang.String" parameterClass="java.util.HashMap">	
+          select count(*) from service b where b.tenant_id=#tenantId# and b.service_id IN (select a.service_id
+          from DIR_SER_LIST a 
+          <isNotNull prepend=" where " property="dirTreeNode">   
+            a.DIR_ID = #dirTreeNode# 
+          </isNotNull>
+          )
+   </select>
+   <!--查询默认消息流数-->
+        <select id="queryDefaultFlowList" resultClass="java.util.HashMap" >	
+          select * from MESSAGE_FLOW 
+	 </select>
+	 <!--协议表模糊查询-->
+	<select id="showContract" parameterClass="com.ailk.eaap.op2.bo.Contract" resultClass="com.ailk.eaap.op2.bo.Contract">
+	   select S.NAME as name,s.CONTRACT_ID as contractId  from CONTRACT S where (S.NAME like '%'||#name#||'%')
+	 </select>
+	 <!--通过目录ID查询节点所有父节点-->
+	<select id="queryAllPathByDirId" resultClass="java.util.HashMap">
+	   select * from 
+    directory a start with a.dir_id=#dirId# connect by prior a.fa_dir_id = a.dir_id
+		order by dir_id asc
+	 </select>
+	 <!--通过服务Id查询目录与服务关联表-->
+	 <select id="queryDirIdByServiceId" resultClass="java.util.HashMap" parameterClass="com.ailk.eaap.op2.bo.Service">	
+          select * from  DIR_SER_LIST a where a.SERVICE_ID=#serviceId#
+	 </select>
+	 <!--通过目录Id查询目录名-->
+	 <select id="queryDirNameByDirId" resultClass="java.lang.String" parameterClass="java.lang.String">	
+          select a.DIR_NAME from DIRECTORY a where a.DIR_ID=#dirId#
+	 </select>
+	 <!--业务流程表查询节点所有父节点信息-->
+	 <select id="queryAllPathByFuncId" resultClass="java.util.HashMap">
+	   select * from biz_function b
+         start with b.biz_function_id = #funcId# connect by prior b.biz_function_id = b.biz_biz_function_id 
+       order by BIZ_FUNCTION_ID asc
+	 </select>
+	 <!--通过业务流程Id查询业务流程信息-->
+	 <select id="queryFuncIdByServiceId" resultClass="java.util.HashMap" parameterClass="com.ailk.eaap.op2.bo.Service">	
+          select * from  FUNC_2_SERVICE a where a.SERVICE_ID=#serviceId#
+	 </select>
+	 <!--通过目录Id查询业务流程名-->
+	 <select id="queryFuncNameByDirId" resultClass="java.lang.String" parameterClass="java.lang.String">	
+          select a.NAME from BIZ_FUNCTION a where a.BIZ_FUNCTION_ID=#funcId#
+	 </select>
+	 <!--接口表查询-->
+	 <select id="queryApi" resultClass="com.ailk.eaap.op2.bo.Api" parameterClass="com.ailk.eaap.op2.bo.Service">	
+          select a.API_ID as apiId , a.IS_NEED_USER_AUTH as isNeedUserAuth,a.API_DESC as apiDesc,a.API_METHOD as apiMethod from API a where a.SERVICE_ID=#serviceId#
+	 </select>
+	 <!--目录表删除-->
+	 <delete id="delDir"  parameterClass="com.ailk.eaap.op2.bo.Service">	
+         delete DIR_SER_LIST a where a.SERVICE_ID=#serviceId#
+	 </delete>
+	 <!--业务流程表删除-->
+	 <delete id="delFunc"  parameterClass="com.ailk.eaap.op2.bo.Service">	
+         delete FUNC_2_SERVICE a where a.SERVICE_ID=#serviceId#
+	 </delete>
+	 <!--接口表更新-->
+	 <update id="updateApi" parameterClass="com.ailk.eaap.op2.bo.Api" >
+	     update API a 
+	      <dynamic prepend="set">
+		     <isNotNull prepend="," property="isNeedUserAuth">
+		         a.IS_NEED_USER_AUTH=#isNeedUserAuth#
+		     </isNotNull>	
+		     <isNotNull prepend="," property="apiMethod">
+		         a.api_method=#apiMethod#
+		     </isNotNull>
+		     <isNotNull prepend="," property="apiName">
+		         a.api_name=#apiName#
+		     </isNotNull>	
+		     <isNotNull prepend="," property="apiDesc">
+		     	a.API_DESC=#apiDesc#
+		     </isNotNull>
+		 </dynamic>     
+	     where a.SERVICE_ID=#serviceId#
+	 </update>
+	 <!--接口表删除-->
+	 <delete id="delServiceApi"  parameterClass="com.ailk.eaap.op2.bo.Service">	
+         delete API a where a.SERVICE_ID=#serviceId#
+	 </delete>
+	    <!--查询通讯协议数-->
+     <select id="queryCommProtocalListList" resultClass="java.util.HashMap" >	
+          select * from COMM_PROTOCAL 
+	 </select>
+	<select id="queryServiceSupplierRegister" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	SELECT comm_pro_cd comm_pro_cd ,to_char(create_time,'yyyy-mm-dd hh24:mi') create_time,state
+	state,to_char(lastest_time,'yyyy-mm-dd hh24:mi') lastest_time,ser_tech_impl_id
+	ser_tech_impl_id,service_cn_name service_cn_name,service_code
+	service_code,name name,code code, attr_spec_value attr_spec_value,SERVICE_ID SERVICE_ID,TECH_IMPL_ID TECH_IMPL_ID,
+	ORG_ID ORG_ID,TECH_IMPL_NAME TECH_IMPL_NAME FROM
+	(SELECT ROWNUM RECNO,
+	comm_pro_cd,create_time,state,lastest_time,ser_tech_impl_id,service_cn_name,service_code,name,attr_spec_value,
+	SERVICE_ID,TECH_IMPL_ID,CODE,ORG_ID,TECH_IMPL_NAME
+	FROM
+	(select c.comm_pro_cd,
+       a.create_time,
+       a.state,
+       a.lastest_time,
+       a.ser_tech_impl_id,
+       b.service_cn_name,
+       b.service_code,
+       d.name,
+       ttt.attr_spec_value,
+       a.SERVICE_ID,
+       a.TECH_IMPL_ID,
+       d.CODE,
+       d.ORG_ID,
+       c.TECH_IMPL_NAME
+    from SER_TECH_IMPL a,
+       SERVICE b,
+       TECH_IMPL c,
+       COMPONENT d,
+       (SELECT tt.tech_impl_id,
+               aaa.state state,
+               aaa.service_id service_id,
+               to_char(wmsys.wm_concat(tt.attr_spec_value)) attr_spec_value
+               FROM TECH_IMP_ATT tt,
+                     ser_tech_impl aaa 
+               WHERE tt.tech_impl_id = aaa.tech_impl_id 
+               GROUP BY tt.tech_impl_id,aaa.state,aaa.service_id) ttt
+    where a.service_id = b.service_id
+    and a.tech_impl_id = c.tech_impl_id
+    and c.component_id = d.component_id
+    and ttt.tech_impl_id = c.tech_impl_id
+    and ttt.service_id = b.service_id
+    <isNotNull prepend="and" property="serviceId"> 
+    ttt.service_id=#serviceId#
+    </isNotNull>
+    <isNotNull prepend="and" property="componentId"> 
+    c.component_id=#componentId#
+    </isNotNull>
+    <isNotNull prepend="and" property="orgId"> 
+    d.org_id=#orgId#
+    </isNotNull>
+    <isNotNull prepend="and" property="commProCd"> 
+    c.comm_pro_cd=#commProCd#
+    </isNotNull>
+    <isNotNull prepend="and" property="techImplId"> 
+     ttt.tech_impl_id=#techImplId#
+    </isNotNull>
+    <isNotNull prepend="and" property="state"> 
+    a.state=#state#
+    </isNotNull>  
+    ORDER BY ser_tech_impl_id DESC
+    )
+	WHERE <![CDATA[ ROWNUM <= (#startRow# + #rows# - 1) ]]>
+	ORDER BY ROWNUM)
+	WHERE RECNO BETWEEN #startRow# AND (#startRow# + #rows# - 1) 
+	 </select>
+	 
+	 
+	 <select id="queryServiceSupplierRegisterCount" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+    SELECT count(*) FROM
+	(SELECT ROWNUM RECNO,
+	comm_pro_cd,create_time,state,lastest_time,ser_tech_impl_id,service_cn_name,service_code,name,code,attr_spec_value
+	FROM
+	(select c.comm_pro_cd,
+       a.create_time,
+       a.state,
+       a.lastest_time,
+       a.ser_tech_impl_id,
+       b.service_cn_name,
+       b.service_code,
+       d.name,
+       d.code,
+       ttt.attr_spec_value
+    from SER_TECH_IMPL a,
+       SERVICE b,
+       TECH_IMPL c,
+       COMPONENT d,
+       (SELECT tt.tech_impl_id,
+               aaa.state state,
+               aaa.service_id service_id,
+               to_char(wmsys.wm_concat(tt.attr_spec_value)) attr_spec_value
+               FROM TECH_IMP_ATT tt,
+                     ser_tech_impl aaa 
+               WHERE tt.tech_impl_id = aaa.tech_impl_id 
+               GROUP BY tt.tech_impl_id,aaa.state,aaa.service_id) ttt
+    where a.service_id = b.service_id
+    and a.tech_impl_id = c.tech_impl_id
+    and c.component_id = d.component_id
+    and ttt.tech_impl_id = c.tech_impl_id
+    and ttt.service_id = b.service_id
+    <isNotNull prepend="and" property="serviceId"> 
+    a.service_id=#serviceId#
+    </isNotNull>
+    <isNotNull prepend="and" property="componentId"> 
+    c.component_id=#componentId#
+    </isNotNull>
+    <isNotNull prepend="and" property="orgId"> 
+    d.org_id=#orgId#
+    </isNotNull>
+    <isNotNull prepend="and" property="commProCd"> 
+    c.comm_pro_cd=#commProCd#
+    </isNotNull>
+    <isNotNull prepend="and" property="techImplId"> 
+     a.tech_impl_id=#techImplId#
+    </isNotNull>
+    <isNotNull prepend="and" property="state"> 
+    a.state=#state#
+    </isNotNull> 
+    ORDER BY ser_tech_impl_id DESC
+    ))
+	 </select>
+	 <select id="controlStrategy" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+	 </select>
+	 <select id="controlStrategyCount" parameterClass="java.util.HashMap" resultClass="java.lang.String" >
+	 </select>
+	 
+ 	<select id="queryCC2cInfoListByIdCount" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+    select count(*) ALLNUM  from (
+     select cc.name,
+            cc2c.cycle_value cycletypename,
+	        cc2c.effect_state statename,
+	        cc2c.cutms_value valuename,
+            cc2c.*
+  from CTL_COUNTERMS_2_TECH cc2c, CONTROL_COUNTERMS cc
+ where cc2c.cc_cd = cc.cc_cd
+ and cc2c.TECH_IMPL_ID =#techImplId#
+ )
+   </select>
+   	
+	<select id="queryCC2cInfoListById" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+     select * from (select row_number() over( order by  CC_CD desc ) rn , newtab.* from (
+     select cc.name,
+            cc2c.cycle_value cycletypename,
+	        cc2c.effect_state statename,
+	        to_char(cc2c.cutms_value) || cc.cutms_unit valuename,
+	        cc2c.TECH_IMPL_ID TECH_IMPL_ID,
+	        cc2c.cc_cd cc_cd,
+	        cc2c.cutms_value cutms_value,
+	        cc2c.effect_state effect_state,
+	        cc2c.cycle_type cycle_type,
+	        cc2c.cycle_value cycle_value,
+            to_char(cc2c.CONFI_TIME,'yyyy-mm-dd hh24:mi') CONFI_TIME
+	  from CTL_COUNTERMS_2_TECH cc2c, CONTROL_COUNTERMS cc
+	 where cc2c.cc_cd = cc.cc_cd
+      and cc2c.TECH_IMPL_ID =#techImplId#
+	 ) newtab ) where rn between #pro# and #end# 
+	   </select>
+	   <insert id="insertCtlCounterms2Tech" parameterClass="com.ailk.eaap.op2.bo.CtlCounterms2Tech">
+	       	INSERT INTO CTL_COUNTERMS_2_TECH  
+		(CONFI_TIME,FLOW_CONTROL_CODE,TENANT_ID
+		<dynamic>
+		    <isNotNull prepend="," property="ccCd">CC_CD</isNotNull>
+			<isNotNull prepend="," property="techImplId">TECH_IMPL_ID</isNotNull>
+			<isNotNull prepend="," property="cutmsValue">CUTMS_VALUE</isNotNull>
+			<isNotNull prepend="," property="effectState">EFFECT_STATE</isNotNull>
+			<isNotNull prepend="," property="cycleType">CYCLE_TYPE</isNotNull>
+			<isNotNull prepend="," property="cycleValue">CYCLE_VALUE</isNotNull>
+		</dynamic>
+		)
+		VALUES
+		(SYS_EXTRACT_UTC(current_timestamp)+0,sys_guid(),#tenantId#
+		<dynamic>
+		    <isNotNull prepend="," property="ccCd">#ccCd#</isNotNull>
+		    <isNotNull prepend="," property="techImplId">#techImplId#</isNotNull>
+			<isNotNull prepend="," property="cutmsValue">#cutmsValue#</isNotNull>
+			<isNotNull prepend="," property="effectState">#effectState#</isNotNull>
+		    <isNotNull prepend="," property="cycleType">#cycleType#</isNotNull>
+			<isNotNull prepend="," property="cycleValue">#cycleValue#</isNotNull>
+		</dynamic>
+		)
+	   </insert>
+	   <select id="querySeqSerTechImpl" resultClass="java.lang.String" >
+	     select seq_ser_tech_impl.nextval from dual
+	   </select>
+	   <insert id="insertSerTechImpl" parameterClass="com.ailk.eaap.op2.bo.SerTechImpl">
+	        	INSERT INTO SER_TECH_IMPL  
+		(CREATE_TIME,LASTEST_TIME,STATE,TENANT_ID
+		<dynamic>
+			<isNotNull prepend="," property="serTechImplId">SER_TECH_IMPL_ID</isNotNull>
+			<isNotNull prepend="," property="serviceId">SERVICE_ID</isNotNull>
+			<isNotNull prepend="," property="techImplId">TECH_IMPL_ID</isNotNull>
+		</dynamic>
+		)
+		VALUES
+		(SYS_EXTRACT_UTC(current_timestamp)+0,SYS_EXTRACT_UTC(current_timestamp)+0,'D',#tenantId#
+		<dynamic>
+		    <isNotNull prepend="," property="serTechImplId">#serTechImplId#</isNotNull>
+			<isNotNull prepend="," property="serviceId">#serviceId#</isNotNull>
+			<isNotNull prepend="," property="techImplId">#techImplId#</isNotNull>
+		</dynamic>
+		)
+	   </insert>
+	   <select id="queryServiceSupplierRegisterBySerImplId" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+	   select c.comm_pro_cd,
+       a.create_time,
+       a.state,
+       a.lastest_time,
+       a.ser_tech_impl_id,
+       b.service_cn_name,
+       b.service_code,
+       d.name componentName,
+       ttt.attr_spec_value,
+       a.SERVICE_ID,
+       a.TECH_IMPL_ID,
+       d.CODE,
+       d.ORG_ID,
+       e.NAME orgName,
+       e.ORG_CODE,
+       c.TECH_IMPL_NAME
+    from SER_TECH_IMPL a,
+       SERVICE b,
+       TECH_IMPL c,
+       COMPONENT d,
+       org e,
+       (select tech_impl_id,
+               to_char(wmsys.wm_concat(tt.attr_spec_value)) attr_spec_value
+          from TECH_IMP_ATT tt
+         group by tech_impl_id) ttt
+    where a.service_id = b.service_id
+    and a.tech_impl_id = c.tech_impl_id
+    and c.component_id = d.component_id
+    and e.org_id = d.ORG_ID
+    and ttt.tech_impl_id = c.tech_impl_id and a.ser_tech_impl_id=#serTechImplId#
+	   </select>
+	   
+	 <select id="queryAttrByAttrSpecCode" resultClass="java.lang.String" parameterClass="java.lang.String">	
+          select ATTR_SPEC.ATTR_SPEC_ID from ATTR_SPEC where ATTR_SPEC.ATTR_SPEC_CODE=#attrSpecCode#
+	 </select>
+	 <select id="compareServiceVersionAndEnName" resultClass="com.ailk.eaap.op2.bo.Service" parameterClass="com.ailk.eaap.op2.bo.Service">	
+          select c.service_version as serviceVersion,c.service_en_name as serviceEnName from service c 
+          where (c.service_version=#serviceVersion# or c.service_en_name=#serviceEnName# or c.service_code=#serviceCode# )
+          <isNotNull prepend="and" property="serviceId"> 
+    			c.service_id!=#serviceId#
+   		  </isNotNull>
+	 </select>
+
+    <select id="queryBizFunction" resultClass="com.ailk.eaap.op2.bo.BizFunction" parameterClass="com.ailk.eaap.op2.bo.BizFunction">	
+          select c.biz_function_id as bizFunctionId,c.name,c.code from biz_function c 
+          where c.code=#code#
+          <isNotNull prepend="and" property="bizFunctionId">
+          		c.biz_function_id!=#bizFunctionId#
+          </isNotNull>
+	 </select>
+	 
+      <select id="queryRegesiterSerListExcept" resultClass="com.ailk.eaap.op2.bo.Service" parameterClass="java.util.HashMap">
+       SELECT SERVICE_ID          as serviceId,
+       SERVICE_VERSION     as serviceVersion,
+       CONTRACT_VERSION_ID as contractVersionId,
+       SERVICE_CN_NAME     as serviceCnName,
+       SERVICE_EN_NAME     as serviceEnName,
+       SERVICE_CODE        as serviceCode,
+       STATE               as state,
+       DEFAULT_MSG_FLOW    as defaultMsgFlow
+      from service a WHERE a.tenant_id=#tenantId# and a.service_id not IN(select b.SERVICE_ID from DIR_SER_LIST b UNION
+      select c.SERVICE_ID from FUNC_2_SERVICE c)
+   </select> 
+    <select id="queryRegesiterSerListExceptCount" resultClass="java.lang.String" parameterClass="java.util.HashMap">
+      SELECT count(*)
+      from service a WHERE a.tenant_id=#tenantId# and a.service_id not IN(select b.SERVICE_ID from DIR_SER_LIST b UNION
+      select c.SERVICE_ID from FUNC_2_SERVICE c)
+   </select>
+
+	<select id="queryMessgFlowByServiceId" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">	           
+	    SELECT
+	    b.message_flow_id messFlowId,
+	    b.message_flow_name messFlowName
+        FROM
+	    service a,
+	    message_flow b
+        WHERE
+	    a.default_msg_flow = b.message_flow_id
+        AND
+	    a.service_id =#serviceId#
+	 </select>
+	 
+	 
+	<!--根据服务技术实现ID获取技术实现名称-->
+	 <select id="getTechImplName" parameterClass="java.lang.String" resultClass="java.lang.String" >
+          select i.TECH_IMPL_NAME
+		   from TECH_IMPL i,SER_TECH_IMPL s
+		 where i.TECH_IMPL_ID = s.TECH_IMPL_ID
+		    and s.SER_TECH_IMPL_ID =#serTechImplId#
+	 </select>
+	<!-- 保存消息流 -->
+	<insert id="saveMessageFlow" parameterClass="java.util.HashMap">
+		insert into
+		message_flow
+		(message_flow_id, message_flow_name, first_endpoint_id,
+		create_time, state,
+		lastest_time, descriptor)
+		values
+		(#message_Flow_Id#,
+		#message_Flow_Name#, #first_Endpoint_Id#, 
+		sysdate, #state#,
+		sysdate, #descriptor#)
+	</insert>
+	<!-- 保存端点-->
+	<insert id="saveEndpoint" parameterClass="java.util.HashMap" >
+		insert into endpoint
+		  (endpoint_id,endpoint_spec_id,in_data_type_id,out_data_type_id,endpoint_name,
+		   endpoint_code,enable_in_trace,enable_out_trace,enable_in_log,enable_out_log,
+		   create_date,state,lastest_date,endpoint_desc,map_code)
+		values
+		  (#endpoint_Id#,#endpoint_Spec_Id#,#in_Data_Type_Id#,#out_Data_Type_Id#,#endpoint_Name#,
+		   #endpoint_Code#,#enable_In_Trace#,#enable_Out_Trace#,#enable_In_Log#,#enable_Out_Log#,
+		   sysdate,#state#,sysdate,#endpoint_Desc#,#map_Code#)
+	</insert>
+	<!-- 保存端点规格属性值-->
+	<insert id="saveEndpointAttrValue" parameterClass="java.util.HashMap" >
+		insert into endpoint_attr_value
+		  (endpoint_attr_value_id,endpoint_id,endpoint_spec_attr_id,attr_value,long_attr_value)
+		values
+		  (SEQ_ENDPOINT_ATTR_VAL.Nextval,#endpoint_Id#,#endpoint_Spec_Attr_Id#,#attr_Value#,#long_Attr_Value#)
+	</insert>	
+	<!-- 保存消息流路径-->
+	<insert id="saveService_Route_Config" parameterClass="java.util.HashMap" >
+		insert into service_route_config
+		  (route_id, route_policy_id, from_endpoint_id, to_endpoint_id, message_flow_id, 
+		   syn_asyn, state, create_date, lastest_date, map_Code,service_route_config_code)
+		values
+		  (#route_Id#, #route_Policy_Id#, #from_Endpoint_Id#, #to_Endpoint_Id#, #message_Flow_Id#,
+		   #syn_Asyn#, #state#, sysdate, sysdate, #map_Code#,sys_guid())
+	</insert>	
+	<!-- 新增路由规则 -->
+	<insert id="addRoutePolicy" parameterClass="java.util.HashMap" >
+		insert into route_policy
+			(route_policy_id, rule_strategy_id,ROUTE_POLICY_CODE)
+		values
+			(#route_Policy_Id#, #rule_Strategy_Id#,sys_guid())		
+	</insert>	
+
+	<!--获取主键ID -->
+	<select id="getSeq" parameterClass="java.util.HashMap" resultClass="java.lang.Integer" remapResults="true" >
+		select $sequenceName$.Nextval from dual
+	</select>
+	<!--得到attrSpecID-->
+	 <select id="getAttrSpecID" parameterClass="java.util.HashMap" resultClass="java.lang.String" >	
+          select attr_spec_id from ATTR_SPEC where attr_spec_code = #aPIachieve# and tenant_id = #tenantId#
+	 </select>
+	 <!-- 添加服务属性数据 -->
+	 <insert id="insertServiceAtt" parameterClass="com.ailk.eaap.op2.bo.ServiceAtt">
+  	<selectKey resultClass="int" keyProperty="serviceAttId">
+		  select seq_ser_tech_impl.nextval from dual
+    </selectKey>
+	 	insert into SERVICE_ATT  
+	 	(CREATE_TIME, LASTEST_TIME,TENANT_ID
+	  <dynamic>
+	    <isNotNull prepend="," property="serviceAttId">service_att_id</isNotNull>
+	    <isNotNull prepend="," property="serviceId">service_id</isNotNull>
+	    <isNotNull prepend="," property="attrSpecId">attr_spec_id</isNotNull>
+	    <isNotNull prepend="," property="serSpecVa">ser_spec_va</isNotNull>
+	    <isNotNull prepend="," property="state">state</isNotNull>
+	  </dynamic>
+	  )
+	  values(SYS_EXTRACT_UTC(current_timestamp)+0 , SYS_EXTRACT_UTC(current_timestamp)+0,#tenantId#
+	  <dynamic>
+	    <isNotNull prepend="," property="serviceAttId">#serviceAttId#</isNotNull>
+	    <isNotNull prepend="," property="serviceId">#serviceId#</isNotNull>
+	    <isNotNull prepend="," property="attrSpecId">#attrSpecId#</isNotNull>
+	    <isNotNull prepend="," property="serSpecVa">#serSpecVa#</isNotNull>
+	    <isNotNull prepend="," property="state">#state#</isNotNull>
+	  </dynamic>
+	  )
+  </insert>
+  <!--得到服务属性值-->
+	 <select id="getSerSpecVal" parameterClass="com.ailk.eaap.op2.bo.ServiceAtt" resultClass="java.lang.String" >	
+          select ser_spec_va from SERVICE_ATT where service_id=#serviceId# and attr_spec_id=#attrSpecId#
+	 </select>
+	 
+	 <!--修改服务属性值-->
+	<update  id="updateServiceApi" parameterClass="com.ailk.eaap.op2.bo.ServiceAtt">
+	  update SERVICE_ATT set ser_spec_va=#serSpecVa#  where service_id=#serviceId# and attr_spec_id=#attrSpecId#
+	 </update>
+	 
+	<!--服务的默认消息流更新为新创建的透传消息流 -->
+	<update  id="updateServiceDefaultMsgFlow" parameterClass="java.util.HashMap">
+	  update SERVICE set DEFAULT_MSG_FLOW = #messageFlowId# where SERVICE_ID in (select i.SERVICE_ID from SER_TECH_IMPL i where i.SER_TECH_IMPL_ID=#serTechImplId#)
+	 </update>
+	 
+	<select id="querySerInvokeIns" parameterClass="com.ailk.eaap.op2.bo.SerInvokeIns" resultClass="com.ailk.eaap.op2.bo.SerInvokeIns">
+		select SER_INVOKE_INS_ID as serInvokeInsId,MESSAGE_FLOW_ID as messageFlowId,COMPONENT_ID as componentId,SERVICE_ID as serviceId,
+				   SER_INVOKE_INS_NAME as serInvokeInsName,CREATE_DATE as createDate,STATE as state,LASTEST_DATE as lastestDate,SER_INVOKE_INS_DESC as serInvokeInsDesc
+		  from SER_INVOKE_INS
+		where STATE = 'A'  
+		 <dynamic>
+		 	<isNotNull prepend="and" property="componentId"> COMPONENT_ID=#componentId#</isNotNull>
+		 	<isNotNull prepend="and" property="serviceId"> SERVICE_ID=#serviceId# </isNotNull>
+		 </dynamic>
+	 </select>
+	 
+	 <select id="selectServiceList" resultClass="com.ailk.eaap.op2.bo.Service" parameterClass="java.util.HashMap">	
+		select 
+		SERVICE_ID							as serviceId,
+        SERVICE_VERSION     			as serviceVersion,
+        CONTRACT_VERSION_ID	as contractVersionId,
+        SERVICE_CN_NAME     		as serviceCnName,
+        SERVICE_EN_NAME     		as serviceEnName,
+        SERVICE_CODE					as serviceCode,
+        STATE									as state,
+        SERVICE_TYPE						as serviceType,
+        SERVICE_DESC					as serviceDesc,
+        CREATE_DATE						as createDate,
+        IS_PUBLISHED						as isPublished,
+        SERVICE_PRIORITY				as servicePriority,
+        SERVICE_TIMEOUT				as serviceTimeout,
+        DEFAULT_MSG_FLOW		as defaultMsgFlow
+		from SERVICE
+		<dynamic prepend="where">
+		    <isNotNull prepend="and" property="serviceId"> SERVICE_ID=#serviceId#</isNotNull>
+		    <isNotNull prepend="and" property="contractVersionId"> CONTRACT_VERSION_ID=#contractVersionId#</isNotNull>
+		    <isNotNull prepend="and" property="serviceCode"> SERVICE_CODE=#serviceCode#</isNotNull>
+		    <isNotNull prepend="and" property="state"> STATE=#state#</isNotNull>
+		</dynamic>
+		order by SERVICE_ID desc
+	 </select> 
+	 
+	<update  id="updateServiceStatus" parameterClass="java.util.HashMap">
+	   UPDATE service SET state = #serviceState# WHERE service_id = (SELECT service_id FROM ser_invoke_ins WHERE ser_invoke_ins_id = #ser_invoke_ins_id#)
+	</update>
+	
+	<select id="getServiceStatus" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+		SELECT state FROM service WHERE service_id  = (SELECT service_id FROM ser_invoke_ins WHERE ser_invoke_ins_id = #ser_invoke_ins_id#)
+	</select>
+</sqlMap>

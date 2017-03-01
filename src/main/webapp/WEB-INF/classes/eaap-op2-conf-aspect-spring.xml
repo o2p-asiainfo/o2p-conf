@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+						http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+       					http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+		
+     <bean id="cacheHolder" class="com.ailk.eaap.o2p.common.spring.config.ZKCfgCacheHolder">
+        <property name="ignoreResourceNotFound" value="true"></property>
+    </bean>
+		
+		<!--租户拦截器-->
+		<bean id="tenantAspectForSpring" class="com.ailk.eaap.op2.conf.util.TenantAspectForSpring" />
+		<aop:config proxy-target-class="true">
+			<aop:aspect ref="tenantAspectForSpring">
+				<aop:around method="aroundMethod"
+					pointcut="(execution(* com.ailk.eaap.op2.conf.*.dao.*.*(..)) || execution(* com.ailk.eaap.op2.dao.*.*(..)) || execution(* com.ailk.eaap.op2.settleRuleOrgRel.dao.*.*(..)) || execution(* com.ailk.eaap.op2.informationArchiving.dao.*.*(..)))" />
+			</aop:aspect>
+		</aop:config>
+		
+		<!--UTC时间处理拦截器-->
+		<bean id="utcAspectForSpring" class="com.ailk.eaap.op2.conf.util.UtcAspectForSpring"/>
+		<aop:config proxy-target-class="true">
+			<aop:aspect ref="utcAspectForSpring">
+				<aop:around method="aroundMethod" pointcut="
+				(execution(* com.ailk.eaap.op2.conf..*.*Dao.query*(..)) and !execution(* com.ailk.eaap.op2.conf.monitor.dao.MonitorViewDao.*(..)))
+				|| execution(* com.ailk.eaap.op2.conf..*.*Dao.select*(..))
+				|| execution(* com.ailk.eaap.op2.conf..*.*Dao.get*List(..))
+				|| execution(* com.ailk.eaap.op2.conf.proofmanage.dao.IProofEffectDao.getAllProofInstance(..))" /> 
+			</aop:aspect>
+		</aop:config>
+		
+		<!--国际化处理拦截器-->
+		<bean id="i18nAspectForCustom" class="com.ailk.eaap.op2.conf.util.I18nAspectForCustom" init-method="initialize"/>
+		
+		<bean id="i18nAspectForSpring" class="com.ailk.eaap.op2.conf.util.I18nAspectForSpring" init-method="initialize"/>
+		<aop:config proxy-target-class="true">
+			<aop:aspect ref="i18nAspectForSpring">
+				<aop:around method="aroundMethod" pointcut="
+				execution(* com.ailk.eaap.op2.dao.MainDataDaoImpl.*(..))
+				|| execution(* com.ailk.eaap.op2.conf.wsdlImport.dao.WsdlImportDaoImpl.getWsdlImportList(..))
+				|| execution(* com.ailk.eaap.op2.conf.contract.dao.ContractDao.getAllJavaField*(..))
+				|| execution(* com.ailk.eaap.op2.conf.contract.dao.ContractDao.selectConType(..))
+				|| execution(* com.ailk.eaap.op2.conf.mealrate.dao.MealRateDaoImpl.*(..))
+				|| execution(* com.ailk.eaap.op2.conf.crmorder.dao.CrmOrderDao.*(..))
+				|| execution(* com.ailk.eaap.op2.conf.authenticate.dao.AuthenticateDaoImpl.getProofTypeList(..))
+				|| execution(* com.ailk.eaap.op2.conf.proofmanage.dao.ProofEffectDaoImpl.*(..))
+				|| execution(* com.ailk.eaap.op2.conf.auditing.dao.CompRegAuditingDaoImpl.queryCompTypeNCList(..))
+				|| execution(* com.ailk.eaap.op2.conf.task.dao.TaskDaoImpl.getCycleList(..))
+				|| execution(* com.ailk.eaap.op2.conf.auditing.dao.OrgRegAuditingDaoImpl.*(..))"/> 
+			</aop:aspect>
+		</aop:config>
+
+</beans>

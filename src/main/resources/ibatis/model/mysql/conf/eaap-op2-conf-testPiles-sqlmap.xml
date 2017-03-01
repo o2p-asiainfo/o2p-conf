@@ -1,0 +1,1099 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "http://ibatis.apache.org/dtd/sql-map-2.dtd" "-//ibatis.apache.org//DTD SQL Map 2.0//EN">
+
+<sqlMap namespace="eaap-op2-conf-testPiles">
+
+<select id="selectTestSceneList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	select SCENE_ID, SCENE_NAME, STATE, REMARK, date_format(CREATE_DATE,'%Y-%m-%d %H:%i')  as CREATE_DATE from TEST_SCENE
+  <dynamic prepend="where">
+    <isNotNull prepend="and" property="sceneName"> SCENE_NAME like CONCAT('%',#sceneName#,'%')</isNotNull>
+    <isNotNull prepend="and" property="remark"> REMARK like CONCAT('%',#remark#,'%')</isNotNull>
+  </dynamic>
+   order by CREATE_DATE desc
+  Limit #pro_mysql#,#page_record#
+</select>
+<select id="selectTestSceneListCount" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+ select count(*) ALLNUM  from (
+		select SCENE_ID, SCENE_NAME, CREATE_DATE, STATE, REMARK from TEST_SCENE
+  <dynamic prepend="where">
+    <isNotNull prepend="and" property="sceneName"> SCENE_NAME like CONCAT('%',#sceneName#,'%')</isNotNull>
+    <isNotNull prepend="and" property="remark"> REMARK like CONCAT('%',#remark#,'%')</isNotNull>
+  </dynamic>
+  ) temp
+</select>
+
+<select id="queryTestScene" parameterClass="com.ailk.eaap.op2.bo.TestScene" resultClass="com.ailk.eaap.op2.bo.TestScene">
+	select SCENE_ID as sceneId, SCENE_NAME as sceneName, state, remark, CREATE_DATE as createDate, PERSON_ID as personId  from TEST_SCENE 
+  <dynamic prepend="where">
+    <isNotNull prepend="and" property="sceneId"> SCENE_ID=#sceneId#</isNotNull>
+  </dynamic>
+</select>
+
+<select id="getTestSceneRelaListBySceneId" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select r.rela_id, r.scene_id, r.obj_type, r.obj_id,
+			(IF(r.obj_type=0,(select s.service_en_name from service s where s.service_id =r.obj_id),(select i.ser_invoke_ins_name from ser_invoke_ins i where i.ser_invoke_ins_id =r.obj_id))) as obj_name,
+			r.mod_id,
+			(select m.mod_name from test_msg_mod m where m.mod_id=r.mod_id) as mod_name
+		from TEST_SCENE_RELA r
+	  <dynamic prepend="where">
+    		<isNotNull prepend="and" property="sceneId"> r.SCENE_ID=#sceneId#</isNotNull>
+	  </dynamic>
+	  order by r.rela_id
+</select>
+<select id="getTestSceneRelaListBySceneIdCount" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+ 	  select count(*) ALLNUM from TEST_SCENE_RELA
+	  <dynamic prepend="where">
+    		<isNotNull prepend="and" property="sceneId"> SCENE_ID=#sceneId#</isNotNull>
+	  </dynamic>
+</select>
+
+<delete id="testSceneRelaDel" parameterClass="com.ailk.eaap.op2.bo.TestSceneRela">
+	  delete from TEST_SCENE_RELA where RELA_ID = #relaId#
+</delete>
+
+<select id="getTestSceneRelaModList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select m.mod_id,m.mod_name,m.msg_format_type,m.request_msg_mod,m.response_msg_mod,m.remark, date_format(m.create_date,'%Y-%m-%d %H:%i') as create_date
+		 from test_msg_mod m,test_msg_mod_rela r
+		where m.mod_id = r.mod_id
+			and r.obj_type = #objType#
+			and r.obj_id = #objId#
+			<dynamic>
+				<isNotNull prepend="and" property="modName"> m.mod_name like CONCAT('%',#modName#,'%')</isNotNull>
+				<isNotNull prepend="and" property="msgFormatType"> m.msg_format_type=#msgFormatType#</isNotNull>
+			</dynamic>
+		order by create_date desc
+</select>
+<select id="getTestSceneRelaModListCount" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+ 	  select count(*) ALLNUM 
+		 from test_msg_mod m,test_msg_mod_rela r
+		where m.mod_id = r.mod_id
+			and r.obj_type = #objType#
+			and r.obj_id = #objId#
+			<dynamic>
+				<isNotNull prepend="and" property="modName"> m.mod_name like CONCAT('%',#modName#,'%')</isNotNull>
+				<isNotNull prepend="and" property="msgFormatType"> m.msg_format_type=#msgFormatType#</isNotNull>
+			</dynamic>
+</select>
+
+<update id="testSceneRelaUpdateMod" parameterClass="com.ailk.eaap.op2.bo.TestSceneRela">
+	  update TEST_SCENE_RELA
+	  <dynamic prepend="set">
+		    <isNotNull prepend="," property="modId">MOD_ID=#modId#</isNotNull>
+	  </dynamic>
+	  where RELA_ID=#relaId#
+</update>
+<delete id="testSceneRelaModDel" parameterClass="com.ailk.eaap.op2.bo.TestMsgModRela">
+	  delete from TEST_MSG_MOD_RELA where MOD_ID=#modId# and OBJ_TYPE=#objType# and OBJ_ID=#objId#
+</delete>
+<update id="testSceneRelaModUpdate" parameterClass="com.ailk.eaap.op2.bo.TestMsgMod">
+	  update TEST_MSG_MOD
+	  <dynamic prepend="set">
+		    <isNotNull prepend="," property="modName"> MOD_NAME=#modName#</isNotNull>
+		    <isNotNull prepend="," property="requestMsgMod"> REQUEST_MSG_MOD=#requestMsgMod#</isNotNull>
+		    <isNotNull prepend="," property="responseMsgMod"> RESPONSE_MSG_MOD=#responseMsgMod#</isNotNull>
+		    <isNotNull prepend="," property="msgFormatType"> MSG_FORMAT_TYPE=#msgFormatType#</isNotNull>
+		    <isNotNull prepend="," property="remark"> REMARK=#remark#</isNotNull>
+	  </dynamic>
+	  where MOD_ID=#modId#
+</update>
+ <insert id="testSceneRelaModAdd" parameterClass="com.ailk.eaap.op2.bo.TestMsgMod">
+	INSERT INTO TEST_MSG_MOD
+	(CREATE_DATE  
+	<dynamic >
+		<isNotNull prepend=","  property="modId">MOD_ID</isNotNull>
+		<isNotNull prepend=","  property="modName">MOD_NAME</isNotNull>
+		<isNotNull prepend=","  property="requestMsgMod">REQUEST_MSG_MOD</isNotNull>
+		<isNotNull prepend=","  property="responseMsgMod">RESPONSE_MSG_MOD</isNotNull>
+		<isNotNull prepend=","  property="msgFormatType">MSG_FORMAT_TYPE</isNotNull>
+		<isNotNull prepend=","  property="state">STATE</isNotNull>
+		<isNotNull prepend=","  property="remark">REMARK</isNotNull>
+		<isNotNull prepend=","  property="personId">PERSON_ID</isNotNull>
+	</dynamic>
+	) values (utc_timestamp()
+	<dynamic>
+		<isNotNull prepend="," property="modId">#modId#</isNotNull>
+		<isNotNull prepend="," property="modName">#modName#</isNotNull>
+		<isNotNull prepend="," property="requestMsgMod">#requestMsgMod#</isNotNull>
+		<isNotNull prepend="," property="responseMsgMod">#responseMsgMod#</isNotNull>
+		<isNotNull prepend="," property="msgFormatType">#msgFormatType#</isNotNull>
+		<isNotNull prepend="," property="state">#state#</isNotNull>
+		<isNotNull prepend="," property="remark">#remark#</isNotNull>
+		<isNotNull prepend="," property="personId">#personId#</isNotNull>
+	</dynamic>
+	)
+</insert>
+ <insert id="testSceneRelaModRelaAdd" parameterClass="com.ailk.eaap.op2.bo.TestMsgModRela">
+   INSERT INTO TEST_MSG_MOD_RELA
+   (CREATE_DATE  
+  <dynamic >
+	    <isNotNull prepend=","  property="modId">MOD_ID</isNotNull>
+	    <isNotNull prepend=","  property="objId">OBJ_ID</isNotNull>
+	    <isNotNull prepend=","  property="objType">OBJ_TYPE</isNotNull>
+	    <isNotNull prepend=","  property="personId">PERSON_ID</isNotNull>
+  </dynamic>
+  ) values (utc_timestamp()
+   <dynamic>
+	    <isNotNull prepend="," property="modId">#modId#</isNotNull>
+	    <isNotNull prepend="," property="objId">#objId#</isNotNull>
+	    <isNotNull prepend="," property="objType">#objType#</isNotNull>
+	    <isNotNull prepend="," property="personId">#personId#</isNotNull>
+   </dynamic>
+	)
+</insert>
+
+<select id="getTestSceneRelaObjList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	select t.obj_id, t.obj_type, t.obj_name from (
+		select r.obj_type, r.obj_id,
+			(IF(r.obj_type=0,(select s.service_en_name from service s where s.service_id =r.obj_id),(select i.ser_invoke_ins_name from ser_invoke_ins i where i.ser_invoke_ins_id =r.obj_id))) as obj_name 
+		 from test_msg_mod_rela r
+		group by r.obj_type, r.obj_id) t
+	<dynamic prepend="where">
+	    <isNotNull prepend="and" property="objType"> t.obj_type=#objType#</isNotNull>
+	    <isNotNull prepend="and" property="objName"> t.obj_name like CONCAT('%',#objName#,'%')</isNotNull>
+	</dynamic>
+  Limit #pro_mysql#,#page_record#
+</select>
+<select id="getTestSceneRelaObjListCount" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	select count(*) ALLNUM  from(
+		select r.obj_type, r.obj_id,
+			(IF(r.obj_type=0,(select s.service_en_name from service s where s.service_id =r.obj_id),(select i.ser_invoke_ins_name from ser_invoke_ins i where i.ser_invoke_ins_id =r.obj_id))) as obj_name 
+		 from test_msg_mod_rela r
+		group by r.obj_type, r.obj_id) t
+	<dynamic prepend="where">
+	    <isNotNull prepend="and" property="objType"> t.obj_type=#objType#</isNotNull>
+	    <isNotNull prepend="and" property="objName"> t.obj_name like like CONCAT('%',#objName#,'%')</isNotNull>
+	</dynamic>
+</select>
+
+<insert id="testSceneRelaInsert" parameterClass="com.ailk.eaap.op2.bo.TestSceneRela">
+  <selectKey resultClass="int" keyProperty="relaId">
+		SELECT nextval('SEQ_TEST_SCENE_RELA');
+  </selectKey>
+   INSERT INTO TEST_SCENE_RELA
+   (CREATE_DATE  
+  <dynamic >
+	    <isNotNull prepend=","  property="relaId">RELA_ID</isNotNull>
+	    <isNotNull prepend=","  property="sceneId">SCENE_ID</isNotNull>
+	    <isNotNull prepend=","  property="objId">OBJ_ID</isNotNull>
+	    <isNotNull prepend=","  property="objType">OBJ_TYPE</isNotNull>
+	    <isNotNull prepend=","  property="modId">MOD_ID</isNotNull>
+	    <isNotNull prepend=","  property="personId">PERSON_ID</isNotNull>
+  </dynamic>
+  ) values (utc_timestamp()
+   <dynamic>
+	    <isNotNull prepend=","  property="relaId">#relaId#</isNotNull>
+	    <isNotNull prepend=","  property="sceneId">#sceneId#</isNotNull>
+	    <isNotNull prepend=","  property="objId">#objId#</isNotNull>
+	    <isNotNull prepend=","  property="objType">#objType#</isNotNull>
+	    <isNotNull prepend=","  property="modId">#modId#</isNotNull>
+	    <isNotNull prepend=","  property="personId">#personId#</isNotNull>
+   </dynamic>
+	)
+</insert>
+
+
+
+<select id="selectTestTaskList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	select t.TASK_ID, t.TASK_NAME, t.REMARK, 
+		 (select group_concat(s.scene_name separator ",") from test_task_scene ts,test_scene s WHERE s.scene_id = ts.SCENE_ID and ts.task_id= t.TASK_ID) as SCENE_NAME,
+		 (select group_concat(s.user_name separator ",") from test_task_user u,vbpm_user_uap s WHERE s.user_id = u.TEST_USER_ID and u.TASK_ID= t.TASK_ID) as TEST_USER_NAME 
+	from TEST_TASK t
+  <dynamic prepend="where">
+     <isNotNull prepend="and" property="taskName"> t.TASK_NAME like CONCAT('%',#taskName#,'%')</isNotNull>
+     <isNotNull prepend="and" property="remark"> t.REMARK like CONCAT('%',#remark#,'%')</isNotNull>
+     <isNotNull prepend="and" property="sceneName"> t.TASK_ID in (select ts.TASK_ID from TEST_TASK_SCENE ts,TEST_SCENE s WHERE s.SCENE_ID = ts.SCENE_ID and s.SCENE_NAME  like CONCAT('%',#sceneName#,'%'))</isNotNull>
+     <isNotNull prepend="and" property="testUserName"> t.TASK_ID in (select u.TASK_ID from test_task_user u,vbpm_user_uap s WHERE s.user_id = u.TEST_USER_ID and s.user_name  like CONCAT('%',#testUserName#,'%'))</isNotNull>
+  </dynamic>
+  	order by t.CREATE_DATE desc
+    Limit #pro_mysql#,#page_record#
+</select>
+<select id="selectTestTaskListCount" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+ select count(*) allnum  from ( 
+  select t.TASK_ID 
+    from TEST_TASK t
+  <dynamic prepend="where">
+     <isNotNull prepend="and" property="taskName"> t.TASK_NAME like CONCAT('%',#taskName#,'%')</isNotNull>
+     <isNotNull prepend="and" property="remark"> t.REMARK like CONCAT('%',#remark#,'%')</isNotNull>
+     <isNotNull prepend="and" property="sceneName"> t.TASK_ID in (select ts.TASK_ID from TEST_TASK_SCENE ts,TEST_SCENE s WHERE s.SCENE_ID = ts.SCENE_ID and s.SCENE_NAME  like CONCAT('%',#sceneName#,'%')) </isNotNull>
+     <isNotNull prepend="and" property="testUserName"> t.TASK_ID in (select u.TASK_ID from test_task_user u,vbpm_user_uap s WHERE s.user_id = u.TEST_USER_ID and s.user_name  like CONCAT('%',#testUserName#,'%'))</isNotNull>
+  </dynamic>
+  ) temp
+</select>
+
+<select id="queryTestTask" parameterClass="com.ailk.eaap.op2.bo.TestTask" resultClass="com.ailk.eaap.op2.bo.TestTask">
+	select TASK_ID taskId, TASK_NAME taskName, PROC_ID procId, REMARK remark, CREATE_DATE createDate, PERSON_ID personId from TEST_TASK 
+  <dynamic prepend="where">
+    <isNotNull prepend="and" property="taskId"> TASK_ID=#taskId#</isNotNull>
+  </dynamic>
+</select>
+
+<select id="queryTestTaskScene" parameterClass="com.ailk.eaap.op2.bo.TestTaskScene" resultClass="com.ailk.eaap.op2.bo.TestTaskScene"> 
+	select TASK_ID as taskId, SCENE_ID as sceneId from TEST_TASK_SCENE where TASK_ID=#taskId# 
+</select>
+
+<select id="queryTestTaskUsers" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	SELECT group_concat(p.user_id separator ",") USER_ID, group_concat(p.user_name separator ",") USER_NAME
+	    from test_task_user u, vbpm_user_uap p
+	  where p.user_id = u.TEST_USER_ID
+	      and u.TASK_ID= #taskId# 
+</select>
+
+<insert id="testTaskUserInsert" parameterClass="com.ailk.eaap.op2.bo.TestTaskUser">
+	insert into TEST_TASK_USER (TASK_ID, TEST_USER_ID)values(#taskId#, #testUserId#)
+</insert>
+<delete id="testTaskUserDel" parameterClass="com.ailk.eaap.op2.bo.TestTaskUser">
+	delete from TEST_TASK_USER where TASK_ID=#taskId# 
+</delete>
+
+
+
+<select id="selectTestSceneListByTaskId" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT e.endpoint_id,e.endpoint_name,
+			(select p.tech_impl_id 
+			from ENDPOINT_ATTR_VALUE v,ser_tech_impl l,tech_impl p
+			where v.endpoint_id = e.endpoint_id
+			and v.attr_value = l.ser_tech_impl_id
+			and l.tech_impl_id = p.tech_impl_id) as tech_impl_id,
+			(select p.tech_impl_name
+			from ENDPOINT_ATTR_VALUE v,ser_tech_impl l,tech_impl p
+			where v.endpoint_id = e.endpoint_id
+			and v.attr_value = l.ser_tech_impl_id
+			and l.tech_impl_id = p.tech_impl_id) as tech_impl_name,
+			(SELECT s.scene_name from test_scene s,test_task_scene t
+				where s.scene_id = t.SCENE_ID
+				and t.TASK_ID = #taskId#
+				and t.ENDPOINT_ID = e.endpoint_id) as scene_name
+		from ENDPOINT e 
+		where FIND_IN_SET(e.endpoint_id,getServiceRouteConfigChildLst(#firstEndpointId#))
+      Limit #pro_mysql#,#page_record#
+</select>
+<select id="selectTestSceneListByTaskIdCount" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+ select count(*) ALLNUM  from (
+		SELECT e.endpoint_id
+		from ENDPOINT e 
+		where FIND_IN_SET(e.endpoint_id,getServiceRouteConfigChildLst(#firstEndpointId#))
+  ) temp
+</select>
+
+
+
+
+
+<select id="queryTestTestingList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	select r.TEST_ID, t.TASK_ID, t.TASK_NAME, 
+		 (select group_concat(s.scene_name separator ",") from test_task_scene ts,test_scene s WHERE s.scene_id = ts.SCENE_ID and ts.task_id= t.TASK_ID) as SCENE_NAME, 
+		 u.USER_NAME as TEST_USER_NAME, 
+		 (select date_format(l.TEST_DATE,'%Y-%m-%d %H:%i') from test_result_log l where l.LOG_ID=(select max(ll.LOG_ID) from test_result_log ll where ll.TEST_ID=r.TEST_ID)) as TEST_DATE,
+		 (SELECT COUNT(*) from test_result_log l where l.TEST_ID =r.TEST_ID) as LOG_COUNT
+	from TEST_TASK t,TEST_RESULT r, VBPM_USER_UAP u
+	  where t.TASK_ID = r.TASK_ID
+	    and u.user_id = r.TEST_USER_ID
+  <dynamic>
+     <isNotNull prepend="and" property="taskName"> t.TASK_NAME like CONCAT('%',#taskName#,'%')</isNotNull>
+     <isNotNull prepend="and" property="remark"> t.REMARK like CONCAT('%',#remark#,'%')</isNotNull>
+     <isNotNull prepend="and" property="sceneName"> t.TASK_ID in (select ts.TASK_ID from TEST_TASK_SCENE ts,TEST_SCENE s WHERE s.SCENE_ID = ts.SCENE_ID and s.SCENE_NAME  like CONCAT('%',#sceneName#,'%')) </isNotNull>
+     <isNotNull prepend="and" property="testUserName"> u.USER_NAME like CONCAT('%',#testUserName#,'%')</isNotNull>
+     <isNotNull prepend="and" property="testUserId"> u.USER_ID = #testUserId#</isNotNull>
+  </dynamic>
+  	order by t.CREATE_DATE desc
+    Limit #pro_mysql#,#page_record#
+</select>
+<select id="queryTestTestingListCount" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+ select count(*) allnum  from ( 
+	select r.TEST_ID
+	from TEST_TASK t,test_result r, vbpm_user_uap u
+	  where t.TASK_ID = r.TASK_ID
+	    and u.user_id = r.TEST_USER_ID
+  <dynamic>
+     <isNotNull prepend="and" property="taskName"> t.TASK_NAME like CONCAT('%',#taskName#,'%')</isNotNull>
+     <isNotNull prepend="and" property="remark"> t.REMARK like CONCAT('%',#remark#,'%')</isNotNull>
+     <isNotNull prepend="and" property="sceneName"> t.TASK_ID in (select ts.TASK_ID from TEST_TASK_SCENE ts,TEST_SCENE s WHERE s.SCENE_ID = ts.SCENE_ID and s.SCENE_NAME  like CONCAT('%',#sceneName#,'%')) </isNotNull>
+     <isNotNull prepend="and" property="testUserName"> u.USER_NAME like CONCAT('%',#testUserName#,'%')</isNotNull>
+     <isNotNull prepend="and" property="testUserId"> u.USER_ID = #testUserId#</isNotNull>
+  </dynamic>
+  ) temp
+</select>
+
+<select id="selectTestingSceneListByTaskId" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	  SELECT e.ENDPOINT_ID,e.ENDPOINT_NAME,
+			(select p.tech_impl_id 
+				from endpoint_attr_value v,ser_tech_impl l,tech_impl p
+				where v.endpoint_id = e.endpoint_id
+				and v.attr_value = l.ser_tech_impl_id
+				and l.tech_impl_id = p.tech_impl_id) as TECH_IMPL_ID,
+			(select p.tech_impl_name
+				from endpoint_attr_value v,ser_tech_impl l,tech_impl p
+				where v.endpoint_id = e.endpoint_id
+				and v.attr_value = l.ser_tech_impl_id
+				and l.tech_impl_id = p.tech_impl_id) as TECH_IMPL_NAME,
+			(select c.name
+				from endpoint_attr_value v,ser_tech_impl l,tech_impl p,component c
+				where v.endpoint_id = e.endpoint_id
+				and v.attr_value = l.ser_tech_impl_id
+				and l.tech_impl_id = p.tech_impl_id
+				and c.component_id = p.component_id) as COMPONENT_NAME,
+			(select c.comm_pro_name
+				from endpoint_attr_value v,ser_tech_impl l,tech_impl p,comm_protocal c
+				where v.endpoint_id = e.endpoint_id
+				and v.attr_value = l.ser_tech_impl_id
+				and l.tech_impl_id = p.tech_impl_id
+				and c.comm_pro_cd = p.comm_pro_cd) as COMM_PRO_NAME,
+			(select a.attr_spec_value
+				from endpoint_attr_value v,ser_tech_impl l,tech_impl p,tech_imp_att a
+				where v.endpoint_id = e.endpoint_id
+				and v.attr_value = l.ser_tech_impl_id
+				and l.tech_impl_id = p.tech_impl_id
+				and a.tech_impl_id = p.tech_impl_id
+				and a.attr_spec_id = 1) as ADDRESS,
+			(select s.scene_ID from test_scene s,test_task_scene t
+				where s.scene_id = t.scene_id
+				and t.task_id = t.task_id
+				and t.endpoint_id = e.endpoint_id) as SCENE_ID,
+			(select s.scene_name from test_scene s,test_task_scene t
+				where s.scene_id = t.scene_id
+				and t.task_id = t.task_id
+				and t.endpoint_id = e.endpoint_id) as SCENE_NAME,
+			(select s.request_message_mod from test_scene s,test_task_scene t
+				where s.scene_id = t.scene_id
+				and t.task_id = t.task_id
+				and t.endpoint_id = e.endpoint_id) as REQUEST_MESSAGE,
+			(select s.request_message_mod from test_scene s,test_task_scene t
+				where s.scene_id = t.scene_id
+				and t.task_id = t.task_id
+				and t.endpoint_id = e.endpoint_id) as REQUEST_MESSAGE_MOD 
+		from ENDPOINT e,TEST_TASK t,SER_INVOKE_INS i,MESSAGE_FLOW m 
+	  where FIND_IN_SET(e.endpoint_id,getServiceRouteConfigChildLst(m.first_endpoint_id))
+			and m.message_flow_id = i.message_flow_id
+			and i.ser_invoke_ins_id = t.ser_invoke_ins_id 
+	  		and t.task_id=#taskId#
+</select>
+
+
+<select id="selectTestResultsList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	select l.LOG_ID, r.TEST_ID, t.TASK_ID, t.TASK_NAME,
+		 (select group_concat(s.scene_name separator ",") from test_task_scene ts,test_scene s WHERE s.scene_id = ts.SCENE_ID and ts.task_id= t.TASK_ID) as SCENE_NAME, 
+		 u.USER_NAME as TEST_USER_NAME, 
+		  date_format(l.TEST_DATE,'%Y-%m-%d %H:%i:%s') as TEST_DATE
+	from TEST_TASK t, TEST_RESULT r, VBPM_USER_UAP u, test_result_log l
+	  where t.TASK_ID = r.TASK_ID
+	    and u.user_id = r.TEST_USER_ID
+			and l.TEST_ID = r.TEST_ID
+	  <dynamic>
+	     <isNotNull prepend="and" property="taskName"> t.TASK_NAME like CONCAT('%',#taskName#,'%')</isNotNull>
+	     <isNotNull prepend="and" property="remark"> t.REMARK like CONCAT('%',#remark#,'%')</isNotNull>
+	     <isNotNull prepend="and" property="sceneName"> t.TASK_ID in (select ts.TASK_ID from TEST_TASK_SCENE ts,TEST_SCENE s WHERE s.SCENE_ID = ts.SCENE_ID and s.SCENE_NAME  like CONCAT('%',#sceneName#,'%')) </isNotNull>
+	     <isNotNull prepend="and" property="testUserName"> u.USER_NAME like CONCAT('%',#testUserName#,'%')</isNotNull>
+	  </dynamic>
+  	order by TEST_DATE desc
+    Limit #pro_mysql#,#page_record#
+</select>
+<select id="selectTestResultsListCount" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	select count(l.LOG_ID) allnum
+	from TEST_TASK t,TEST_RESULT r, VBPM_USER_UAP u, test_result_log l
+	  where t.TASK_ID = r.TASK_ID
+		and u.user_id = r.TEST_USER_ID
+		and l.TEST_ID = r.TEST_ID
+	  <dynamic>
+	     <isNotNull prepend="and" property="taskName"> t.TASK_NAME like CONCAT('%',#taskName#,'%')</isNotNull>
+	     <isNotNull prepend="and" property="remark"> t.REMARK like CONCAT('%',#remark#,'%')</isNotNull>
+	     <isNotNull prepend="and" property="sceneName"> t.TASK_ID in (select ts.TASK_ID from TEST_TASK_SCENE ts,TEST_SCENE s WHERE s.SCENE_ID = ts.SCENE_ID and s.SCENE_NAME  like CONCAT('%',#sceneName#,'%')) </isNotNull>
+	     <isNotNull prepend="and" property="testUserName"> u.USER_NAME like CONCAT('%',#testUserName#,'%')</isNotNull>
+	  </dynamic>
+</select>
+
+
+
+
+<select id="queryTestSceneRequestMessageMod" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+	select REQUEST_MESSAGE_MOD from TEST_SCENE 
+  <dynamic prepend="where">
+    <isNotNull prepend="and" property="sceneId"> SCENE_ID=#sceneId#</isNotNull>
+  </dynamic>
+</select>
+
+ <select id="selectTestSceneSeq" resultClass="java.lang.String">
+   SELECT nextval('SEQ_TEST_SCENE') from dual 
+</select>
+ <select id="selectTestTaskSeq" resultClass="java.lang.String">
+   SELECT nextval('SEQ_TEST_TASK') from dual 
+</select>
+ <select id="selectTestResultSeq" resultClass="java.lang.String">
+   SELECT nextval('SEQ_TEST_RESULT') from dual 
+</select>
+ <select id="selectTestMsgModSeq" resultClass="java.lang.String">
+   SELECT nextval('SEQ_TEST_MSG_MOD') from dual 
+</select>
+ <select id="selectTestResultLogSeq" resultClass="java.lang.String">
+   SELECT nextval('SEQ_TEST_RESULT_LOG') from dual 
+</select>
+
+
+ <insert id="insertTestScene" parameterClass="com.ailk.eaap.op2.bo.TestScene">
+   INSERT INTO test_scene
+   (CREATE_DATE  
+  <dynamic >
+	    <isNotNull prepend=","  property="sceneId">SCENE_ID</isNotNull>
+	    <isNotNull prepend="," property="sceneName">SCENE_NAME</isNotNull>
+	    <isNotNull prepend="," property="state">STATE</isNotNull>
+	    <isNotNull prepend="," property="remark">REMARK</isNotNull>
+  </dynamic>
+   ) values (utc_timestamp()
+   <dynamic>
+	    <isNotNull prepend="," property="sceneId">#sceneId#</isNotNull>
+	    <isNotNull prepend="," property="sceneName">#sceneName#</isNotNull>
+	    <isNotNull prepend="," property="state">#state#</isNotNull>
+	    <isNotNull prepend="," property="remark">#remark#</isNotNull>
+   </dynamic>
+    )
+</insert>
+<update id="updateTestScene" parameterClass="com.ailk.eaap.op2.bo.TestScene">
+  update TEST_SCENE
+  <dynamic prepend="set">
+	    <isNotNull prepend="," property="sceneName">SCENE_NAME=#sceneName#</isNotNull>
+	    <isNotNull prepend="," property="remark">REMARK=#remark#</isNotNull>
+  </dynamic>
+  <dynamic prepend="where">
+    	<isNotNull prepend="and" property="sceneId"> SCENE_ID=#sceneId#</isNotNull>
+  </dynamic>
+</update>
+<delete id="deleteTestScene" parameterClass="com.ailk.eaap.op2.bo.TestScene">
+	  delete from TEST_SCENE where SCENE_ID=#sceneId# 
+</delete>
+<delete id="testSceneListDelete" parameterClass="com.ailk.eaap.op2.bo.TestScene">
+	  delete from TEST_SCENE where  SCENE_ID=#sceneId# 
+</delete>
+
+<select id="selectSerInvokeIns" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+	  select serii.* ,
+	 ser.service_cn_name sername,
+	 comp.name compname,
+	 org.name orgname,
+	 mf.message_flow_name mfname,
+     mf.first_endpoint_id
+	from ser_invoke_ins serii,
+	   service ser,
+	   component comp,
+	   org  org,
+	   message_flow mf
+	   where serii.service_id = ser.service_id
+	   and serii.component_id = comp.component_id
+	   and comp.org_id = org.org_id
+	   and serii.message_flow_id = mf.message_flow_id
+	   and serii.ser_invoke_ins_id =#serInvokeInsId#
+</select>
+
+<insert id="insertTestTask" parameterClass="com.ailk.eaap.op2.bo.TestTask">
+   insert into TEST_TASK
+   (CREATE_DATE  
+  <dynamic >
+	    <isNotNull prepend=","  property="taskId">TASK_ID</isNotNull>
+	    <isNotNull prepend="," property="taskName">TASK_NAME</isNotNull>
+	    <isNotNull prepend="," property="procId">PROC_ID</isNotNull>
+	    <isNotNull prepend="," property="remark">REMARK</isNotNull>
+	    <isNotNull prepend="," property="personId">PERSON_ID</isNotNull>
+  </dynamic>
+   ) values (utc_timestamp()
+   <dynamic>
+	    <isNotNull prepend="," property="taskId">#taskId#</isNotNull>
+	    <isNotNull prepend="," property="taskName">#taskName#</isNotNull>
+	    <isNotNull prepend="," property="procId">#procId#</isNotNull>
+	    <isNotNull prepend="," property="remark">#remark#</isNotNull>
+	    <isNotNull prepend="," property="personId">#personId#</isNotNull>
+   </dynamic>
+    )
+</insert>
+<update id="updateTestTask" parameterClass="com.ailk.eaap.op2.bo.TestTask">
+  update TEST_TASK 
+  <dynamic prepend="set">
+	    <isNotNull prepend="," property="taskName"> TASK_NAME=#taskName#</isNotNull>
+	    <isNotNull prepend="," property="procId"> PROC_ID=#procId#</isNotNull>
+	    <isNotNull prepend="," property="remark"> REMARK=#remark#</isNotNull>
+  </dynamic>
+  where TASK_ID=#taskId# 
+</update>
+
+<delete id="testTaskListDelete" parameterClass="com.ailk.eaap.op2.bo.TestTask">
+	  delete from TEST_TASK where TASK_ID=#taskId# 
+</delete>
+<delete id="testTaskSceneDelete" parameterClass="com.ailk.eaap.op2.bo.TestTask">
+	  delete from TEST_TASK_SCENE where TASK_ID=#taskId# 
+</delete>
+<delete id="testTaskUserDelete" parameterClass="com.ailk.eaap.op2.bo.TestTask">
+	  delete from TEST_TASK_USER where TASK_ID=#taskId# 
+</delete>
+
+
+<delete id="testTaskSceneDel" parameterClass="com.ailk.eaap.op2.bo.TestTaskScene">
+	  delete from TEST_TASK_SCENE where TASK_ID=#taskId# 
+</delete>
+<insert id="testTaskSceneInsert" parameterClass="com.ailk.eaap.op2.bo.TestTaskScene">
+   insert into TEST_TASK_SCENE (TASK_ID, SCENE_ID)values(#taskId#, #sceneId#)
+</insert>
+
+<select id="queryTestMsgInfo" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+	select t.task_id,t.task_name,f.message_flow_name,i.ser_invoke_ins_name,c.name as component_name
+	    from test_task t, ser_invoke_ins i, message_flow f,component c
+	  where i.ser_invoke_ins_id = t.ser_invoke_ins_id
+	     and f.message_flow_id = i.message_flow_id
+	     and c.component_id = i.component_id
+	     and t.task_id = #taskId#
+</select>
+
+
+<insert id="testResultInsert" parameterClass="com.ailk.eaap.op2.bo.TestResult" >
+  <selectKey resultClass="int" keyProperty="testId">
+		select nextval('SEQ_TEST_RESULT');
+  </selectKey>
+   Insert into TEST_RESULT (  
+  <dynamic >
+	    <isNotNull property="testId">TEST_ID</isNotNull>
+	    <isNotNull prepend=","  property="taskId">TASK_ID</isNotNull>
+	    <isNotNull prepend=","  property="testUserId">TEST_USER_ID</isNotNull>
+	    <isNotNull prepend=","  property="procId">PROC_ID</isNotNull>
+  </dynamic>
+   ) values (
+   <dynamic>
+	    <isNotNull property="testId">#testId#</isNotNull>
+	    <isNotNull prepend=","  property="taskId">#taskId#</isNotNull>
+	    <isNotNull prepend=","  property="testUserId">#testUserId#</isNotNull>
+	    <isNotNull prepend=","  property="procId">#procId#</isNotNull>
+   </dynamic>
+    )
+</insert>
+<update id="updateTestResult"  parameterClass="java.util.HashMap" >
+  update TEST_RESULT 
+  <dynamic prepend="set">
+	    <isNotNull prepend="," property="procId"> PROC_ID = #procId#</isNotNull>
+  </dynamic>
+  <dynamic prepend="where">
+    	<isNotNull prepend="and" property="testId"> TEST_ID=#testId#</isNotNull>
+  </dynamic>
+</update>
+<delete id="testResultDel" parameterClass="com.ailk.eaap.op2.bo.TestResult">
+	  delete from TEST_RESULT where TEST_ID=#testId#
+</delete>
+<select id="queryTestResultInfoMap" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	select r.TEST_ID, a.TASK_ID, a.TASK_NAME, a.REMARK, u.USER_NAME as TEST_USER_NAME,
+		(select group_concat(s.scene_name separator ",") from test_task_scene ts,test_scene s WHERE s.scene_id = ts.SCENE_ID and ts.task_id= r.TASK_ID) as SCENE_NAME,
+		(select max(l.LOG_ID) from test_result_log l where l.TEST_ID=r.TEST_ID) as LOG_ID,
+		(select date_format(l.TEST_DATE,'%Y-%m-%d %H:%i') from test_result_log l where l.LOG_ID=(select max(ll.LOG_ID) from test_result_log ll where ll.TEST_ID=r.TEST_ID)) as TEST_DATE
+	  from TEST_RESULT r, TEST_TASK a, VBPM_USER_UAP u
+	 where a.TASK_ID = r.TASK_ID
+	   and u.USER_ID = r.TEST_USER_ID
+	   and r.TEST_ID= #testId# 
+</select>
+<select id="queryTestResultSceneObjList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	select r.test_id,r.task_id, s.scene_id, s.scene_name, sr.obj_id, sr.obj_type,sr.rela_id,
+			(if(sr.obj_type=0,(select s.service_en_name from service s where s.service_id =sr.obj_id),(select i.ser_invoke_ins_name from ser_invoke_ins i where i.ser_invoke_ins_id =sr.obj_id))) as obj_name,
+			m.mod_id, m.request_msg_mod, m.response_msg_mod,
+			(select max(l.LOG_ID) from test_result_log l where l.TEST_ID=r.TEST_ID) as LOG_ID,
+			(select lm.REQUEST_MSG from TEST_RESULT_LOG_MSG lm where lm.RELA_ID = sr.rela_id and lm.LOG_ID=(select max(ll.LOG_ID) from test_result_log ll where ll.TEST_ID=r.TEST_ID)) as REQUEST_MSG,
+			(select lm.RESPONSE_MSG from TEST_RESULT_LOG_MSG lm where lm.RELA_ID = sr.rela_id and lm.LOG_ID=(select max(ll.LOG_ID) from test_result_log ll where ll.TEST_ID=r.TEST_ID)) as RESPONSE_MSG, 
+			(if(sr.obj_type=0,(
+				SELECT o.name 
+				from org o, component c, tech_impl i, ser_tech_impl t
+				where o.org_id = c.org_id 
+				 and c.component_id = i.component_id
+				 and i.tech_impl_id = t.tech_impl_id
+				 and t.service_id = sr.obj_id
+			),'')) as ORG_NAME,
+			(if(sr.obj_type=0,(
+				SELECT c.name 
+				from component c, tech_impl i, ser_tech_impl t
+				where c.component_id = i.component_id
+				 and i.tech_impl_id = t.tech_impl_id
+				 and t.service_id = sr.obj_id
+			),'')) as COMPONENT_NAME,
+			(if(sr.obj_type=0,(
+				SELECT i.tech_impl_name 
+				from tech_impl i, ser_tech_impl t
+				where i.tech_impl_id = t.tech_impl_id
+				 and t.service_id = sr.obj_id
+			),'')) as TECH_IMPL_NAME,
+			(if(sr.obj_type=0,(
+				select p.comm_pro_name
+					from service s,ser_tech_impl l,tech_impl i,comm_protocal p
+				 where s.service_id = l.service_id
+					and l.tech_impl_id = i.tech_impl_id
+					and p.comm_pro_cd = i.comm_pro_cd
+					and s.service_id = sr.obj_id
+			),'')) as COMM_PRO_NAME,
+			(if(sr.obj_type=0,(
+				select a.attr_spec_value 
+				  from service s,ser_tech_impl l,tech_impl i,tech_imp_att a
+				 where s.service_id = l.service_id
+					and l.tech_impl_id = i.tech_impl_id
+					and a.attr_spec_id=1 
+					and a.tech_impl_id = i.tech_impl_id
+					and s.service_id = sr.obj_id
+				),(SELECT concat(#basePath#, a.api_method, '?SrcSysCode=',  i.component_id) 
+					  from SER_INVOKE_INS i,api a 
+					 where a.service_id = i.service_id 
+					   and i.ser_invoke_ins_id = sr.obj_id
+				))) as ADDRESS
+	  from test_result r,test_task_scene ts, test_scene s,test_scene_rela sr, test_msg_mod m
+	where ts.task_id = r.task_id
+	   and s.scene_id = ts.scene_id
+	   and sr.scene_id = s.scene_id
+	   and m.mod_id = sr.mod_id
+	   and r.test_id = #testId#
+</select>
+
+<insert id="testResultLogInsert" parameterClass="com.ailk.eaap.op2.bo.TestResultLog">
+	insert into TEST_RESULT_LOG (LOG_ID, TEST_ID, TEST_DATE)values(#logId#, #testId#,utc_timestamp())
+</insert>
+<insert id="testResultLogMsgInsert" parameterClass="com.ailk.eaap.op2.bo.TestResultLogMsg">
+	insert into TEST_RESULT_LOG_MSG (LOG_ID, RELA_ID, REQUEST_MSG, RESPONSE_MSG)values(#logId#, #relaId#, #requestMsg#, #responseMsg#)
+</insert>
+<delete id="testResultLogMsgDel" parameterClass="com.ailk.eaap.op2.bo.TestResultLogMsg">
+	delete from TEST_RESULT_LOG_MSG where LOG_ID=#logId# and RELA_ID=#relaId#
+</delete>
+<select id="queryTestResultLogInfoMap" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	select l.LOG_ID, r.TEST_ID, a.TASK_ID, a.TASK_NAME, a.REMARK, u.USER_NAME as TEST_USER_NAME,
+		(select group_concat(s.scene_name separator ",") from test_task_scene ts,test_scene s WHERE s.scene_id = ts.SCENE_ID and ts.task_id= r.TASK_ID) as SCENE_NAME,
+		date_format(l.TEST_DATE,'%Y-%m-%d %H:%i') as TEST_DATE
+	  from TEST_RESULT r, TEST_TASK a, VBPM_USER_UAP u, test_result_log l
+	 where a.TASK_ID = r.TASK_ID
+		and u.USER_ID = r.TEST_USER_ID
+		and r.TEST_ID = l.TEST_ID
+		and l.LOG_ID = #logId# 
+</select>
+<select id="queryTestResultLogSceneObjList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	select l.LOG_ID, r.test_id,r.task_id, s.scene_id, s.scene_name, sr.rela_id, sr.obj_type, sr.obj_id, 
+			(if(sr.obj_type=0,(select s.service_en_name from service s where s.service_id =sr.obj_id),(select i.ser_invoke_ins_name from ser_invoke_ins i where i.ser_invoke_ins_id =sr.obj_id))) as obj_name,
+			(if(sr.obj_type=0,(select p.comm_pro_name from tech_impl i,COMM_PROTOCAL p where p.comm_pro_cd = i.comm_pro_cd AND i.tech_impl_id =sr.obj_id),'')) as COMM_PRO_NAME,
+			(select lm.REQUEST_MSG  from TEST_RESULT_LOG_MSG lm where lm.RELA_ID = sr.rela_id and lm.LOG_ID=l.LOG_ID) as REQUEST_MSG,
+			(select lm.RESPONSE_MSG from TEST_RESULT_LOG_MSG lm where lm.RELA_ID = sr.rela_id and lm.LOG_ID=l.LOG_ID) as RESPONSE_MSG,
+			(if(sr.obj_type=0,(
+				SELECT o.name 
+				from org o, component c, tech_impl i, ser_tech_impl t
+				where o.org_id = c.org_id 
+				 and c.component_id = i.component_id
+				 and i.tech_impl_id = t.tech_impl_id
+				 and t.service_id = sr.obj_id
+			),'')) as ORG_NAME,
+			(if(sr.obj_type=0,(
+				SELECT c.name 
+				from component c, tech_impl i, ser_tech_impl t
+				where c.component_id = i.component_id
+				 and i.tech_impl_id = t.tech_impl_id
+				 and t.service_id = sr.obj_id
+			),'')) as COMPONENT_NAME,
+			(if(sr.obj_type=0,(
+				SELECT i.tech_impl_name 
+				from tech_impl i, ser_tech_impl t
+				where i.tech_impl_id = t.tech_impl_id
+				 and t.service_id = sr.obj_id
+			),'')) as TECH_IMPL_NAME,
+			(if(sr.obj_type=0,(
+				select p.comm_pro_name
+					from service s,ser_tech_impl l,tech_impl i,comm_protocal p
+				 where s.service_id = l.service_id
+					and l.tech_impl_id = i.tech_impl_id
+					and p.comm_pro_cd = i.comm_pro_cd
+					and s.service_id = sr.obj_id
+			),'')) as COMM_PRO_NAME,
+			(if(sr.obj_type=0,(
+				select a.attr_spec_value 
+				  from service s,ser_tech_impl l,tech_impl i,tech_imp_att a
+				 where s.service_id = l.service_id
+					and l.tech_impl_id = i.tech_impl_id
+					and a.attr_spec_id=1 
+					and a.tech_impl_id = i.tech_impl_id
+					and s.service_id = sr.obj_id
+				),(SELECT concat(#basePath#, a.api_method, '?SrcSysCode=',  i.component_id) 
+					  from SER_INVOKE_INS i,api a 
+					 where a.service_id = i.service_id 
+					   and i.ser_invoke_ins_id = sr.obj_id
+				))) as ADDRESS
+	  from test_result r,test_task_scene ts, test_scene s,test_scene_rela sr, test_result_log l 
+	where ts.task_id = r.task_id
+	   and s.scene_id = ts.scene_id
+	   and sr.scene_id = s.scene_id 
+	   and r.TEST_ID = l.TEST_ID
+	   and l.LOG_ID = #logId# 
+</select>
+
+<select id="queryTestResult" parameterClass="com.ailk.eaap.op2.bo.TestResult" resultClass="com.ailk.eaap.op2.bo.TestResult">
+	select TEST_ID as testId, TASK_ID as taskId, TEST_USER_ID as testUserId, PROC_ID as procId from TEST_RESULT 
+  <dynamic prepend="where">
+    <isNotNull prepend="and" property="testId"> TEST_ID=#testId#</isNotNull>
+  </dynamic>
+</select>
+
+<select id="queryTestResultInfo" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+	select r.test_id, t.task_id,t.task_name,f.message_flow_name,i.ser_invoke_ins_name,c.name as component_name 
+	    from test_task t, ser_invoke_ins i, message_flow f,component c,test_result r
+	  where i.ser_invoke_ins_id = t.ser_invoke_ins_id
+	     and f.message_flow_id = i.message_flow_id
+	     and c.component_id = i.component_id
+	     and t.task_id = r.task_id
+		 and r.test_id = #testId#
+</select>
+
+
+<select id="queryTestResultSceneListByTestId" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	  SELECT e.ENDPOINT_ID,e.ENDPOINT_NAME,
+			(select p.tech_impl_id 
+				from endpoint_attr_value v,ser_tech_impl l,tech_impl p
+				where v.endpoint_id = e.endpoint_id
+				and v.attr_value = l.ser_tech_impl_id
+				and l.tech_impl_id = p.tech_impl_id) as TECH_IMPL_ID,
+			(select p.tech_impl_name
+				from endpoint_attr_value v,ser_tech_impl l,tech_impl p
+				where v.endpoint_id = e.endpoint_id
+				and v.attr_value = l.ser_tech_impl_id
+				and l.tech_impl_id = p.tech_impl_id) as TECH_IMPL_NAME,
+			(select c.name
+				from endpoint_attr_value v,ser_tech_impl l,tech_impl p,component c
+				where v.endpoint_id = e.endpoint_id
+				and v.attr_value = l.ser_tech_impl_id
+				and l.tech_impl_id = p.tech_impl_id
+				and c.component_id = p.component_id) as COMPONENT_NAME,
+			(select c.comm_pro_name
+				from endpoint_attr_value v,ser_tech_impl l,tech_impl p,comm_protocal c
+				where v.endpoint_id = e.endpoint_id
+				and v.attr_value = l.ser_tech_impl_id
+				and l.tech_impl_id = p.tech_impl_id
+				and c.comm_pro_cd = p.comm_pro_cd) as COMM_PRO_NAME,
+			(select a.attr_spec_value
+				from endpoint_attr_value v,ser_tech_impl l,tech_impl p,tech_imp_att a
+				where v.endpoint_id = e.endpoint_id
+				and v.attr_value = l.ser_tech_impl_id
+				and l.tech_impl_id = p.tech_impl_id
+				and a.tech_impl_id = p.tech_impl_id
+				and a.attr_spec_id = 1) as ADDRESS,
+			(select s.scene_ID from test_scene s,test_task_scene t
+				where s.scene_id = t.scene_id
+				and t.task_id = t.task_id
+				and t.endpoint_id = e.endpoint_id) as SCENE_ID,
+			(select s.scene_name from test_scene s,test_task_scene t
+				where s.scene_id = t.scene_id
+				and t.task_id = t.task_id
+				and t.endpoint_id = e.endpoint_id) as SCENE_NAME,
+			(select s.request_message_mod from test_scene s,test_task_scene t
+				where s.scene_id = t.scene_id
+				and t.task_id = t.task_id
+				and t.endpoint_id = e.endpoint_id) as REQUEST_MESSAGE_MOD,
+			(select m.REQUEST_MESSAGE from test_message m
+				where m.TEST_ID = r.TEST_ID
+				and m.ENDPOINT_ID = e.endpoint_id) as REQUEST_MESSAGE,
+			(select m.RESPONSE_MESSAGE from test_message m
+				where m.TEST_ID = r.TEST_ID
+				and m.ENDPOINT_ID = e.endpoint_id) as RESPONSE_MESSAGE
+		from ENDPOINT e,TEST_TASK t,SER_INVOKE_INS i,MESSAGE_FLOW m ,test_result r
+	  where FIND_IN_SET(e.endpoint_id,getServiceRouteConfigChildLst(m.first_endpoint_id))
+			and m.message_flow_id = i.message_flow_id
+			and i.ser_invoke_ins_id = t.ser_invoke_ins_id 
+	  		and t.task_id = r.task_id
+			 and r.test_id = #testId#
+</select>
+
+<select id="getTestUserIds" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+	select TEST_USER_ID from TEST_TASK where PROC_ID = #procId#
+</select>
+
+	<select id="getProcessDesignRootGroup" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+		  select node,node id,f_node,text,have_sub,node_type,(case when have_sub = '0' then '' else 'closed' end) state
+		  from (
+		  		select node,f_node,group_name text,
+		           ((select count(0)
+		               from vbpm_group_tree_uap b
+		              where b.f_node = a.node
+		                and b.state = 'A') +
+		           (select count(0)
+		               from vbpm_group_user_uap c
+		              where c.node = a.node
+		                and c.state = 'A')) HAVE_SUB,'T' node_type
+		        from vbpm_group_tree_uap a
+		        where  a.state='A'
+		        <dynamic>
+				    <isNotNull prepend="and" property="f_Node"> a.f_node=#f_Node#</isNotNull>
+				 </dynamic>
+		        ) as a	     
+	</select>
+	
+	<select id="getProcessDesignSubGroupAndUser" parameterClass="java.util.HashMap" resultClass="java.util.HashMap" >
+			select node,node id,f_node,text,have_sub,node_type,(case when have_sub = '0' then '' else 'closed' end) state
+			from (
+			      select a.user_id node,c.node f_node,a.user_name text,0 HAVE_SUB,'L' node_type
+			      from vbpm_user_uap a,
+			      	 (select node, f_node, group_name, group_type, descript, orderno, remarks, create_date, state, state_date, state_user 
+		                   from vbpm_group_tree_uap where state='A') b,vbpm_group_user_uap c
+			      where a.state='A' and c.state='A'and a.user_id=c.user_id and b.node=c.node and c.node =#f_Node#    
+			      union all
+			   		select node,f_node,group_name text,
+			           ((select count(0)
+			               from vbpm_group_tree_uap b
+			              where b.f_node = a.node
+			                and b.state = 'A') +
+			           (select count(0)
+			               from vbpm_group_user_uap c
+			              where c.node = a.node
+			                and c.state = 'A')) HAVE_SUB,'T' node_type
+			        from vbpm_group_tree_uap a
+			        where a.f_node=#f_Node# and a.state='A') as a      
+	</select>	
+	
+	<select id="getTestMsgModListCount" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	   select count(1) ALLNUM
+	     from test_msg_mod
+	     where state != 'R'
+	  <dynamic>
+	    <isNotNull prepend="and" property="modName"> mod_name like CONCAT('%',#modName#,'%')</isNotNull>
+	    <isNotNull prepend="and" property="msgFormatType"> msg_format_type = #msgFormatType#</isNotNull>
+	    <isNotNull prepend="and" property="tenantId"> TENANT_ID=#tenantId#</isNotNull>
+	  </dynamic>
+	</select>
+	
+	<select id="getTestMsgModList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	   select mod_id,
+	          mod_name,
+	          msg_format_type,
+	          state,
+	          delay_time,
+	          remark,
+	          create_date
+	     from test_msg_mod
+	    where state != 'R'
+	  <dynamic>
+	    <isNotNull prepend="and" property="modName"> mod_name like CONCAT('%',#modName#,'%')</isNotNull>
+	    <isNotNull prepend="and" property="msgFormatType"> msg_format_type = #msgFormatType#</isNotNull>
+	    <isNotNull prepend="and" property="tenantId"> TENANT_ID=#tenantId#</isNotNull>
+	  </dynamic>
+	  	order by mod_id desc
+         Limit #pro_mysql#,#page_record#
+	</select>
+	
+    <select id="getTestMsgMod" parameterClass="com.ailk.eaap.op2.bo.TestMsgMod" resultClass="com.ailk.eaap.op2.bo.TestMsgMod">
+	   select mod_id modId,
+	          mod_name modName,
+	          request_msg_mod requestMsgMod,
+	          response_msg_mod responseMsgMod,
+	          msg_format_type msgFormatType,
+	          expression_flag expressionFlag,
+	          case when delay_time  is null  then 0 else delay_time end as delayTime,
+	          state,
+	          remark,
+	          create_date createDate
+	     from test_msg_mod
+	    where mod_id = #modId#
+	</select>
+	
+	  <insert id="insertTestMsgMod" parameterClass="com.ailk.eaap.op2.bo.TestMsgMod">
+		  insert into test_msg_mod
+		  (create_date  
+		  <dynamic>
+		    <isNotNull prepend="," property="modId">mod_id</isNotNull>
+		    <isNotNull prepend="," property="modName">mod_name</isNotNull>
+		    <isNotNull prepend="," property="msgFormatType">msg_format_type</isNotNull>
+		    <isNotNull prepend="," property="requestMsgMod">request_msg_mod</isNotNull>
+		    <isNotNull prepend="," property="responseMsgMod">response_msg_mod</isNotNull>
+		    <isNotNull prepend="," property="state">state</isNotNull>
+		    <isNotNull prepend="," property="remark">remark</isNotNull>
+		    <isNotNull prepend="," property="personId">person_id</isNotNull>
+		    <isNotNull prepend="," property="expressionFlag">expression_flag</isNotNull>
+		    <isNotNull prepend="," property="delayTime">delay_time</isNotNull>
+		    <isNotNull prepend="," property="tenantId">TENANT_ID</isNotNull>
+		  </dynamic>
+		  )
+		  values
+		  (utc_timestamp()
+		   <dynamic >
+		    <isNotNull prepend="," property="modId">#modId#</isNotNull>
+		    <isNotNull prepend="," property="modName">#modName#</isNotNull>
+		    <isNotNull prepend="," property="msgFormatType">#msgFormatType#</isNotNull>
+		    <isNotNull prepend="," property="requestMsgMod">#requestMsgMod#</isNotNull>
+		    <isNotNull prepend="," property="responseMsgMod">#responseMsgMod#</isNotNull>
+		    <isNotNull prepend="," property="state">#state#</isNotNull>
+		    <isNotNull prepend="," property="remark">#remark#</isNotNull>
+		    <isNotNull prepend="," property="personId">#personId#</isNotNull>
+		    <isNotNull prepend="," property="expressionFlag">#expressionFlag#</isNotNull>
+		    <isNotNull prepend="," property="delayTime">#delayTime#</isNotNull>
+		    <isNotNull prepend="," property="tenantId">#tenantId#</isNotNull>
+		    </dynamic>
+		  )
+		</insert>
+	
+		<update id="updateTestMsgMod" parameterClass="com.ailk.eaap.op2.bo.TestMsgMod">
+		  update test_msg_mod
+		  <dynamic prepend="set">
+		    <isNotNull prepend="," property="modName">mod_name=#modName#</isNotNull>
+		    <isNotNull prepend="," property="msgFormatType">msg_format_type=#msgFormatType#</isNotNull>
+		    <isNotNull prepend="," property="requestMsgMod">request_msg_mod=#requestMsgMod#</isNotNull>
+		    <isNotNull prepend="," property="responseMsgMod">response_msg_mod=#responseMsgMod#</isNotNull>
+		    <isNotNull prepend="," property="state">state=#state#</isNotNull>
+		    <isNotNull prepend="," property="remark">remark=#remark#</isNotNull>
+		    <isNotNull prepend="," property="expressionFlag">expression_flag=#expressionFlag#</isNotNull>
+		    <isNotNull prepend="," property="delayTime">delay_time=#delayTime#</isNotNull>
+		  </dynamic>
+		  where mod_id=#modId#
+		</update>
+		
+      <delete id="deleteTestMsgMod" parameterClass="com.ailk.eaap.op2.bo.TestMsgMod">
+		    delete from test_msg_mod_rela where mod_id=#modId#
+	  </delete>
+	  
+	  <select id="getTestMsgModResponseListByModId" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+			select r.msg_id,r.mod_id,r.expression,r.response_msg_mod,r.remark 
+			from test_msg_mod m, test_msg_mod_response r
+			where r.mod_id=m.mod_id
+		  <dynamic>
+	    		<isNotNull prepend="and" property="modId"> m.mod_id=#modId#</isNotNull>
+	    		<isNotNull prepend="and" property="tenantId"> r.TENANT_ID=#tenantId#</isNotNull>
+		  </dynamic>
+		  order by r.msg_id
+	  </select>
+	  <select id="getTestMsgModResponseListByModIdCount" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	 	  select count(*) allnum 
+	 	   from test_msg_mod m, test_msg_mod_response r
+		 where r.mod_id=m.mod_id
+		  <dynamic>
+	    		<isNotNull prepend="and" property="modId"> m.mod_id=#modId#</isNotNull>
+	    		<isNotNull prepend="and" property="tenantId"> r.TENANT_ID=#tenantId#</isNotNull>
+		  </dynamic>
+	  </select>
+    <select id="getTestMsgModResponse" parameterClass="com.ailk.eaap.op2.bo.TestMsgModResponse" resultClass="com.ailk.eaap.op2.bo.TestMsgModResponse">
+	   select msg_id msgId, mod_id modId, expression, response_msg_mod responseMsgMod, remark
+	     from test_msg_mod_response
+	   where msg_id = #msgId#
+	</select>
+	  <insert id="insertTestMsgModResponse" parameterClass="com.ailk.eaap.op2.bo.TestMsgModResponse">
+		  <selectKey resultClass="int" keyProperty="msgId">
+				select nextval('SEQ_TEST_MSG_MOD_RESPONSE')
+		  </selectKey>
+		  insert into test_msg_mod_response(  
+		  <dynamic>
+		    <isNotNull property="msgId">msg_id</isNotNull>
+		    <isNotNull prepend="," property="modId">mod_id</isNotNull>
+		    <isNotNull prepend="," property="expression">expression</isNotNull>
+		    <isNotNull prepend="," property="responseMsgMod">response_msg_mod</isNotNull>
+		    <isNotNull prepend="," property="remark">remark</isNotNull>
+		    <isNotNull prepend="," property="tenantId">TENANT_ID</isNotNull>
+		  </dynamic>
+		  ) values (
+		   <dynamic >
+		    <isNotNull property="msgId">#msgId#</isNotNull>
+		    <isNotNull prepend="," property="modId">#modId#</isNotNull>
+		    <isNotNull prepend="," property="expression">#expression#</isNotNull>
+		    <isNotNull prepend="," property="responseMsgMod">#responseMsgMod#</isNotNull>
+		    <isNotNull prepend="," property="remark">#remark#</isNotNull>
+		    <isNotNull prepend="," property="tenantId">#tenantId#</isNotNull>
+		    </dynamic>
+		  )
+		</insert>
+		<update id="updateTestMsgModResponse" parameterClass="com.ailk.eaap.op2.bo.TestMsgModResponse">
+		  update test_msg_mod_response
+		  <dynamic prepend="set">
+		    <isNotNull prepend="," property="expression">expression=#expression#</isNotNull>
+		    <isNotNull prepend="," property="responseMsgMod">response_msg_mod=#responseMsgMod#</isNotNull>
+		    <isNotNull prepend="," property="remark">remark=#remark#</isNotNull>
+		  </dynamic>
+		  where msg_id=#msgId#
+		</update>
+      <delete id="deleteTestMsgModResponse" parameterClass="com.ailk.eaap.op2.bo.TestMsgModResponse">
+		    delete from test_msg_mod_response where msg_id=#msgId#
+	  </delete>
+	  <select id="checkDelayTimeCount" resultClass="java.lang.String">
+	   		select count(1) from TEST_MSG_MOD  where DELAY_TIME>0
+	   </select>
+	
+	<select id="getTestMsgModRelaListCount" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	   select count(1) ALLNUM  from (
+				SELECT m.mod_id, m.mod_name,
+				    r.obj_id, r.obj_type,
+					(if(r.obj_type=0,
+						(select s.service_en_name from service s where s.service_id =r.obj_id),
+						(select i.ser_invoke_ins_name from ser_invoke_ins i where i.ser_invoke_ins_id =r.obj_id)
+					)) as obj_name,
+ 				    r.create_date,r.person_id
+				from test_msg_mod_rela r, test_msg_mod m
+				where m.mod_id = r.mod_id
+		) temp
+	  <dynamic prepend="where">
+	    <isNotNull prepend="and" property="modName"> temp.mod_name like CONCAT('%',#modName#,'%')</isNotNull>
+	    <isNotNull prepend="and" property="objName"> temp.obj_name like CONCAT('%',#objName#,'%')</isNotNull>
+	    <isNotNull prepend="and" property="objType"> temp.obj_type = #objType#</isNotNull>
+	  </dynamic>
+	</select>
+	
+	<select id="getTestMsgModRelaList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	  select temp.mod_id,
+	         temp.mod_name,
+	         temp.obj_id,
+	         temp.obj_type,
+	         temp.obj_name,
+	         temp.create_date,
+	         temp.person_id,
+	         temp.address
+	    from (
+				SELECT m.mod_id, m.mod_name,
+				    r.obj_id, r.obj_type,
+					(if(r.obj_type=0,
+						(select s.service_en_name from service s where s.service_id =r.obj_id),
+						(select i.ser_invoke_ins_name from ser_invoke_ins i where i.ser_invoke_ins_id =r.obj_id)
+					)) as obj_name,
+ 				    r.create_date,r.person_id,
+					(if(r.obj_type=0,(
+						concat(#testPilesSerPath#, m.mod_id, '/http.shtml')
+					 ),'')) as ADDRESS,
+
+					(if(r.obj_type=0,(
+						select p.comm_pro_name 
+							from service s,ser_tech_impl l,tech_impl i,comm_protocal p
+						 where s.service_id = l.service_id
+							and l.tech_impl_id = i.tech_impl_id
+							and l.state ='A'
+							and p.comm_pro_cd = i.comm_pro_cd
+							and s.service_id = r.obj_id
+					 ),'')) as comm_pro_name
+					 
+				from test_msg_mod_rela r, test_msg_mod m
+				where m.mod_id = r.mod_id
+		) temp
+	  <dynamic prepend="where">
+	    <isNotNull prepend="and" property="modName"> temp.mod_name like CONCAT('%',#modName#,'%')</isNotNull>
+	    <isNotNull prepend="and" property="objName"> temp.obj_name like CONCAT('%',#objName#,'%')</isNotNull>
+	    <isNotNull prepend="and" property="objType"> temp.obj_type = #objType#</isNotNull>
+	  </dynamic>
+	  order by temp.create_date desc
+         Limit #pro_mysql#,#page_record#
+	</select>
+	
+	  <insert id="insertTestMsgModRela" parameterClass="com.ailk.eaap.op2.bo.TestMsgModRela">
+		  insert into test_msg_mod_rela
+		  (create_date  
+		  <dynamic>
+		    <isNotNull prepend="," property="modId">mod_id</isNotNull>
+		    <isNotNull prepend="," property="objId">obj_id</isNotNull>
+		    <isNotNull prepend="," property="objType">obj_type</isNotNull>
+		    <isNotNull prepend="," property="personId">person_id</isNotNull>
+		  </dynamic>
+		  )
+		  values
+		  (utc_timestamp()
+		   <dynamic >
+		    <isNotNull prepend="," property="modId">#modId#</isNotNull>
+		    <isNotNull prepend="," property="objId">#objId#</isNotNull>
+		    <isNotNull prepend="," property="objType">#objType#</isNotNull>
+		    <isNotNull prepend="," property="personId">#personId#</isNotNull>
+		    </dynamic>
+		  )
+		</insert>
+	
+      <delete id="deleteTestMsgModRela" parameterClass="com.ailk.eaap.op2.bo.TestMsgModRela">
+		  delete from test_msg_mod_rela
+	       where mod_id = #modId#
+	         and obj_id = #objId#
+	         and obj_type = #objType#
+	  </delete>
+	  
+	  <select id="existTestMsgModRela" parameterClass="com.ailk.eaap.op2.bo.TestMsgModRela" resultClass="java.lang.Integer">
+	  	  select count(1) num
+	  	    from test_msg_mod_rela
+	       where mod_id = #modId#
+	         and obj_id = #objId#
+	         and obj_type = #objType#
+	 </select>
+	  
+</sqlMap>

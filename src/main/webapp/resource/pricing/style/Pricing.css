@@ -1,0 +1,51 @@
+body{
+	font-size:12px;}
+dl,
+dt,
+dd{
+	margin:0;
+	padding:0;
+	float:left;}
+.hear{
+  margin: 0;
+  border: 0;
+  border-radius: 0 0 0 0;
+}
+.hear_body{
+	height:24px;
+	line-height:24px;
+	border:1px solid #a3a7ac;
+	background:#f8f8f8;
+	text-align:center;
+	}
+.hear_body img{
+	padding-top:4px;}
+.hear_con dl{
+	font-size:12px;}
+.hear_con dl img{
+	margin-top:5px;}
+
+.hear td{
+	border-right:1px solid #666;}
+.sech_body{
+	height:25px;
+	line-height:25px;
+	border:1px solid #666;}
+.sech_body dl {
+	border-left:1px solid #666;
+	padding-left:4px;}
+
+.searchCondition dl{
+	width:50%;
+	float:left;
+	height:40px;}
+.searchCondition dt{
+	width:20%;
+	text-align:right;}
+.package{
+	border:1px solid #999;
+	height:25px;
+	padding:5px 0;}
+.package dt{
+		float:left;
+		line-height:25px;}

@@ -1,0 +1,127 @@
+<div id="productDetailTmpl">
+</div>
+<script type="text/html" id="tmpl-product-detail">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">{{productName}}</h4>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="form-body">
+        <a name="step1"></a>
+        <h3 class="form-section mt5"> Basic Infomation</h3>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="control-label">Product Name:</label>
+              <input type="text" class="form-control" readonly value="{{productName}}">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="control-label">Product Code:</label>
+              <input type="text" class="form-control" readonly value="{{productCode}}">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="control-label">System Name:</label>
+              <input type="text" class="form-control" readonly value="{{systemName}}">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="control-label">Service Module:</label>
+              <input type="text" class="form-control" readonly value="{{serviceModule}}">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="control-label">Dependent Type:</label>
+              <input type="text" class="form-control" readonly value="{{dependentType}}">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="control-label">Status:</label>
+              <input type="text" class="form-control" readonly value="{{status}}">
+            </div>
+          </div>
+        </div>
+        <h3 class="form-section"> Service Attribute</h3>
+        <div class="table-responsive">
+          <table class="table table-bordered  table-nowrap">
+            <thead class="th-heading">
+              <tr>
+                <th class="th-name"> Name </th>
+                <th> Customized </th>
+                <th> Code </th>
+                <th> Specification Value Type </th>
+                <th> Remarks </th>
+                <th> Default </th>
+              </tr>
+            </thead>
+            <tbody>
+            {{if (productAttribute.length>0)}}
+              {{ each serviceAttribute}}
+              <tr>
+                <td>{{$value.name}}</td>
+                <td>{{$value.customized}}</td>
+                <td>{{$value.code}}</td>
+                <td>{{$value.specificationValueType}}</td>
+                <td>{{$value.remarks}}</td>
+                <td>{{$value.default}}</td>
+              </tr>
+              {{/each}}
+              {{else}}
+              <tr><td colspan="6" class="text-center i18n">CNF00000065</td></tr>
+             {{/if}}
+            </tbody>
+          </table>
+        </div>
+        <h3 class="form-section"> Product Attribute</h3>
+        <div class="table-responsive">
+          <table class="table table-bordered table-nowrap">
+            <thead class="th-heading">
+              <tr role="row">
+                <th class="th-name"> Name </th>
+                <th> Customized </th>
+                <th> Code </th>
+                <th> Specification Value Type </th>
+                <th> Remarks </th>
+                <th> Default </th>
+              </tr>
+            </thead>
+            <tbody>
+             {{if (productAttribute.length>0)}}
+             {{ each productAttribute}}
+              <tr>
+                <td>{{$value.name}}</td>
+                <td>{{$value.customized}}</td>
+                <td>{{$value.code}}</td>
+                <td>{{$value.specificationValueType}}</td>
+                <td>{{$value.remarks}}</td>
+                <td>{{$value.default}}</td>
+              </tr>
+              {{/each}}
+             {{else}}
+              <tr><td colspan="6" class="text-center i18n">CNF00000065</td></tr>
+             {{/if}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </form>
+  </div>
+</script>
+<script>
+  (function() {
+    var $modal = $('#productDetailTmpl').closest('.modal'); //获取当前modal对象
+    App.template(App.urls.productDetailData, 'tmpl-product-detail', 'productDetailTmpl',{productId: $modal.data('myData') }, function() {App.transferI18nRes();
+      $modal.modal();
+    })
+  })()
+</script>
+

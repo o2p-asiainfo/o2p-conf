@@ -1,0 +1,69 @@
+<div id="settlementDetailTmpl">
+</div>
+<script type="text/html" id="tmpl-settlement-detail">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">{{offerName}} - Settlement</h4>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="form-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-nowrap">
+            <thead class="th-heading">
+              <tr>
+                <th> Operator </th>
+                <th class="th-name"> Name </th>
+                <th> First Settlement Date </th>
+                <th> Cycle Type </th>
+                <th> Product Category </th>
+                <th> Effective Date </th>
+                <th> Rule </th>
+                <th> Description </th>
+              </tr>
+            </thead>
+            <tbody>
+              {{if (settlement.length>0)}} {{each settlement}}
+              <tr>
+                <td> {{$value.operator}}</td>
+                <td> {{$value.name}}</td>
+                <td> {{$value.firstSettlementDate}} </td>
+                <td> {{$value.cycleType}} </td>
+                <td> {{$value.productCategory}} </td>
+                <td> {{$value.effectiveDate}} </td>
+                <td>
+                  {{each $value.rules}} {{ if ($value.type == null) }} {{ else if ($value.type == 1) }}
+                  <a href="javascript:;" class="label label-primary" onclick="App.modal({width:'container',remote:App.urls.settlementRecurringRule,data:{{$value.id}}})"><i class="fa fa-edit"></i> <span class="i18n">CNF00000077</span></a> {{ else if ($value.type == 4)}}
+                  <a href="javascript:;" class="label label-primary" onclick="App.modal({width:'container',remote:App.urls.settlementaggregationRule,data:{{$value.id}}})"><i class="fa fa-edit"></i> <span class="i18n">CNF00000078</span></a> {{ else if ($value.type == 2)}}
+                  <a href="javascript:;" class="label label-primary" onclick="App.modal({width:'container',remote:App.urls.settlementOneTimeChargeRule,data:{{$value.id}}})"><i class="fa fa-edit"></i> <span class="i18n">CNF00000079</span></a> {{/if}} {{/each}} </td>
+                <td>{{$value.description}}</td>
+              </tr>
+              {{/each}} {{else}}
+              <tr>
+                <td colspan="8" class="text-center i18n">CNF00000065</td>
+              </tr>
+              {{/if}}
+            </tbody>
+          </table>
+        </div>
+        <br>
+      </div>
+    </form>
+  </div>
+</script>
+<script>
+  var settlementDetail = function() {
+    return {
+      init: function() {
+        var $modal = $('#settlementDetailTmpl').closest('.modal'); //获取当前modal对象
+        App.template(App.urls.settlementDetailData, 'tmpl-settlement-detail', 'settlementDetailTmpl', {
+          offerId: $modal.data('myData')
+        }, function() {
+          App.transferI18nRes();
+          $modal.modal();
+        })
+      }
+    }
+  }()
+  settlementDetail.init();
+</script>

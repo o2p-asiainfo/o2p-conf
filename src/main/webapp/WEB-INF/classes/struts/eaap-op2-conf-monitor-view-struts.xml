@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="monitorView" extends="default" namespace="/monitorView">
+				
+		<!-- 监控首页主视图 -->
+		<action name="findMonitorViewIndexNew" class="com.ailk.eaap.op2.conf.monitor.action.MonitorViewAction" method="findMonitorViewIndexNew">
+			<result name="success">
+				/monitorNew/monitorViewIndex.jsp
+			</result>
+		</action>
+		
+		<!-- 单个业务监控视图首页 -->
+		<action name="showSingleBizViewIndexNew" class="com.ailk.eaap.op2.conf.monitor.action.MonitorViewAction" method="showSingleBizViewIndexNew">
+			<result name="success">
+				/monitorNew/singleBizViewIndex.jsp
+			</result>
+		</action>
+		<action name="getSingleBizViewIndexList" class="com.ailk.eaap.op2.conf.monitor.action.MonitorViewAction" method="getSingleBizViewIndexList">
+		</action>
+		
+		<!-- 组件监控视图首页-加载当前用户所有的组件 -->
+		<action name="showComponentViewIndexNew" class="com.ailk.eaap.op2.conf.monitor.action.MonitorViewAction" method="showComponentViewIndexNew">
+			<result name="success">
+				/monitorNew/componentViewIndex.jsp
+			</result>
+		</action>
+		<action name="getComponentViewIndexList" class="com.ailk.eaap.op2.conf.monitor.action.MonitorViewAction" method="getComponentViewIndexList">
+		</action>
+		
+		<!-- 服务性能监控视图首页-加载当前用户所有的组件 -->
+		<action name="showServiceViewIndexNew" class="com.ailk.eaap.op2.conf.monitor.action.MonitorViewAction" method="showServiceViewIndexNew">
+			<result name="success">
+				/monitorNew/svcPerformanceViewIndex.jsp
+			</result>
+		</action>
+		<action name="getServiceViewIndexNewList" class="com.ailk.eaap.op2.conf.monitor.action.MonitorViewAction" method="getServiceViewIndexNewList">
+		</action>
+				
+		<action name="getSingleBizData" class="com.ailk.eaap.op2.conf.monitor.action.MonitorViewAction" method="getSingleBizData">
+		</action>
+		<action name="getSingleComponetData" class="com.ailk.eaap.op2.conf.monitor.action.MonitorViewAction" method="getSingleComponetData">
+		</action>
+		<action name="getSingleServiceData" class="com.ailk.eaap.op2.conf.monitor.action.MonitorViewAction" method="getSingleServiceData">
+		</action>
+		<action name="getAllBizViewData" class="com.ailk.eaap.op2.conf.monitor.action.MonitorViewAction" method="getAllBizViewData">
+		</action>
+		<action name="getTodoWordGrid" class="com.ailk.eaap.op2.conf.monitor.action.MonitorViewAction" method="getTodoWordGrid">
+		</action>
+		<action name="getComponentSvcViewData" class="com.ailk.eaap.op2.conf.monitor.action.MonitorViewAction" method="getComponentSvcViewData">
+		</action>
+		
+		<action name="getSysViewDataLine" class="com.ailk.eaap.op2.conf.monitor.action.MonitorViewAction" method="getSysViewDataLine">
+		</action>
+		<action name="getSysViewDataGauge" class="com.ailk.eaap.op2.conf.monitor.action.MonitorViewAction" method="getSysViewDataGauge">
+		</action>
+		
+
+		<!-- 获取表配置，个性化定制图表 -->
+		<action name="queryModuleViewInfo" class="com.ailk.eaap.op2.conf.monitor.action.MonitorViewAction" method="queryModuleViewInfo">
+		</action>
+		
+		<!-- 监控视图首页,面板拖动修改显示顺序 -->
+		<action name="savePortalPanelCfg" class="com.ailk.eaap.op2.conf.monitor.action.MonitorViewAction" method="savePortalPanelCfg">
+		</action>
+		
+		<!-- 自定义面板 -->
+		<action name="saveCustomPanelCfg" class="com.ailk.eaap.op2.conf.monitor.action.MonitorViewAction" method="saveCustomPanelCfg">
+		</action>
+		
+		<!-- 删除面板 -->
+		<action name="deletePortalPanel" class="com.ailk.eaap.op2.conf.monitor.action.MonitorViewAction" method="deletePortalPanel">
+		</action>
+	</package>
+</struts>

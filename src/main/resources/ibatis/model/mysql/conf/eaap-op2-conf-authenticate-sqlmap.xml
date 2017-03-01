@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "http://ibatis.apache.org/dtd/sql-map-2.dtd" "-//ibatis.apache.org//DTD SQL Map 2.0//EN">
+
+<sqlMap namespace="eaap-op2-conf-authenticate">
+
+	<select id="getComponentList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		 SELECT  COMPONENT_ID , NAME  
+		 FROM COMPONENT  
+		 WHERE STATE NOT IN ('G','X')  
+		and TENANT_ID=#tenantId#
+	</select>
+	
+	<select id="getServiceList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		 SELECT  SERVICE_ID , SERVICE_CN_NAME   
+		 FROM SERVICE  
+		 WHERE STATE = 'A'  
+		and TENANT_ID=#tenantId#
+	</select>
+	
+	<select id="getSerInvokeInsList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		 SELECT  SER_INVOKE_INS_ID ,SER_INVOKE_INS_NAME 
+		 FROM SER_INVOKE_INS  
+		 WHERE STATE = 'A'  
+		and TENANT_ID=#tenantId#
+	</select>
+	
+ 
+ 	<select id="getProofTypeList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		 SELECT DISTINCT A.PT_CD , A.PT_NAME ,A.PT_CODE ,A.PT_DESC   
+	     FROM PROOF_TYPE A , PROOF_TYPE_ATR_SPEC B  
+	     WHERE A.PT_CD = B.PT_CD  
+			and A.TENANT_ID=#tenantId#
+			and B.TENANT_ID=#tenantId#
+	</select>
+ 
+ 	<select id="queryProofAttr" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		 SELECT A.ATTR_SPEC_NAME  , A.DEFAULT_VALUE ,B.PR_ATR_SPEC_CD ,A.ATTR_SPEC_DESC , C.PT_CD   
+	     FROM ATTR_SPEC A , PROOF_TYPE_ATR_SPEC B ,PROOF_TYPE C 
+	     WHERE C.PT_CD = B.PT_CD AND B.ATTR_SPEC_ID = A.ATTR_SPEC_ID AND B.STATE = 'A' AND A.STATE = 'A' AND C.PT_CD = #data# 
+			and A.TENANT_ID=#tenantId#
+			and B.TENANT_ID=#tenantId#
+			and C.TENANT_ID=#tenantId#
+	</select>
+ 
+ 	<select id="queryExistsAttr" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	   SELECT B.PROOFE_ID , C.PT_CD , C.PT_NAME ,F.ATTR_SPEC_NAME ,D.ATTR_VALUE ,B.STATUS ,to_char(B.CREATE_TIME,'yyyy-MM-dd HH:mi') CREATE_TIME  , G.NAME GNAME , H.SERVICE_CN_NAME , E.PR_ATR_SPEC_CD  
+       FROM SER_INVOKE_INS A,PROOF_EFFECT B,PROOF_TYPE C,PROOF_VALUES D,PROOF_TYPE_ATR_SPEC E,ATTR_SPEC F ,COMPONENT G,SERVICE H  
+       WHERE A.SER_INVOKE_INS_ID = B.SER_INVOKE_INS_ID AND B.PT_CD = C.PT_CD AND C.PT_CD = E.PT_CD AND E.ATTR_SPEC_ID = F.ATTR_SPEC_ID AND E.PR_ATR_SPEC_CD = D.PR_ATR_SPEC_CD AND B.PROOFE_ID = D.PROOFE_ID 
+       AND A.COMPONENT_ID = G.COMPONENT_ID AND H.SERVICE_ID = A.SERVICE_ID     
+	    <dynamic>
+		 	<isNotNull prepend="AND" property="componentId"> G.COMPONENT_ID=#componentId#</isNotNull>
+		 	<isNotNull prepend="AND" property="serviceId"> H.SERVICE_ID=#serviceId# </isNotNull>
+		 </dynamic>
+		  AND A.STATE = 'A' AND  B.STATUS = 'Y' AND G.STATE NOT IN ('G','X')  
+			and A.TENANT_ID=#tenantId#
+			and B.TENANT_ID=#tenantId#
+			and C.TENANT_ID=#tenantId#
+			and D.TENANT_ID=#tenantId#
+			and E.TENANT_ID=#tenantId#
+			and F.TENANT_ID=#tenantId#
+			and G.TENANT_ID=#tenantId#
+			and H.TENANT_ID=#tenantId#
+	</select>
+	
+	<select id="queryProofEffectCount" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+	    SELECT COUNT(1) ALLNUM  
+      	FROM SER_INVOKE_INS A  
+      	WHERE A.STATE = 'A'   
+			and A.TENANT_ID=#tenantId#
+		<dynamic >
+		 	<isNotNull prepend="AND" property="componentId"> A.COMPONENT_ID=#componentId#</isNotNull>
+		 	<isNotNull prepend="AND" property="serviceId"> A.SERVICE_ID=#serviceId# </isNotNull>
+		</dynamic>
+ 	</select>
+ 	
+ 	<select id="queryProofEffectList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">	
+	   SELECT * FROM (SELECT ROW_NUMBER() OVER( ORDER BY SER_INVOKE_INS_ID ) rn , newtab.* FROM (  
+	   SELECT A.SER_INVOKE_INS_ID , B.NAME , C.SERVICE_CN_NAME , B.COMPONENT_ID , C.SERVICE_ID    
+       FROM SER_INVOKE_INS A  , COMPONENT B , SERVICE C  
+       WHERE  A.COMPONENT_ID = B.COMPONENT_ID AND A.SERVICE_ID = C.SERVICE_ID AND A.STATE = 'A'  
+			and A.TENANT_ID=#tenantId#
+			and B.TENANT_ID=#tenantId#
+			and C.TENANT_ID=#tenantId#
+	    <dynamic>
+		 	<isNotNull prepend="AND" property="componentId"> A.COMPONENT_ID=#componentId#</isNotNull>
+		 	<isNotNull prepend="AND" property="serviceId"> A.SERVICE_ID=#serviceId# </isNotNull>
+		 </dynamic>
+		  ) newtab ) WHERE rn BETWEEN #pro# AND #end# 
+	</select>
+	
+	<update id="deleteProofEffect" parameterClass="com.ailk.eaap.op2.bo.ProofEffect" >
+		UPDATE PROOF_EFFECT 
+		SET STATUS = 'R' 
+		WHERE PROOFE_ID = #proofeId#
+		and TENANT_ID=#tenantId#
+	</update>
+	
+	<select id="queryAttrByProofeId" parameterClass="com.ailk.eaap.op2.bo.ProofEffect" resultClass="java.util.HashMap">
+	   SELECT B.PROOFE_ID , C.PT_CD , C.PT_NAME ,F.ATTR_SPEC_NAME ,D.ATTR_VALUE ,B.STATUS ,to_char(B.CREATE_TIME,'yyyy-MM-dd HH:mi') CREATE_TIME  ,  E.PR_ATR_SPEC_CD  
+       FROM SER_INVOKE_INS A,PROOF_EFFECT B,PROOF_TYPE C,PROOF_VALUES D,PROOF_TYPE_ATR_SPEC E,ATTR_SPEC F  
+       WHERE A.SER_INVOKE_INS_ID = B.SER_INVOKE_INS_ID AND B.PT_CD = C.PT_CD AND C.PT_CD = E.PT_CD AND E.ATTR_SPEC_ID = F.ATTR_SPEC_ID AND E.PR_ATR_SPEC_CD = D.PR_ATR_SPEC_CD AND B.PROOFE_ID = D.PROOFE_ID   
+          <dynamic>
+		 	<isNotNull prepend="AND" property="proofeId"> B.PROOFE_ID=#proofeId#</isNotNull>
+		 </dynamic>
+		  AND A.STATE = 'A' AND  B.STATUS = 'Y'   
+		and A.TENANT_ID=#tenantId#
+		and B.TENANT_ID=#tenantId#
+		and C.TENANT_ID=#tenantId#
+		and D.TENANT_ID=#tenantId#
+		and E.TENANT_ID=#tenantId#
+		and F.TENANT_ID=#tenantId#
+	</select>
+	
+	<select id="queryProofTypeListBySerInvokeInsId" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		 SELECT DISTINCT C.PT_CD , C.PT_NAME , C.PT_CODE , B.PROOFE_ID     
+	     FROM SER_INVOKE_INS A , PROOF_EFFECT B ,PROOF_TYPE C ,PROOF_VALUES D 
+	     WHERE A.SER_INVOKE_INS_ID = B.SER_INVOKE_INS_ID AND B.PT_CD = C.PT_CD AND  D.PROOFE_ID = B.PROOFE_ID AND D.ATTR_VALUE IS NOT NULL AND  A.STATE = 'A' AND B.STATUS = 'Y'  AND A.SER_INVOKE_INS_ID = #data#
+			and A.TENANT_ID=#tenantId#
+			and B.TENANT_ID=#tenantId#
+			and C.TENANT_ID=#tenantId#
+			and D.TENANT_ID=#tenantId# 
+	</select>
+	
+	<select id="queryAttrListByProofId" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	   SELECT D.ATTR_SPEC_NAME , B.ATTR_VALUE  ,B.PV_ID  , B.PR_ATR_SPEC_CD , A.PT_CD  
+       FROM PROOF_EFFECT A,PROOF_VALUES B,PROOF_TYPE_ATR_SPEC C,ATTR_SPEC D   
+       WHERE A.PROOFE_ID = B.PROOFE_ID AND B.PR_ATR_SPEC_CD = C.PR_ATR_SPEC_CD AND C.ATTR_SPEC_ID = D.ATTR_SPEC_ID 
+	   AND A.STATUS = 'Y' AND B.ATTR_VALUE IS NOT NULL AND A.PROOFE_ID = #data#
+		and A.TENANT_ID=#tenantId#
+		and B.TENANT_ID=#tenantId#
+		and C.TENANT_ID=#tenantId#
+		and D.TENANT_ID=#tenantId#
+	</select>
+	
+	<select id="queryAttrListByProofIdAll" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+	   SELECT D.ATTR_SPEC_NAME , B.ATTR_VALUE  ,B.PV_ID  , B.PR_ATR_SPEC_CD , A.PT_CD  
+       FROM PROOF_EFFECT A,PROOF_VALUES B,PROOF_TYPE_ATR_SPEC C,ATTR_SPEC D   
+       WHERE A.PROOFE_ID = B.PROOFE_ID AND B.PR_ATR_SPEC_CD = C.PR_ATR_SPEC_CD AND C.ATTR_SPEC_ID = D.ATTR_SPEC_ID 
+	   AND A.STATUS = 'Y' AND A.PROOFE_ID = #data#
+		and A.TENANT_ID=#tenantId#
+		and B.TENANT_ID=#tenantId#
+		and C.TENANT_ID=#tenantId#
+		and D.TENANT_ID=#tenantId#
+	</select>
+	
+	<select id="queryCount" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+		SELECT COUNT(1) COUNT FROM PROOF_EFFECT WHERE SER_INVOKE_INS_ID = #serInvokeInsId# and TENANT_ID=#tenantId#
+	</select>
+</sqlMap>

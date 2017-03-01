@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="eaap-op2-conf-msgFlowException">
+ 	
+    <select id="getExceptionDealInfoList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT e.EXCEPTION_ID,e.SERINVOKEINS_NAME,e.SERVICE_NAME,e.COMPONENT_NAME,e.MESSAGEFLOW_NAME,e.ENDPOINT_NAME,e.TRY_NUM,e.TRY_STATUS,
+				  date_format(e.CREATE_DATE,'%Y-%m-%d %H:%i:%S') as CREATE_DATE, date_format(e.UPDATE_DATE,'%Y-%m-%d %H:%i:%S') as UPDATE_DATE,
+				  e.EXCEPTION_CODE,e.EXCEPTION_STACK,e.IS_HIS,e.COMPONENT_ID
+		FROM(
+			select EXCEPTION_ID,SERINVOKEINS_NAME,SERVICE_NAME,COMPONENT_NAME,MESSAGEFLOW_NAME,ENDPOINT_NAME,TRY_NUM,TRY_STATUS,CREATE_DATE,UPDATE_DATE, 
+				  EXCEPTION_CODE,EXCEPTION_STACK,'false' as IS_HIS,COMPONENT_ID 
+			from EXCEPTION_DEAL_INFO 
+			UNION 
+			select EXCEPTION_ID,SERINVOKEINS_NAME,SERVICE_NAME,COMPONENT_NAME,MESSAGEFLOW_NAME,ENDPOINT_NAME,TRY_NUM,TRY_STATUS,CREATE_DATE,UPDATE_DATE, 
+				  EXCEPTION_CODE,EXCEPTION_STACK,'true' as IS_HIS,COMPONENT_ID 
+			from EXCEPTION_DEAL_INFO_HIS 
+		) AS e
+		<dynamic prepend="where">
+		    <isNotNull prepend="and" property="serinvokeinsName"> LOWER(e.SERINVOKEINS_NAME) like CONCAT('%',#serinvokeinsName#,'%')</isNotNull>
+		    <isNotNull prepend="and" property="serviceName"> LOWER(e.SERVICE_NAME) like CONCAT('%',#serviceName#,'%')</isNotNull>
+		    <isNotNull prepend="and" property="componentName"> LOWER(e.COMPONENT_NAME) like CONCAT('%',#componentName#,'%')</isNotNull>
+		    <isNotNull prepend="and" property="messageflowName"> LOWER(e.MESSAGEFLOW_NAME) like CONCAT('%',#messageflowName#,'%')</isNotNull>
+		    <isNotNull prepend="and" property="endpointName"> LOWER(e.ENDPOINT_NAME) like CONCAT('%',#endpointName#,'%')</isNotNull>
+		    <isNotNull prepend="and" property="exceptionId"> e.EXCEPTION_ID = #exceptionId#</isNotNull>
+	        <isNotNull prepend="and" property="arrayTryStatus"> 
+				 e.TRY_STATUS in 
+	             <iterate property="arrayTryStatus"  conjunction=","  open="("  close=")" >
+                  #arrayTryStatus[]#
+                 </iterate>
+	        </isNotNull>
+		</dynamic>
+		order by e.CREATE_DATE desc 
+        LIMIT #pro_mysql#,#page_record#
+	</select>
+	
+	<select id="getExceptionDealInfoListCount" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+		select COUNT(1) ALLNUM
+		FROM(
+			select EXCEPTION_ID,SERINVOKEINS_NAME,SERVICE_NAME,COMPONENT_NAME,MESSAGEFLOW_NAME,ENDPOINT_NAME,TRY_STATUS,COMPONENT_ID from EXCEPTION_DEAL_INFO 
+			UNION 
+			select EXCEPTION_ID,SERINVOKEINS_NAME,SERVICE_NAME,COMPONENT_NAME,MESSAGEFLOW_NAME,ENDPOINT_NAME,TRY_STATUS,COMPONENT_ID from EXCEPTION_DEAL_INFO_HIS 
+		) AS e
+		<dynamic prepend="where">
+		    <isNotNull prepend="and" property="serinvokeinsName"> LOWER(e.SERINVOKEINS_NAME) like CONCAT('%',#serinvokeinsName#,'%')</isNotNull>
+		    <isNotNull prepend="and" property="serviceName"> LOWER(e.SERVICE_NAME) like CONCAT('%',#serviceName#,'%')</isNotNull>
+		    <isNotNull prepend="and" property="componentName"> LOWER(e.COMPONENT_NAME) like CONCAT('%',#componentName#,'%')</isNotNull>
+		    <isNotNull prepend="and" property="messageflowName"> LOWER(e.MESSAGEFLOW_NAME) like CONCAT('%',#messageflowName#,'%')</isNotNull>
+		    <isNotNull prepend="and" property="endpointName"> LOWER(e.ENDPOINT_NAME) like CONCAT('%',#endpointName#,'%')</isNotNull>
+		    <isNotNull prepend="and" property="exceptionId"> e.EXCEPTION_ID = #exceptionId#</isNotNull>
+	        <isNotNull prepend="and" property="arrayTryStatus"> 
+				 e.TRY_STATUS in 
+	             <iterate property="arrayTryStatus"  conjunction=","  open="("  close=")" >
+                  #arrayTryStatus[]#
+                 </iterate>
+	        </isNotNull>
+		</dynamic>
+ 	</select>
+	
+	<update id="tryStatusUpdate" parameterClass="java.util.HashMap">
+		update exception_deal_info set try_status=#tryStatus# 
+		<dynamic prepend="where">
+	   		<isNotNull prepend="" property="arrayExceptionId"> 
+	   			exception_id in 
+	   			<iterate property="arrayExceptionId"  conjunction=","  open="("  close=")" >
+	                #arrayExceptionId[]#
+				</iterate>
+			</isNotNull>
+	 	</dynamic>
+	</update>
+	
+	
+	<insert id="exceptionToHis" parameterClass="java.util.HashMap">
+	  insert into exception_deal_info_his select * from exception_deal_info
+		<dynamic prepend="where">
+	   		<isNotNull prepend="" property="arrayExceptionId"> 
+	   			exception_id in 
+	   			<iterate property="arrayExceptionId"  conjunction=","  open="("  close=")" >
+	                #arrayExceptionId[]#
+				</iterate>
+			</isNotNull>
+	 	</dynamic>
+	</insert>
+	
+	<delete id="exceptionDel" parameterClass="java.util.HashMap">
+	  delete from exception_deal_info 
+		<dynamic prepend="where">
+	   		<isNotNull prepend="" property="arrayExceptionId"> 
+	   			exception_id in 
+	   			<iterate property="arrayExceptionId"  conjunction=","  open="("  close=")" >
+	                #arrayExceptionId[]#
+				</iterate>
+			</isNotNull>
+	 	</dynamic>
+	</delete>
+	
+	
+</sqlMap> 

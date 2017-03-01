@@ -1,0 +1,4 @@
+资源目录划分规格：
+comm 为公共的相关js、css、images文件
+按主题划分为不同资源文件，如橙色orange,蓝色blue
+对于各运营商不同的图片，则在主题内再分联通、电信、移动划分,如orange/images/un为联通，orange/images/tel为电信.

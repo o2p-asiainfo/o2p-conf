@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "http://ibatis.apache.org/dtd/sql-map-2.dtd" "-//ibatis.apache.org//DTD SQL Map 2.0//EN">
+
+<sqlMap namespace="eaap-op2-conf-autitingContract">
+
+  <select id="queryContractInfoList" parameterClass="java.util.HashMap"  resultClass="java.util.HashMap">
+  select * from (select row_number() over( order by contract_id desc ) rn , newtab.* from (
+    select c.*
+  	from contract c
+    <dynamic prepend="where">
+            <isNotNull prepend="and " property="contractId">c.contract_id=#contractId#</isNotNull>
+            <isNotNull prepend="and " property="baseContractId">c.base_contract_id=#baseContractId#</isNotNull>
+            <isNotNull prepend="and " property="name">c.name like '%'||#name#||'%'</isNotNull>
+            <isNotNull prepend="and " property="code">c.code =#code#</isNotNull>
+            <isNotNull prepend="and " property="state">c.state=#state#</isNotNull>     
+    </dynamic>
+    order by c.contract_id
+     ) newtab ) where rn between #pro# and #end# 
+ </select>
+
+ <resultMap id="queryContractVersionAndFormatMap" class="java.util.HashMap">
+ 	<result property="CONTRACT_VERSION_ID" column="CONTRACT_VERSION_ID"></result>
+ 	<result property="IS_NEED_CHECK" column="IS_NEED_CHECK"></result>
+ 	<result property="STATE" column="STATE"></result>
+ 	<result property="REQ_RSP" column="REQ_RSP"></result>
+ 	<result property="XSD_DEMO" column="XSD_DEMO"   jdbcType="CLOB" javaType = "java.lang.String"></result>
+ </resultMap>
+ <select id="queryContractVersionAndFormat" parameterClass="java.lang.Integer"  resultMap="queryContractVersionAndFormatMap">
+     select *
+	  from contract_version cv, CONTRACT_FORMAT cf
+	 where cv.contract_id = #contract_id#
+	   and cf.contract_version_id = cv.contract_version_id
+	 order by cv.contract_version_id
+ </select>
+
+
+ <select id="queryContractInfoListCount" parameterClass="java.util.HashMap"  resultClass="java.lang.Integer">
+    select count(*) ALLNUM
+  	from contract c
+    <dynamic  prepend="where">
+            <isNotNull prepend="and " property="contractId">c.contract_id=#contractId#</isNotNull>
+            <isNotNull prepend="and " property="baseContractId">c.base_contract_id=#baseContractId#</isNotNull>
+            <isNotNull prepend="and " property="name">c.name like '%'||#name#||'%'</isNotNull>
+            <isNotNull prepend="and " property="code">c.code =#code#</isNotNull>
+            <isNotNull prepend="and " property="state">c.state=#state#</isNotNull>     
+    </dynamic>
+</select>
+ 
+<update id="updateContract" parameterClass="com.ailk.eaap.op2.bo.Contract">
+  update contract c
+  <dynamic prepend="set">
+  	c.lastest_time=SYS_EXTRACT_UTC(current_timestamp)+0
+    <isNotNull prepend="," property="baseContractId">c.base_contract_id=#baseContractId#</isNotNull>
+    <isNotNull prepend="," property="name">c.name=#name#</isNotNull>
+    <isNotNull prepend="," property="code">c.code=#code#</isNotNull>
+    <isNotNull prepend="," property="state">c.state=#state#</isNotNull>
+    <isNotNull prepend="," property="descriptor">c.descriptor=#descriptor#</isNotNull>
+  </dynamic>
+  <dynamic prepend="where">
+    <isNotNull prepend="and" property="contractId">c.contract_id=#contractId#</isNotNull>
+  </dynamic>
+</update>
+<update id="updateContractVersion" parameterClass="com.ailk.eaap.op2.bo.ContractVersion">
+  update contract_version cv
+  <dynamic prepend="set">
+  	cv.lastest_time=SYS_EXTRACT_UTC(current_timestamp)+0
+    <isNotNull prepend="," property="version">cv.version=#version#</isNotNull>
+    <isNotNull prepend="," property="state">cv.state=#state#</isNotNull>
+    <isNotNull prepend="," property="effDate">cv.eff_date=#effDate#</isNotNull>
+    <isNotNull prepend="," property="expDate">cv.exp_date=#expDate#</isNotNull>
+    <isNotNull prepend="," property="descriptor">cv.descriptor=#descriptor#</isNotNull>
+    <isNotNull prepend="," property="isNeedCheck">cv.is_need_check=#isNeedCheck#</isNotNull>
+  </dynamic>
+  <dynamic prepend="where">
+    <isNotNull prepend="and" property="contractVersionId">cv.contract_version_id=#contractVersionId#</isNotNull>
+  </dynamic>
+</update>
+<update id="updateContractFormat" parameterClass="com.ailk.eaap.op2.bo.ContractVersion">
+	update CONTRACT_FORMAT cf
+	  <dynamic prepend="set">
+	  	cf.lastest_time = SYS_EXTRACT_UTC(current_timestamp)+0
+	    <isNotNull prepend="," property="conType">cf.conType=#conType#</isNotNull>
+	    <isNotNull prepend="," property="xsdHeaderFor">cf.xsd_header_for=#xsdHeaderFor#</isNotNull>
+	    <isNotNull prepend="," property="xsdFormat">cf.xsd_format=#xsdFormat#</isNotNull>
+	    <isNotNull prepend="," property="xsdDemo">cf.xsd_demo=#xsdDemo#</isNotNull>
+	    <isNotNull prepend="," property="state">cf.state=#state#</isNotNull>
+	    <isNotNull prepend="," property="descriptor">cf.descriptor =#descriptor#</isNotNull>
+	  </dynamic>
+	  <dynamic prepend="where">
+	    <isNotNull prepend="and" property="tcpCtrFId">cf.tcp_ctr_f_id=#tcpCtrFId#</isNotNull>
+	  </dynamic>
+</update>
+<insert id="insertContract" parameterClass="com.ailk.eaap.op2.bo.Contract">
+ <selectKey resultClass="java.lang.Integer" keyProperty="contractId">
+			 SELECT to_char(seq_contract.NEXTVAL) FROM DUAL  
+ </selectKey>	
+    insert into CONTRACT
+    (CREATE_TIME,STATE,LASTEST_TIME
+  <dynamic>
+    <isNotNull prepend="," property="contractId">CONTRACT_ID</isNotNull>
+    <isNotNull prepend="," property="baseContractId">BASE_CONTRACT_ID</isNotNull>
+    <isNotNull prepend="," property="name">NAME</isNotNull>
+    <isNotNull prepend="," property="code">CODE</isNotNull>
+    <isNotNull prepend="," property="descriptor">DESCRIPTOR</isNotNull>
+  </dynamic>
+  )
+  values(SYS_EXTRACT_UTC(current_timestamp)+0 ,'A',SYS_EXTRACT_UTC(current_timestamp)+0
+  <dynamic>
+    <isNotNull prepend="," property="contractId">#contractId#</isNotNull>
+    <isNotNull prepend="," property="baseContractId">#baseContractId#</isNotNull>
+    <isNotNull prepend="," property="name">#name#</isNotNull>
+    <isNotNull prepend="," property="code">#code#</isNotNull>
+    <isNotNull prepend="," property="descriptor">#descriptor#</isNotNull>
+  </dynamic>
+  )
+</insert>
+<insert id="insertContractVersion" parameterClass="com.ailk.eaap.op2.bo.ContractVersion">
+ <selectKey resultClass="java.lang.Integer" keyProperty="contractVersionId">
+			 SELECT to_char(SEQ_CONTRACT_VERSION.NEXTVAL) FROM DUAL  
+ </selectKey>	
+    insert into contract_version
+    (create_time,state,lastest_time
+  <dynamic>
+    <isNotNull prepend="," property="contractVersionId">contract_version_id</isNotNull>
+    <isNotNull prepend="," property="contractId">contract_id</isNotNull>
+    <isNotNull prepend="," property="version">version</isNotNull>
+    <isNotNull prepend="," property="effDate">eff_date</isNotNull>
+    <isNotNull prepend="," property="expDate">exp_date</isNotNull>
+    <isNotNull prepend="," property="descriptor">descriptor</isNotNull>
+    <isNotNull prepend="," property="isNeedCheck">is_need_check</isNotNull>
+  </dynamic>
+  )
+  values(SYS_EXTRACT_UTC(current_timestamp)+0 ,'A',SYS_EXTRACT_UTC(current_timestamp)+0
+  <dynamic>
+    <isNotNull prepend="," property="contractVersionId">#contractVersionId#</isNotNull>
+    <isNotNull prepend="," property="contractId">#contractId#</isNotNull>
+    <isNotNull prepend="," property="version">#version#</isNotNull>
+    <isNotNull prepend="," property="effDate">#effDate#</isNotNull>
+    <isNotNull prepend="," property="expDate">#expDate#</isNotNull>
+    <isNotNull prepend="," property="descriptor">#descriptor#</isNotNull>
+    <isNotNull prepend="," property="isNeedCheck">#isNeedCheck#</isNotNull>
+  </dynamic>
+  )
+</insert>
+<insert id="insertContractFormat" parameterClass="com.ailk.eaap.op2.bo.ContractFormat">
+ <selectKey resultClass="java.lang.Integer" keyProperty="tcpCtrFId">
+			 SELECT to_char(SEQ_CONTRACT_FORMAT.NEXTVAL) FROM DUAL  
+ </selectKey>	
+    insert into contract_format
+    (create_time,state,lastest_time,CONTRACT_FORMAT_CODE
+  <dynamic>
+    <isNotNull prepend="," property="tcpCtrFId">tcp_ctr_f_id</isNotNull>
+    <isNotNull prepend="," property="contractVersionId">contract_version_id</isNotNull>
+    <isNotNull prepend="," property="reqRsp">req_rsp</isNotNull>
+    <isNotNull prepend="," property="conType">con_type</isNotNull>
+    <isNotNull prepend="," property="xsdHeaderFor">xsd_header_for</isNotNull>
+    <isNotNull prepend="," property="xsdFormat">xsd_format</isNotNull>
+    <isNotNull prepend="," property="xsdDemo">xsd_demo</isNotNull>
+    <isNotNull prepend="," property="descriptor">descriptor</isNotNull>
+  </dynamic>
+  )
+  values(SYS_EXTRACT_UTC(current_timestamp)+0 ,'A',SYS_EXTRACT_UTC(current_timestamp)+0,sys_guid()
+  <dynamic>
+    <isNotNull prepend="," property="tcpCtrFId">#tcpCtrFId#</isNotNull>
+    <isNotNull prepend="," property="contractVersionId">#contractVersionId#</isNotNull>
+    <isNotNull prepend="," property="reqRsp">#reqRsp#</isNotNull>
+    <isNotNull prepend="," property="conType">#conType#</isNotNull>
+    <isNotNull prepend="," property="xsdHeaderFor">#xsdHeaderFor#</isNotNull>
+    <isNotNull prepend="," property="xsdFormat">#xsdFormat#</isNotNull>
+    <isNotNull prepend="," property="xsdDemo">#xsdDemo#</isNotNull>
+    <isNotNull prepend="," property="descriptor">#descriptor#</isNotNull>
+  </dynamic>
+  )
+</insert>
+<delete id="deleteContractCascade" parameterClass="java.lang.Integer">
+	delete from contract where contract_id=#contractId#
+</delete>
+
+</sqlMap>

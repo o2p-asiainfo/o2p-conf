@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="proofeffect" extends="default" namespace="/proofeffect">
+	
+		<action name="showProofEffect" class="com.ailk.eaap.op2.conf.proofmanage.action.ProofEffectAction" method="showProofEffectPage">
+			<result name="success">/proofmanage/proofmanage.jsp</result> 
+		</action>
+		<action name="selectProofEffect" class="com.ailk.eaap.op2.conf.proofmanage.action.ProofEffectAction" method="selectProofEffect">
+			<result name="success">/proofmanage/select_proofmanage.jsp</result>
+		</action>
+		<action name="addProofEffect" class="com.ailk.eaap.op2.conf.proofmanage.action.ProofEffectAction" method="addProofEffect">
+			<result name="success">/proofmanage/addproofpage.jsp</result> 
+		</action>
+		<action name="add_ProofEffect" class="com.ailk.eaap.op2.conf.proofmanage.action.ProofEffectAction" method="add_ProofEffect">
+			<result name="success">/proofmanage/add_proof_page.jsp</result> 
+		</action>
+		<action name="submit_ProofEffect" class="com.ailk.eaap.op2.conf.proofmanage.action.ProofEffectAction" method="submit_ProofEffect">
+			<result name="success">/proofmanage/proofmanage.jsp</result> 
+		</action>
+		<action name="submit_updatePro" class="com.ailk.eaap.op2.conf.proofmanage.action.ProofEffectAction" method="submit_updatePro">
+			<!-- <result name="success" type="redirectAction">  
+			    <param name="actionName">showProofEffect</param>  
+			</result> -->
+			<result name="success">/proofmanage/proofmanage.jsp</result> 
+		</action>
+		<action name="addProofEffectType" class="com.ailk.eaap.op2.conf.proofmanage.action.ProofEffectAction" method="addProofEffectType">
+			<result name="success">/proofmanage/addproofpage.jsp</result> 
+		</action>
+		<action name="selectattr" class="com.ailk.eaap.op2.conf.proofmanage.action.ProofEffectAction" method="selectattr">
+			<result name="success">/proofmanage/select_attr_spec.jsp</result> 
+		</action>
+		<action name="addAttrValues" class="com.ailk.eaap.op2.conf.proofmanage.action.ProofEffectAction" method="addAttrValues">
+			<result name="success">/proofmanage/select_attr_spec.jsp</result> 
+		</action>
+		<action name="selectProofAttrType" class="com.ailk.eaap.op2.conf.proofmanage.action.ProofEffectAction" method="selectProofAttrType">
+			<result name="success">/proofmanage/select_proof_type_attr_spec_page.jsp</result> 
+		</action>
+		<action name="addPrAttrValues" class="com.ailk.eaap.op2.conf.proofmanage.action.ProofEffectAction" method="addPrAttrValues">
+			<result name="success">/proofmanage/select_attr_spec.jsp</result> 
+		</action>
+		<action name="delPrAttrSpec" class="com.ailk.eaap.op2.conf.proofmanage.action.ProofEffectAction" method="delPrAttrSpec">
+			<result name="success">/proofmanage/select_attr_spec.jsp</result> 
+		</action>
+		<action name="delProofValues" class="com.ailk.eaap.op2.conf.proofmanage.action.ProofEffectAction" method="delProofValues">
+			<result name="success">/proofmanage/select_attr_spec.jsp</result> 
+		</action>
+		<action name="delProofEffect" class="com.ailk.eaap.op2.conf.proofmanage.action.ProofEffectAction" method="delProofEffect">
+			<result name="success">/proofmanage/select_attr_spec.jsp</result> 
+		</action>
+		<action name="showProofEffectPage" class="com.ailk.eaap.op2.conf.proofmanage.action.ProofEffectAction" method="showProofEffect">
+			<result name="success">/proofmanage/showproofpage.jsp</result> 
+		</action>
+		<action name="show_ProofEffectPage" class="com.ailk.eaap.op2.conf.proofmanage.action.ProofEffectAction" method="show_ProofEffectPage">
+			<result name="success">/proofmanage/show_proof_page.jsp</result> 
+		</action>
+		<action name="show_updatePage" class="com.ailk.eaap.op2.conf.proofmanage.action.ProofEffectAction" method="show_updatePage">
+			<result name="success">/proofmanage/show_update_page.jsp</result> 
+		</action>
+		<action name="showSelectedMes" class="com.ailk.eaap.op2.conf.proofmanage.action.ProofEffectAction" method="showSelectedMes">
+			<result name="success">/proofmanage/show_proof_page.jsp</result> 
+		</action>
+		<action name="encodePwd" class="com.ailk.eaap.op2.conf.proofmanage.action.ProofEffectAction" method="encodePwd">
+			<result name="success">/proofmanage/show_proof_page.jsp</result> 
+		</action>
+	 </package>
+</struts>

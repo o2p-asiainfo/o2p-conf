@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "http://ibatis.apache.org/dtd/sql-map-2.dtd" "-//ibatis.apache.org//DTD SQL Map 2.0//EN">
+
+<sqlMap namespace="eaap-op2-conf-autitingcomp">
+
+
+	<select id="queryCompInfo" parameterClass="com.ailk.eaap.op2.bo.Component"
+		resultClass="java.util.HashMap">
+		select comptype.name COMPTYPE,comp.*,o.name ORGNAME
+		from component comp,COMPONENT_TYPE comptype,org o
+		where comp.component_type_id = comptype.component_type_id
+    	and o.org_id=comp.org_id
+		and comp.tenant_id=#tenantId#
+		<dynamic>
+			<isNotNull prepend="and" property="componentId"> comp.component_id =
+				#componentId#</isNotNull>
+		</dynamic>
+	</select>
+
+
+	<select id="queryCompTypeNCList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		select name,code,component_type_id from component_type where code!=3 
+	</select>
+
+
+
+
+	<select id="queryCompInfoList" parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+		select distinct comptype.name COMPTYPE,
+		org.name ORGNAME,
+		org.org_code ORGCODE,
+		app.appkey APPKEY,
+		comp.component_id COMPONENT_ID,
+		comp.org_id ORG_ID,
+		comp.code CODE,
+		comp.name NAME,
+		comp.component_type_id COMPONENT_TYPE_ID,
+		comp.audit_flow_id AUDIT_FLOW_ID,
+		date_format(comp.reg_time,'%Y-%m-%d %H:%i') REG_TIME ,
+		comp.state STATE,
+		date_format(comp.state_time,'%Y-%m-%d %H:%i') STATE_TIME ,
+		comp.password PASSWORD,
+		comp.descriptor DESCRIPTOR,
+		comp.s_file_id S_FILE_ID
+		from component comp
+		inner join component_type comptype
+		on comp.component_type_id = comptype.component_type_id  
+		inner join org org
+		on org.org_id = comp.org_id and org.TENANT_ID=#tenantId#
+		left join app app
+		on app.component_id = comp.component_id and app.TENANT_ID=#tenantId#
+		where 1=1
+		and comp.TENANT_ID=#tenantId#
+		<dynamic>
+			<isNotNull prepend="and" property="componentId"> comp.component_id
+				=#componentId#</isNotNull>
+			<isNotNull prepend="and" property="code"> comp.code =#code#</isNotNull>
+			<isNotNull prepend="and" property="name"> comp.name like
+				CONCAT('%',#name#,'%')</isNotNull>
+			<isNotNull prepend="and" property="arrayComponentTypeId">
+				comp.component_type_id in
+				<iterate property="arrayComponentTypeId" conjunction=","
+					close=")" open="(">
+					#arrayComponentTypeId[]#
+				</iterate>
+			</isNotNull>
+			<isNotNull prepend="and" property="orgId"> org.org_id=#orgId#</isNotNull>
+			<isNotNull prepend="and" property="orgName"> org.name like
+				CONCAT('%',#orgName#,'%')</isNotNull>
+			<isNull prepend="and" property="state"> comp.state!='X'</isNull>
+			<isNotNull prepend="and" property="arrayState">
+				comp.state in
+				<iterate property="arrayState" conjunction="," close=")"
+					open="(">
+					#arrayState[]#
+				</iterate>
+			</isNotNull>
+			<isNotNull prepend="and" property="appkey"> app.appkey=#appkey#</isNotNull>
+		</dynamic>
+		LIMIT #pro_mysql#,#page_record#
+	</select>
+
+
+	<select id="queryCompInfoListCount" parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+		select count(*) ALLNUM from (
+		select distinct comptype.name COMPTYPE,
+		org.name ORGNAME,
+		org.org_code ORGCODE,
+		app.appkey APPKEY,
+		comp.component_id COMPONENT_ID,
+		comp.org_id ORG_ID,
+		comp.code CODE,
+		comp.name NAME,
+		comp.component_type_id COMPONENT_TYPE_ID,
+		comp.audit_flow_id AUDIT_FLOW_ID,
+		date_format(comp.reg_time,'%Y-%m-%d %H:%i') REG_TIME ,
+		comp.state STATE,
+		date_format(comp.state_time,'%Y-%m-%d %H:%i') STATE_TIME ,
+		comp.password PASSWORD,
+		comp.descriptor DESCRIPTOR,
+		comp.s_file_id S_FILE_ID
+		from component comp
+		inner join component_type comptype
+		on comp.component_type_id = comptype.component_type_id 
+		inner join org org
+		on org.org_id = comp.org_id and org.TENANT_ID=#tenantId#
+		left join app app
+		on app.component_id = comp.component_id and app.TENANT_ID=#tenantId#
+		where 1=1
+		and comp.TENANT_ID=#tenantId#
+		<dynamic>
+			<isNotNull prepend="and" property="code"> comp.code =#code#</isNotNull>
+			<isNotNull prepend="and" property="tenantId"> comp.tenant_id =#tenantId#</isNotNull>
+			<isNotNull prepend="and" property="name"> comp.name like
+				CONCAT('%',#name#,'%')</isNotNull>
+			<isNotNull prepend="and" property="arrayComponentTypeId">
+				comp.component_type_id in
+				<iterate property="arrayComponentTypeId" conjunction=","
+					close=")" open="(">
+					#arrayComponentTypeId[]#
+				</iterate>
+			</isNotNull>
+			<isNotNull prepend="and" property="orgId"> org.org_id=#orgId#</isNotNull>
+			<isNotNull prepend="and" property="orgName"> org.name like
+				CONCAT('%',#orgName#,'%')</isNotNull>
+			<isNull prepend="and" property="state"> comp.state!='X'</isNull>
+			<isNotNull prepend="and" property="arrayState">
+				comp.state in
+				<iterate property="arrayState" conjunction="," close=")"
+					open="(">
+					#arrayState[]#
+				</iterate>
+			</isNotNull>
+			<isNotNull prepend="and" property="appkey"> app.appkey=#appkey#</isNotNull>
+		</dynamic>
+		) temp
+	</select>
+
+	<update id="updateComponent" parameterClass="com.ailk.eaap.op2.bo.Component">
+		update COMPONENT
+		<dynamic prepend="set">
+			<isNotNull prepend="," property="name">NAME=#name#</isNotNull>
+			<isNotNull prepend="," property="code">CODE=#code#</isNotNull>
+			<isNotNull prepend="," property="state">STATE=#state#</isNotNull>
+			<isNotNull prepend="," property="descriptor">DESCRIPTOR=#descriptor#</isNotNull>
+		</dynamic>
+		<dynamic prepend="where">
+			<isNotNull prepend="and" property="componentId"> COMPONENT_ID=#componentId#</isNotNull>
+			<isNotNull prepend="and" property="tenantId"> TENANT_ID=#tenantId#</isNotNull>
+		</dynamic>
+	</update>
+
+	<insert id="insertComponent" parameterClass="com.ailk.eaap.op2.bo.Component">
+		<selectKey resultClass="String" keyProperty="componentId">
+			SELECT
+			SEQ_COMPONENT.NEXTVAL FROM DUAL
+		</selectKey>
+		insert into COMPONENT
+		(REG_TIME,STATE_TIME,STATE,TENANT_ID
+		<dynamic>
+			<isNotNull prepend="," property="componentId">COMPONENT_ID</isNotNull>
+			<isNotNull prepend="," property="orgId">ORG_ID</isNotNull>
+			<isNotNull prepend="," property="code">CODE</isNotNull>
+			<isNotNull prepend="," property="name">NAME</isNotNull>
+			<isNotNull prepend="," property="componentTypeId">COMPONENT_TYPE_ID</isNotNull>
+			<isNotNull prepend="," property="sfileId">S_FILE_ID</isNotNull>
+			<isNotNull prepend="," property="descriptor">DESCRIPTOR</isNotNull>
+			<isNotNull prepend="," property="password">PASSWORD</isNotNull>
+		</dynamic>
+		)
+		values
+		(utc_timestamp(), utc_timestamp(),'A',#tenantId#
+		<dynamic>
+			<isNotNull prepend="," property="componentId">#componentId#</isNotNull>
+			<isNotNull prepend="," property="orgId">#orgId#</isNotNull>
+			<isNotNull prepend="," property="code">#code#</isNotNull>
+			<isNotNull prepend="," property="name">#name#</isNotNull>
+			<isNotNull prepend="," property="componentTypeId">#componentTypeId#</isNotNull>
+			<isNotNull prepend="," property="sfileId">#sfileId#</isNotNull>
+			<isNotNull prepend="," property="descriptor">#descriptor#</isNotNull>
+			<isNotNull prepend="," property="password">#password#</isNotNull>
+		</dynamic>
+		)
+	</insert>
+	<delete id="delComponent" parameterClass="String">
+		delete from component where component_id=#compId# and TENANT_ID=#tenantId#
+	</delete>
+
+</sqlMap>

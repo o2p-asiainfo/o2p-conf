@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="component" extends="default" namespace="/component">
+		<action name="queryCompInfo" class="com.ailk.eaap.op2.conf.auditing.action.CompRegAuditingAction" method="queryCompInfo">
+			<result name="success">/auditing/comp_auditing.jsp</result> 
+			<result name="successtoinfo">/mgr/compinfo.jsp</result> 
+			<result name="successtoedit">/mgr/comp_edit.jsp</result> 																																																										
+		</action>
+		
+		<action name="checkCompOnline" class="com.ailk.eaap.op2.conf.auditing.action.CompRegAuditingAction" method="checkCompOnline">
+			<result name="success">/auditing/app_auditing.jsp</result> 
+		</action>
+		
+		<action name="showCompList" class="com.ailk.eaap.op2.conf.auditing.action.CompRegAuditingAction" method="showCompList">
+			<result name="success">/mgr/compList.jsp</result> 
+		</action>	
+		<action name="updateCompInfo" class="com.ailk.eaap.op2.conf.auditing.action.CompRegAuditingAction" method="updateCompInfo">
+			 <result name="success" type="redirectAction">  
+                      <param name="actionName">showCompList</param>  
+               </result>  
+		</action>
+		<action name="preAddCompInfo" class="com.ailk.eaap.op2.conf.auditing.action.CompRegAuditingAction" method="preAddCompInfo">
+			<result name="success">/mgr/component_add.jsp</result> 
+			<result name="successtoedit">/mgr/comp_edit.jsp</result> 
+		</action>
+		<action name="preSelectOrg" class="com.ailk.eaap.op2.conf.auditing.action.OrgRegAuditingAction" method="showOrgList">
+			<result name="success">/mgr/comp_preSelectOrg.jsp</result> 
+		</action>
+		
+		<action name="insertCompInfo" class="com.ailk.eaap.op2.conf.auditing.action.CompRegAuditingAction" method="insertCompInfo">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">showCompList</param>  
+               </result>  
+		</action>
+		<action name="deleteComp" class="com.ailk.eaap.op2.conf.auditing.action.CompRegAuditingAction" method="deleteComp">
+			<result name="success" type="redirectAction">  
+                      <param name="actionName">showCompList</param>  
+               </result>  
+		</action>
+		<action name="chooseCompInfo" class="com.ailk.eaap.op2.conf.auditing.action.CompRegAuditingAction" method="chooseCompInfo">
+			<result name="success">/common/chooseCompInfo.jsp</result> 
+		</action>
+		
+		
+	 </package>
+</struts>

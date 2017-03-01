@@ -1,0 +1,165 @@
+<div id="components-billingDiscount4PdtOfr">
+</div>
+<script type="text/html" id="art-billingDiscount4PdtOfr">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <!--Rating Discount-->
+    <h4 class="modal-title i18n">CNF00000023</h4>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="form-group">
+          <!--Price Name-->
+          <label class="control-label i18n">CNF00000028</label>
+          <input type="text" class="form-control" disabled="" value="{{priceName}}">
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <!--Reference Subject-->
+          <label class="control-label i18n">CNF00000052</label>
+          <input type="text" class="form-control" value="{{referenceSubject}}" disabled="">
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <!--Contrast Subject-->
+          <label class="control-label i18n">CNF00000053</label>
+          <input type="text" class="form-control" value="{{contrastSubject}}" disabled="">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="form-group">
+          <!--Tax Type-->
+          <label class="control-label i18n">CNF00000029</label>
+          <input type="text" class="form-control" disabled="" value="{{taxType}}">
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <!--Priority-->
+          <label class="control-label i18n">CNF00000042</label>
+          <input type="text" class="form-control" disabled="" value="{{priority}}">
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <!--Max Discount Money-->
+          <label class="control-label i18n">CNF00000054</label>
+          <div class="input-group">
+            <input type="text" class="form-control" disabled="" value="{{maxDiscountMoneyNum}}">
+            <span class="input-group-addon">{{maxDiscountMoneyName}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="form-group">
+          <!--Effective Date-->
+          <label class="control-label i18n">CNF00000030</label>
+          <input type="text" class="form-control" value="{{effectiveDate}}" disabled="">
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <!--Calc Type-->
+          <label class="control-label i18n">CNF00000055</label>
+          <input type="text" class="form-control" value="{{calcType}}" disabled="">
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <!--Discount Type-->
+          <label class="control-label i18n">CNF00000056</label>
+          <input type="text" class="form-control" value="{{discountType | discoutType }}" disabled="">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-8">
+        <table class="table table-bordered text-center">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th><span class="i18n">CNF00000057</span> &nbsp;({{maxDiscountMoneyName}})</th>
+              {{ if (discountType == 1) }}
+              <th><span class="i18n">CNF00000058</span> &nbsp;({{maxDiscountMoneyName}})</th>
+              {{else}}
+              <th><span class="i18n">CNF00000059</span> &nbsp;({{maxDiscountMoneyName}})</th>
+              {{/if}}
+            </tr>
+          </thead>
+          <tbody>
+            {{each charge}}
+            {{if (charge.length > 0) }}
+            <tr>
+              <td>{{$value.id}}</td>
+              <td>
+                <div class="input-group">
+                  <input type="text" class="form-control" value="{{$value.chargeArrangeMin}}" disabled="">
+                  <span class="input-group-addon">-</span>
+                  <input type="text" class="form-control" value="{{$value.chargeArrangeMax}}" disabled="">
+                </div>
+              </td>
+              <td>
+                {{if (discountType == 1) }}
+                <input type="text" class="form-control" value="{{$value.discount}}" disabled=""> {{else}}
+                <input type="text" class="form-control" value="{{$value.recurringCharge}}" disabled=""> {{/if}}
+              </td>
+            </tr>
+            {{else}}
+            <tr>
+              <td colspan="3" class="i18n">CNF00000065</td>
+            </tr>
+            {{/if}} {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="form-group">
+          <!--Description-->
+          <label class="control-label i18n">CNF00000034</label>
+          <textarea rows="2" class="form-control" disabled="">{{description}}</textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</script>
+<script>
+  (function() {
+    template.helper('discoutType', function(code) {
+      switch (code) {
+        case 1:
+          return App.i18n('CNF00000060');
+          break;
+        case 2:
+          return App.i18n('CNF00000061');
+          break;
+        case 3:
+          return App.i18n('CNF00000062');
+          break;
+        case 4:
+          return App.i18n('CNF00000063');
+          break;
+        case 5:
+          return App.i18n('CNF00000064');
+          break;
+      }
+    });
+
+    var selector = '#components-billingDiscount4PdtOfr';
+    var $modal = $(selector).closest('.modal'); //获取当前modal对象
+    App.template(App.urls.billingDiscount4PdtOfrData, 'art-billingDiscount4PdtOfr', 'components-billingDiscount4PdtOfr', {
+      id: $modal.data('myData')
+    }, function() {
+      App.transferI18nRes();
+      $modal.modal();
+    })
+  })()
+</script>
